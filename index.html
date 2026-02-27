@@ -248,6 +248,80 @@
       border: 1px solid #ddd;
     }
 
+    /* ===== BANK DETAIL GRID ===== */
+    .bank-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .bank-item {
+      background: #f8f9fa;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .bank-item label {
+      margin: 0 0 5px 0;
+      font-weight: bold;
+      color: var(--btn2);
+    }
+
+    .bank-item input {
+      text-align: center;
+      padding: 5px;
+    }
+
+    .bank-total-row {
+      background: #e8f4fd;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    /* ===== PRINT PREVIEW ===== */
+    #printPreview {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .preview-content {
+      background: white;
+      width: 90%;
+      height: 90%;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-header {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preview-frame {
+      flex: 1;
+      border: none;
+    }
+
     /* ===== UTILITIES ===== */
     .hidden {
       display: none !important;
@@ -284,15 +358,15 @@
       margin: 10px 0;
     }
 
-    .bank-detail-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .bank-detail-row input {
-      width: 80px;
+    .total-display {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--btn2);
+      text-align: right;
+      padding: 10px;
+      background: #f0f7ff;
+      border-radius: 8px;
+      margin: 10px 0;
     }
   </style>
 </head>
@@ -394,7 +468,7 @@
     <div class="row">
       <div class="w-50">
         <label>Z-Bon Betrag (€)</label>
-        <input id="zbon" type="number" step="0.01" value="0" placeholder="0,00" />
+        <input id="zbon" type="number" step="0.01" value="0" placeholder="0,00" oninput="updateAllTotals()" />
         <div class="note">Z-Bon = Tagesumsatz laut Kasse. Soll = Start + Z-Bon.</div>
       </div>
     </div>
@@ -402,80 +476,40 @@
 
   <!-- BANK EINZAHLUNG DETAIL SECTION -->
   <div class="card">
-    <h2>🏦 3) Bank Einzahlung - DETAILIERT</h2>
-    <div class="row">
-      <div class="w-50">
-        <label>Gesamtbetrag Einzahlung (€)</label>
-        <input id="bank" type="number" step="0.01" value="0" placeholder="0,00" onchange="updateBankDetails()" />
-      </div>
-      <div class="w-50">
-        <label>&nbsp;</label>
-        <div class="btns">
-          <button class="ghost" onclick="addBankDetailRow()">+ Zeile hinzufügen</button>
-          <button class="ghost" onclick="clearBankDetails()">Zurücksetzen</button>
-        </div>
-      </div>
+    <h2>🏦 3) Bank Einzahlung - ALLE NOTEN</h2>
+    
+    <!-- Bank Details Grid - Alle Noten von 200€ bis 0,01€ -->
+    <div class="bank-grid" id="bankDetailsGrid">
+      <!-- Wird dynamisch befüllt -->
     </div>
 
-    <div style="margin-top: 15px;">
-      <label>Stückelung der Einzahlung (für Finanzamt):</label>
-      <div id="bankDetailsContainer">
-        <!-- Bank detail rows will be added here dynamically -->
-        <div class="bank-detail-row" id="bankDetailTemplate" style="display: none;">
-          <select class="bank-denom" style="width: 100px;">
-            <option value="500">500 €</option>
-            <option value="200">200 €</option>
-            <option value="100">100 €</option>
-            <option value="50">50 €</option>
-            <option value="20">20 €</option>
-            <option value="10">10 €</option>
-            <option value="5">5 €</option>
-            <option value="2">2 € (Münze)</option>
-            <option value="1">1 € (Münze)</option>
-            <option value="0.5">0,50 €</option>
-            <option value="0.2">0,20 €</option>
-            <option value="0.1">0,10 €</option>
-            <option value="0.05">0,05 €</option>
-            <option value="0.02">0,02 €</option>
-            <option value="0.01">0,01 €</option>
-          </select>
-          <input type="number" class="bank-count" min="0" value="1" placeholder="Anzahl" style="width: 80px;" onchange="calculateBankTotal()" />
-          <span class="bank-item-total" style="min-width: 80px; text-align: right;">0,00 €</span>
-          <button class="ghost" style="padding: 5px 8px;" onclick="removeBankDetailRow(this)">✕</button>
-        </div>
-      </div>
+    <div class="bank-total-row">
+      <span>💰 Gesamt Bank Einzahlung:</span>
+      <span id="bankDetailTotal">0,00 €</span>
     </div>
 
-    <div class="flex" style="justify-content: flex-end; margin-top: 10px; padding: 10px; background: #f0f7ff; border-radius: 8px;">
-      <strong>Kontrollsumme: </strong>
-      <span id="bankDetailTotal">0,00</span> €
-      <span id="bankDetailMatch" style="margin-left: 10px;">✓</span>
+    <div class="flex" style="justify-content: flex-end; gap: 10px; margin-top: 10px;">
+      <button class="ghost" onclick="clearAllBankDetails()">Alle zurücksetzen</button>
+      <button class="secondary" onclick="calculateBankTotal()">Summe aktualisieren</button>
     </div>
     
     <div class="note">
-      <b>Wichtig für Finanzamt:</b> Gib hier genau ein, aus wie vielen Scheinen/Münzen sich die Einzahlung zusammensetzt. 
-      Diese Details werden gespeichert und beim nächsten Tag als Übertrag berücksichtigt.
+      <b>Für Finanzamt:</b> Alle Banknoten und Münzen werden automatisch summiert.
+      Die Einzahlung wird für den nächsten Tag als Übertrag berücksichtigt.
     </div>
   </div>
 
   <!-- COUNTING SECTION -->
   <div class="card">
-    <h2>🧾 4) Ist-Kasse zählen (detailliert)</h2>
-    <div class="grid">
-      <div><label>200 €</label><input id="n200" type="number" min="0" value="0" /></div>
-      <div><label>100 €</label><input id="n100" type="number" min="0" value="0" /></div>
-      <div><label>50 €</label><input id="n50" type="number" min="0" value="0" /></div>
-      <div><label>20 €</label><input id="n20" type="number" min="0" value="0" /></div>
-      <div><label>10 €</label><input id="n10" type="number" min="0" value="0" /></div>
-      <div><label>5 €</label><input id="n5" type="number" min="0" value="0" /></div>
-      <div><label>2 €</label><input id="m2" type="number" min="0" value="0" /></div>
-      <div><label>1 €</label><input id="m1" type="number" min="0" value="0" /></div>
-      <div><label>0,50 €</label><input id="m050" type="number" min="0" value="0" /></div>
-      <div><label>0,20 €</label><input id="m020" type="number" min="0" value="0" /></div>
-      <div><label>0,10 €</label><input id="m010" type="number" min="0" value="0" /></div>
-      <div><label>0,05 €</label><input id="m005" type="number" min="0" value="0" /></div>
-      <div><label>0,02 €</label><input id="m002" type="number" min="0" value="0" /></div>
-      <div><label>0,01 €</label><input id="m001" type="number" min="0" value="0" /></div>
+    <h2>🧾 4) Ist-Kasse zählen (ALLE NOTEN)</h2>
+    
+    <!-- Gesamtsumme Ist-Kasse -->
+    <div class="total-display" id="istTotalDisplay">
+      Ist-Kasse Gesamt: <span id="istTotal">0,00</span> €
+    </div>
+    
+    <div class="grid" id="countingGrid">
+      <!-- Wird dynamisch befüllt -->
     </div>
 
     <!-- COUNTING ACTIONS -->
@@ -485,27 +519,27 @@
     </div>
   </div>
 
-  <!-- PRINT SECTION - ENHANCED FOR WORD -->
+  <!-- PRINT SECTION - A5 Format -->
   <div class="card print-section">
     <div class="flex" style="justify-content: space-between; align-items: center;">
-      <h2 style="margin:0; border-bottom: none;">🖨️ 5) Drucken / Export</h2>
+      <h2 style="margin:0; border-bottom: none;">🖨️ 5) Drucken (A5 Format)</h2>
     </div>
     
     <div class="row">
       <div class="w-50">
-        <label>Format wählen:</label>
+        <label>Druck-Optionen:</label>
         <select id="printFormat" class="muted">
-          <option value="word-detailed">Word-Tabelle (detailliert) ⭐</option>
-          <option value="word-compact">Word-Tabelle (kompakt)</option>
-          <option value="html">HTML-Ansicht</option>
+          <option value="a5-detailed">A5 - Detailliert (empfohlen)</option>
+          <option value="a5-compact">A5 - Kompakt</option>
+          <option value="a5-bank">A5 - Nur Bank Einzahlung</option>
         </select>
       </div>
       <div class="w-50">
-        <label>Optionen:</label>
+        <label>&nbsp;</label>
         <div class="btns">
           <button class="secondary" onclick="printDay()">
             <span style="display:flex; align-items:center; gap:5px;">
-              📄 Drucken / Export
+              🖨️ A5 Drucken
             </span>
           </button>
           <button class="ghost" onclick="previewDay()">
@@ -516,8 +550,7 @@
     </div>
     
     <div class="note" style="background: #e8f4fd; padding: 8px; border-radius: 5px;">
-      <b>⭐ Word-Tabelle (detailliert):</b> Enthält alle Stückelungen von der Kasse UND der Bank-Einzahlung.
-      Perfekt für die Finanzamt-Archivierung. Kann direkt in Word kopiert werden.
+      <b>⭐ A5 Format:</b> Optimiert für A5-Papier. Enthält alle Stückelungen, Bank-Details und Übertrag für nächsten Tag.
     </div>
   </div>
 
@@ -549,35 +582,41 @@
   </div>
 </div>
 
+<!-- PRINT PREVIEW MODAL -->
+<div id="printPreview" class="hidden">
+  <div class="preview-content">
+    <div class="preview-header">
+      <h3>Druckvorschau - A5 Format</h3>
+      <div>
+        <button class="secondary" onclick="printFromPreview()">🖨️ Drucken</button>
+        <button class="ghost" onclick="closePreview()">Schließen</button>
+      </div>
+    </div>
+    <iframe id="previewFrame" class="preview-frame"></iframe>
+  </div>
+</div>
+
 <script>
   // ===== CONSTANTS & HELPERS =====
   const KEY_PIN = "sanremo_kasse_pin";
   const KEY_DATA = "sanremo_kasse_data";
 
-  // Denominations: [id, value]
-  const DENOMS = [
-    ["n200", 200], ["n100", 100], ["n50", 50], ["n20", 20], ["n10", 10], ["n5", 5],
-    ["m2", 2], ["m1", 1], ["m050", 0.5], ["m020", 0.2], ["m010", 0.1],
-    ["m005", 0.05], ["m002", 0.02], ["m001", 0.01]
-  ];
-
-  // Bank denomination options
-  const BANK_DENOMS = [
-    { value: 500, label: "500 €" },
-    { value: 200, label: "200 €" },
-    { value: 100, label: "100 €" },
-    { value: 50, label: "50 €" },
-    { value: 20, label: "20 €" },
-    { value: 10, label: "10 €" },
-    { value: 5, label: "5 €" },
-    { value: 2, label: "2 € (Münze)" },
-    { value: 1, label: "1 € (Münze)" },
-    { value: 0.5, label: "0,50 €" },
-    { value: 0.2, label: "0,20 €" },
-    { value: 0.1, label: "0,10 €" },
-    { value: 0.05, label: "0,05 €" },
-    { value: 0.02, label: "0,02 €" },
-    { value: 0.01, label: "0,01 €" }
+  // Alle Banknoten und Münzen (für beide Bereiche)
+  const ALL_DENOMS = [
+    { id: "n200", value: 200, label: "200 €" },
+    { id: "n100", value: 100, label: "100 €" },
+    { id: "n50", value: 50, label: "50 €" },
+    { id: "n20", value: 20, label: "20 €" },
+    { id: "n10", value: 10, label: "10 €" },
+    { id: "n5", value: 5, label: "5 €" },
+    { id: "m2", value: 2, label: "2 €" },
+    { id: "m1", value: 1, label: "1 €" },
+    { id: "m050", value: 0.5, label: "0,50 €" },
+    { id: "m020", value: 0.2, label: "0,20 €" },
+    { id: "m010", value: 0.1, label: "0,10 €" },
+    { id: "m005", value: 0.05, label: "0,05 €" },
+    { id: "m002", value: 0.02, label: "0,02 €" },
+    { id: "m001", value: 0.01, label: "0,01 €" }
   ];
 
   // Helper functions
@@ -604,239 +643,143 @@
 
   const getPin = () => localStorage.getItem(KEY_PIN) || "3515";
 
-  // ===== LOCK / PIN FUNCTIONS =====
-  const setLocked = (isLocked) => {
-    const app = document.getElementById("app");
-    const login = document.getElementById("loginCard");
-    const st = document.getElementById("lockState");
-    if (isLocked) {
-      app.classList.add("hidden");
-      login.classList.remove("hidden");
-      st.textContent = "GESPERRT";
-      st.className = "status lock";
-    } else {
-      login.classList.add("hidden");
-      app.classList.remove("hidden");
-      st.textContent = "ENTSPERRT";
-      st.className = "status open";
-    }
-  };
-
-  window.unlock = () => {
-    const p = (document.getElementById("pinInput").value || "").trim();
-    if (p === getPin()) {
-      setLocked(false);
-      document.getElementById("pinInput").value = "";
-    } else {
-      alert("Falscher PIN.");
-    }
-  };
-
-  window.lock = () => setLocked(true);
-
-  window.showPinChange = () => {
-    document.getElementById("pinChangeBox").classList.remove("hidden");
-  };
-
-  window.hidePinChange = () => {
-    document.getElementById("pinChangeBox").classList.add("hidden");
-  };
-
-  window.savePin = () => {
-    const np = (document.getElementById("newPin").value || "").trim();
-    if (!/^\d{4,}$/.test(np)) {
-      alert("Neuer PIN muss mindestens 4 Ziffern haben.");
-      return;
-    }
-    localStorage.setItem(KEY_PIN, np);
-    document.getElementById("newPin").value = "";
-    hidePinChange();
-    alert("PIN gespeichert.");
-  };
-
-  // ===== BANK DETAILS FUNCTIONS =====
-  const initializeBankDetails = () => {
-    const container = document.getElementById("bankDetailsContainer");
-    const template = document.getElementById("bankDetailTemplate");
+  // ===== UI INITIALIZATION =====
+  const initializeCountingGrid = () => {
+    const grid = document.getElementById("countingGrid");
+    grid.innerHTML = '';
     
-    // Clear existing rows (except template)
-    while (container.children.length > 1) {
-      container.removeChild(container.lastChild);
-    }
-    
-    // Add 3 default rows
-    for (let i = 0; i < 3; i++) {
-      addBankDetailRow();
-    }
-    calculateBankTotal();
+    ALL_DENOMS.forEach(denom => {
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <label>${denom.label}</label>
+        <input id="${denom.id}" type="number" min="0" value="0" step="1" oninput="updateIstTotal()" />
+      `;
+      grid.appendChild(div);
+    });
   };
 
-  window.addBankDetailRow = () => {
-    const container = document.getElementById("bankDetailsContainer");
-    const template = document.getElementById("bankDetailTemplate");
-    const newRow = template.cloneNode(true);
-    newRow.style.display = "flex";
-    newRow.id = "";
+  const initializeBankGrid = () => {
+    const grid = document.getElementById("bankDetailsGrid");
+    grid.innerHTML = '';
     
-    // Add event listeners
-    const select = newRow.querySelector(".bank-denom");
-    const count = newRow.querySelector(".bank-count");
-    
-    select.addEventListener("change", calculateBankTotal);
-    count.addEventListener("input", calculateBankTotal);
-    count.addEventListener("change", calculateBankTotal);
-    
-    container.appendChild(newRow);
-    calculateBankTotal();
+    ALL_DENOMS.forEach(denom => {
+      const div = document.createElement('div');
+      div.className = 'bank-item';
+      div.innerHTML = `
+        <label>${denom.label}</label>
+        <input id="bank_${denom.id}" type="number" min="0" value="0" step="1" oninput="calculateBankTotal()" />
+      `;
+      grid.appendChild(div);
+    });
   };
 
-  window.removeBankDetailRow = (btn) => {
-    const row = btn.closest(".bank-detail-row");
-    if (row && row.id !== "bankDetailTemplate") {
-      row.remove();
-      calculateBankTotal();
-    }
+  // ===== TOTAL CALCULATIONS =====
+  window.updateIstTotal = () => {
+    let total = 0;
+    ALL_DENOMS.forEach(denom => {
+      const input = document.getElementById(denom.id);
+      if (input) {
+        total += num(input.value) * denom.value;
+      }
+    });
+    document.getElementById("istTotal").textContent = euro(total);
+    document.getElementById("kIst").textContent = euro(total);
+    document.getElementById("kIst").dataset.v = total;
+    
+    // Update KPI
+    updateAllTotals();
+    return total;
   };
 
   window.calculateBankTotal = () => {
     let total = 0;
-    const rows = document.querySelectorAll("#bankDetailsContainer .bank-detail-row:not(#bankDetailTemplate)");
-    
-    rows.forEach(row => {
-      const select = row.querySelector(".bank-denom");
-      const count = row.querySelector(".bank-count");
-      const itemTotalSpan = row.querySelector(".bank-item-total");
-      
-      const denom = num(select.value);
-      const quantity = num(count.value);
-      const itemTotal = denom * quantity;
-      total += itemTotal;
-      
-      if (itemTotalSpan) {
-        itemTotalSpan.textContent = euro(itemTotal) + " €";
+    ALL_DENOMS.forEach(denom => {
+      const input = document.getElementById(`bank_${denom.id}`);
+      if (input) {
+        total += num(input.value) * denom.value;
       }
     });
     
-    document.getElementById("bankDetailTotal").textContent = euro(total);
+    document.getElementById("bankDetailTotal").textContent = euro(total) + " €";
+    document.getElementById("bank").value = total.toFixed(2);
+    document.getElementById("kBank").textContent = euro(total);
     
-    // Check if matches bank total
-    const bankTotal = num(document.getElementById("bank").value);
-    const matchSpan = document.getElementById("bankDetailMatch");
-    
-    if (Math.abs(total - bankTotal) < 0.01) {
-      matchSpan.innerHTML = "✓✓ Übereinstimmung ✓✓";
-      matchSpan.style.color = "green";
-      matchSpan.style.fontWeight = "bold";
-    } else {
-      matchSpan.innerHTML = "✗ Summe stimmt nicht mit Gesamtbetrag überein";
-      matchSpan.style.color = "red";
-    }
-    
+    // Update KPI
+    updateAllTotals();
     return total;
   };
 
-  window.clearBankDetails = () => {
-    const container = document.getElementById("bankDetailsContainer");
-    const template = document.getElementById("bankDetailTemplate");
-    
-    // Remove all rows except template
-    while (container.children.length > 1) {
-      container.removeChild(container.lastChild);
-    }
-    
-    // Add 3 empty rows
-    for (let i = 0; i < 3; i++) {
-      addBankDetailRow();
-    }
-    
-    document.getElementById("bank").value = "0";
+  window.clearAllBankDetails = () => {
+    ALL_DENOMS.forEach(denom => {
+      const input = document.getElementById(`bank_${denom.id}`);
+      if (input) input.value = 0;
+    });
     calculateBankTotal();
   };
 
-  window.updateBankDetails = () => {
-    calculateBankTotal();
+  window.updateAllTotals = () => {
+    const start = num(document.getElementById("kStart").dataset.v || 0);
+    const zbon = num(document.getElementById("zbon").value);
+    const ist = updateIstTotal();
+    const bank = num(document.getElementById("bank").value);
+
+    const soll = start + zbon;
+    const diff = ist - soll;
+    const ende = ist - bank;
+
+    document.getElementById("kZbon").textContent = euro(zbon);
+    document.getElementById("kDiff").textContent = euro(diff);
+    document.getElementById("kEnde").textContent = euro(ende);
+    
+    document.getElementById("kEnde").dataset.v = ende;
+    document.getElementById("kDiff").dataset.v = diff;
   };
 
+  const setStartValue = (v) => {
+    const el = document.getElementById("kStart");
+    el.textContent = euro(v);
+    el.dataset.v = num(v);
+    updateAllTotals();
+  };
+
+  // ===== BANK DETAILS GET/SET =====
   const getBankDetails = () => {
     const details = [];
-    const rows = document.querySelectorAll("#bankDetailsContainer .bank-detail-row:not(#bankDetailTemplate)");
-    
-    rows.forEach(row => {
-      const select = row.querySelector(".bank-denom");
-      const count = row.querySelector(".bank-count");
-      
-      const denom = num(select.value);
-      const quantity = num(count.value);
-      
-      if (quantity > 0) {
-        details.push({
-          denom: denom,
-          quantity: quantity,
-          total: denom * quantity
-        });
+    ALL_DENOMS.forEach(denom => {
+      const input = document.getElementById(`bank_${denom.id}`);
+      if (input) {
+        const quantity = num(input.value);
+        if (quantity > 0) {
+          details.push({
+            denom: denom.value,
+            quantity: quantity,
+            total: denom.value * quantity
+          });
+        }
       }
     });
-    
     return details;
   };
 
   const setBankDetails = (details) => {
-    clearBankDetails();
+    // Reset all bank inputs
+    ALL_DENOMS.forEach(denom => {
+      const input = document.getElementById(`bank_${denom.id}`);
+      if (input) input.value = 0;
+    });
     
+    // Set from details
     if (details && details.length > 0) {
-      const container = document.getElementById("bankDetailsContainer");
-      const template = document.getElementById("bankDetailTemplate");
-      
-      // Remove default rows
-      while (container.children.length > 1) {
-        container.removeChild(container.lastChild);
-      }
-      
-      // Add rows from data
       details.forEach(detail => {
-        const newRow = template.cloneNode(true);
-        newRow.style.display = "flex";
-        newRow.id = "";
-        
-        const select = newRow.querySelector(".bank-denom");
-        const count = newRow.querySelector(".bank-count");
-        
-        // Set values
-        select.value = detail.denom.toString();
-        count.value = detail.quantity;
-        
-        select.addEventListener("change", calculateBankTotal);
-        count.addEventListener("input", calculateBankTotal);
-        count.addEventListener("change", calculateBankTotal);
-        
-        container.appendChild(newRow);
+        const denomObj = ALL_DENOMS.find(d => Math.abs(d.value - detail.denom) < 0.001);
+        if (denomObj) {
+          const input = document.getElementById(`bank_${denomObj.id}`);
+          if (input) input.value = detail.quantity;
+        }
       });
     }
     
     calculateBankTotal();
-  };
-
-  // ===== COUNTING FUNCTIONS =====
-  const getCounts = () => {
-    const o = {};
-    for (const [id] of DENOMS) {
-      o[id] = num(document.getElementById(id).value);
-    }
-    return o;
-  };
-
-  const setCounts = (o) => {
-    for (const [id] of DENOMS) {
-      document.getElementById(id).value = num(o?.[id] ?? 0);
-    }
-  };
-
-  const calcIst = () => {
-    let sum = 0;
-    for (const [id, val] of DENOMS) {
-      sum += num(document.getElementById(id).value) * val;
-    }
-    return sum;
   };
 
   // ===== DAY MODEL FUNCTIONS =====
@@ -857,6 +800,21 @@
     return last ? num(last.ende) : 0;
   };
 
+  const getCounts = () => {
+    const o = {};
+    ALL_DENOMS.forEach(denom => {
+      o[denom.id] = num(document.getElementById(denom.id).value);
+    });
+    return o;
+  };
+
+  const setCounts = (o) => {
+    ALL_DENOMS.forEach(denom => {
+      document.getElementById(denom.id).value = num(o?.[denom.id] ?? 0);
+    });
+    updateIstTotal();
+  };
+
   const makeNewEntry = (date, schicht, start) => ({
     key: dayKey(date, schicht),
     date,
@@ -871,35 +829,6 @@
     diff: 0,
     counts: getCounts()
   });
-
-  // ===== UI UPDATE FUNCTIONS =====
-  const refreshKPI = () => {
-    const start = num(document.getElementById("kStart").dataset.v || 0);
-    const zbon = num(document.getElementById("zbon").value);
-    const ist = calcIst();
-    const bank = num(document.getElementById("bank").value);
-
-    const soll = start + zbon;
-    const diff = ist - soll;
-    const ende = ist - bank;
-
-    document.getElementById("kZbon").textContent = euro(zbon);
-    document.getElementById("kIst").textContent = euro(ist);
-    document.getElementById("kBank").textContent = euro(bank);
-    document.getElementById("kEnde").textContent = euro(ende);
-    document.getElementById("kDiff").textContent = euro(diff);
-
-    document.getElementById("kIst").dataset.v = ist;
-    document.getElementById("kEnde").dataset.v = ende;
-    document.getElementById("kDiff").dataset.v = diff;
-  };
-
-  const setStartValue = (v) => {
-    const el = document.getElementById("kStart");
-    el.textContent = euro(v);
-    el.dataset.v = num(v);
-    refreshKPI();
-  };
 
   // ===== MAIN ACTIONS =====
   window.loadOrCreateDay = () => {
@@ -922,23 +851,22 @@
 
     setStartValue(entry.start);
     document.getElementById("zbon").value = num(entry.zbon).toFixed(2);
-    document.getElementById("bank").value = num(entry.bank).toFixed(2);
     
     // Load bank details
     if (entry.bankDetails && entry.bankDetails.length > 0) {
       setBankDetails(entry.bankDetails);
     } else {
-      initializeBankDetails();
+      clearAllBankDetails();
     }
     
     setCounts(entry.counts || {});
-    recalc();
+    updateAllTotals();
     showHistory();
     alert("Tag geöffnet.");
   };
 
   window.recalc = () => {
-    refreshKPI();
+    updateAllTotals();
   };
 
   window.saveAll = () => {
@@ -960,7 +888,7 @@
 
     const start = num(document.getElementById("kStart").dataset.v || 0);
     const zbon = num(document.getElementById("zbon").value);
-    const ist = calcIst();
+    const ist = updateIstTotal();
     const bank = num(document.getElementById("bank").value);
     const bankDetails = getBankDetails();
 
@@ -978,14 +906,16 @@
     entry.counts = getCounts();
 
     saveAllData(arr);
-    refreshKPI();
+    updateAllTotals();
     showHistory();
     alert("Gespeichert.");
   };
 
   window.resetInputs = () => {
-    for (const [id] of DENOMS) document.getElementById(id).value = 0;
-    recalc();
+    ALL_DENOMS.forEach(denom => {
+      document.getElementById(denom.id).value = 0;
+    });
+    updateIstTotal();
   };
 
   window.deleteDay = () => {
@@ -1049,182 +979,242 @@
     document.getElementById("schicht").value = e.schicht;
     setStartValue(e.start);
     document.getElementById("zbon").value = num(e.zbon).toFixed(2);
-    document.getElementById("bank").value = num(e.bank).toFixed(2);
     
     if (e.bankDetails && e.bankDetails.length > 0) {
       setBankDetails(e.bankDetails);
     } else {
-      initializeBankDetails();
+      clearAllBankDetails();
     }
     
     setCounts(e.counts || {});
-    recalc();
+    updateAllTotals();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ===== PRINT FUNCTIONS - WORD OPTIMIZED =====
-  const dayPrintableHTML = (entry, format = 'word-detailed') => {
+  // ===== PRINT FUNCTIONS - A5 OPTIMIZED =====
+  const generateA5HTML = (entry, format = 'a5-detailed') => {
     const soll = num(entry.start) + num(entry.zbon);
     const diff = num(entry.diff);
     const diffColor = diff < 0 ? "#c53030" : "#2f855a";
     const counts = entry.counts || {};
+    const bankDetails = entry.bankDetails || [];
     
+    // A5 spezifische Styles
+    const a5Styles = `
+      <style>
+        @page { size: A5; margin: 1cm; }
+        body { 
+          font-family: Arial, sans-serif; 
+          font-size: 10pt;
+          line-height: 1.3;
+          margin: 0;
+          padding: 0;
+        }
+        h1 { font-size: 16pt; color: #2b6cb0; margin: 0 0 5px 0; }
+        h2 { font-size: 14pt; color: #2b6cb0; border-bottom: 1px solid #ccc; margin: 10px 0 5px 0; }
+        h3 { font-size: 12pt; margin: 8px 0 3px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 5px 0; font-size: 9pt; }
+        th { background: #f0f7ff; border: 1px solid #999; padding: 3px; }
+        td { border: 1px solid #999; padding: 3px; }
+        .right { text-align: right; }
+        .center { text-align: center; }
+        .footer { margin-top: 15px; display: flex; justify-content: space-between; font-size: 9pt; }
+        .summary-box { background: #f9f9f9; padding: 5px; border: 1px solid #999; margin: 5px 0; }
+        .denom-table td { padding: 2px; }
+        .two-column { display: flex; gap: 10px; }
+        .column { flex: 1; }
+      </style>
+    `;
+
     let content = '';
 
-    // WORD-DETAILED format (for Finanzamt)
-    if (format === 'word-detailed') {
+    if (format === 'a5-detailed') {
+      // Bank Details als Tabelle
+      let bankRows = '';
+      if (bankDetails.length > 0) {
+        bankDetails.forEach(detail => {
+          bankRows += `<tr>
+            <td>${detail.denom.toFixed(2).replace('.', ',')} €</td>
+            <td class="center">${detail.quantity}</td>
+            <td class="right">${euro(detail.total)} €</td>
+          </tr>`;
+        });
+      } else {
+        bankRows = '<tr><td colspan="3" class="center">Keine Bank-Einzahlung</td></tr>';
+      }
+
+      // Kassenbestand als Tabelle
+      let cashRows = '';
+      ALL_DENOMS.forEach(denom => {
+        const count = num(counts[denom.id]);
+        cashRows += `<tr>
+          <td>${denom.label}</td>
+          <td class="center">${count}</td>
+          <td class="right">${euro(count * denom.value)} €</td>
+        </tr>`;
+      });
+
       content = `
         <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Kassen-Zählprotokoll - ${entry.date}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 2cm; }
-            h1 { color: #2b6cb0; font-size: 24px; margin-bottom: 5px; }
-            h2 { color: #2b6cb0; font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 20px; }
-            table { border-collapse: collapse; width: 100%; margin: 15px 0; }
-            th { background: #f0f7ff; border: 1px solid #999; padding: 8px; text-align: center; }
-            td { border: 1px solid #999; padding: 8px; }
-            .right { text-align: right; }
-            .center { text-align: center; }
-            .footer { margin-top: 30px; display: flex; justify-content: space-between; }
-            .summary { background: #f9f9f9; padding: 10px; border: 1px solid #999; }
-          </style>
-        </head>
+        <head><meta charset="UTF-8"><title>Kassenprotokoll A5</title>${a5Styles}</head>
         <body>
           <h1>Kassen-Zählprotokoll</h1>
-          <p><strong>Eiscafé Sanremo</strong> · Bad Berleburg · Tel. 0176 72809926</p>
-          <p><strong>Datum:</strong> ${entry.date} | <strong>Schicht:</strong> ${entry.schicht}</p>
-          <hr>
-
-          <h2>1. Übersicht</h2>
+          <p><strong>Eiscafé Sanremo</strong> · Bad Berleburg · ${entry.date} · ${entry.schicht}</p>
+          
+          <h2>📊 Übersicht</h2>
           <table>
-            <tr>
-              <th>Start (Übertrag)</th>
-              <th>Z-Bon (Soll)</th>
-              <th>Soll-Kasse</th>
-              <th>Ist (gezählt)</th>
-              <th>Differenz</th>
-              <th>Bank Einzahlung</th>
-              <th>Ende (Ist-Bank)</th>
-            </tr>
+            <tr><th>Start</th><th>Z-Bon</th><th>Soll</th><th>Ist</th><th>Diff</th><th>Bank</th><th>Ende</th></tr>
             <tr>
               <td class="right">${euro(entry.start)} €</td>
               <td class="right">${euro(entry.zbon)} €</td>
               <td class="right">${euro(soll)} €</td>
               <td class="right">${euro(entry.ist)} €</td>
-              <td class="right" style="color:${diffColor}; font-weight:bold;">${euro(diff)} €</td>
+              <td class="right" style="color:${diffColor};">${euro(diff)} €</td>
               <td class="right">${euro(entry.bank)} €</td>
               <td class="right"><strong>${euro(entry.ende)} €</strong></td>
             </tr>
           </table>
 
-          <h2>2. Kassenbestand - Detaillierte Stückelung (Ist)</h2>
+          <div class="two-column">
+            <div class="column">
+              <h2>💰 Kassenbestand</h2>
+              <table class="denom-table">
+                <tr><th>Wert</th><th>Anz.</th><th>Betrag</th></tr>
+                ${cashRows}
+                <tr style="background:#f0f7ff; font-weight:bold;">
+                  <td colspan="2">Summe</td>
+                  <td class="right">${euro(entry.ist)} €</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div class="column">
+              <h2>🏦 Bank Einzahlung</h2>
+              <table class="denom-table">
+                <tr><th>Wert</th><th>Anz.</th><th>Betrag</th></tr>
+                ${bankRows}
+                <tr style="background:#f0f7ff; font-weight:bold;">
+                  <td colspan="2">Summe</td>
+                  <td class="right">${euro(entry.bank)} €</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <p><strong>Übertrag für nächsten Tag:</strong> ${euro(entry.ende)} €</p>
+            <p><small>Ist (${euro(entry.ist)} €) - Bank (${euro(entry.bank)} €)</small></p>
+          </div>
+
+          <div class="footer">
+            <div>Unterschrift: _________________</div>
+            <div>Datum: _________________</div>
+          </div>
+        </body>
+        </html>
+      `;
+    }
+    
+    else if (format === 'a5-compact') {
+      content = `
+        <html>
+        <head><meta charset="UTF-8"><title>Kassenprotokoll A5</title>${a5Styles}</head>
+        <body>
+          <h1>Kassen-Zählprotokoll</h1>
+          <p>${entry.date} · ${entry.schicht}</p>
+          
           <table>
-            <tr>
-              <th>Wert</th>
-              <th>Anzahl</th>
-              <th>Betrag</th>
-            </tr>
-            ${DENOMS.map(([id, val]) => {
-              const count = num(counts[id]);
-              if (count > 0 || format === 'word-detailed') {
-                return `<tr>
-                  <td>${val.toFixed(2).replace('.', ',')} €</td>
-                  <td class="center">${count}</td>
-                  <td class="right">${euro(count * val)} €</td>
-                </tr>`;
-              }
-              return '';
-            }).join('')}
-            <tr style="background: #f0f7ff; font-weight: bold;">
-              <td colspan="2">Summe Ist-Kasse</td>
-              <td class="right">${euro(entry.ist)} €</td>
-            </tr>
+            <tr><th>Start</th><td class="right">${euro(entry.start)} €</td></tr>
+            <tr><th>Z-Bon</th><td class="right">${euro(entry.zbon)} €</td></tr>
+            <tr><th>Ist</th><td class="right">${euro(entry.ist)} €</td></tr>
+            <tr><th>Bank</th><td class="right">${euro(entry.bank)} €</td></tr>
+            <tr><th>Differenz</th><td class="right" style="color:${diffColor};">${euro(diff)} €</td></tr>
+            <tr><th>Ende</th><td class="right"><strong>${euro(entry.ende)} €</strong></td></tr>
           </table>
 
-          <h2>3. Bank Einzahlung - Detaillierte Stückelung</h2>
+          <div class="footer">
+            <div>Unterschrift: _________________</div>
+            <div>Datum: _________________</div>
+          </div>
+        </body>
+        </html>
+      `;
+    }
+    
+    else if (format === 'a5-bank') {
+      let bankRows = '';
+      ALL_DENOMS.forEach(denom => {
+        const bankDetail = bankDetails.find(d => Math.abs(d.denom - denom.value) < 0.001);
+        const count = bankDetail ? bankDetail.quantity : 0;
+        bankRows += `<tr>
+          <td>${denom.label}</td>
+          <td class="center">${count}</td>
+          <td class="right">${euro(count * denom.value)} €</td>
+        </tr>`;
+      });
+
+      content = `
+        <html>
+        <head><meta charset="UTF-8"><title>Bank Einzahlung A5</title>${a5Styles}</head>
+        <body>
+          <h1>Bank Einzahlung</h1>
+          <p>${entry.date} · ${entry.schicht}</p>
+          
           <table>
-            <tr>
-              <th>Wert</th>
-              <th>Anzahl</th>
-              <th>Betrag</th>
-            </tr>
-            ${entry.bankDetails && entry.bankDetails.length > 0 
-              ? entry.bankDetails.map(detail => `
-                  <tr>
-                    <td>${detail.denom.toFixed(2).replace('.', ',')} €</td>
-                    <td class="center">${detail.quantity}</td>
-                    <td class="right">${euro(detail.total)} €</td>
-                  </tr>
-                `).join('')
-              : '<tr><td colspan="3" class="center">Keine Bank-Einzahlung an diesem Tag</td></tr>'
-            }
-            <tr style="background: #f0f7ff; font-weight: bold;">
-              <td colspan="2">Summe Bank Einzahlung</td>
+            <tr><th>Wert</th><th>Anzahl</th><th>Betrag</th></tr>
+            ${bankRows}
+            <tr style="background:#f0f7ff; font-weight:bold;">
+              <td colspan="2">Gesamt</td>
               <td class="right">${euro(entry.bank)} €</td>
             </tr>
           </table>
 
-          <h2>4. Übertrag für den nächsten Tag</h2>
-          <div class="summary">
-            <p><strong>Endbestand (wird morgen als Start übernommen):</strong> ${euro(entry.ende)} €</p>
-            <p><em>Setzt sich zusammen aus: Ist-Kasse (${euro(entry.ist)} €) - Bank Einzahlung (${euro(entry.bank)} €)</em></p>
-          </div>
-
           <div class="footer">
-            <div>Unterschrift: _______________________</div>
-            <div>Datum: _______________________</div>
+            <div>Unterschrift: _________________</div>
+            <div>Datum: _________________</div>
           </div>
-        </body>
-        </html>
-      `;
-    }
-    
-    // WORD-COMPACT format
-    else if (format === 'word-compact') {
-      content = `
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Kassen-Zählprotokoll - ${entry.date}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 2cm; }
-            table { border-collapse: collapse; width: 100%; }
-            th, td { border: 1px solid #999; padding: 5px; }
-          </style>
-        </head>
-        <body>
-          <h2>Kassen-Zählprotokoll - ${entry.date} (${entry.schicht})</h2>
-          <table>
-            <tr><th>Start</th><td>${euro(entry.start)} €</td><th>Z-Bon</th><td>${euro(entry.zbon)} €</td></tr>
-            <tr><th>Ist</th><td>${euro(entry.ist)} €</td><th>Bank</th><td>${euro(entry.bank)} €</td></tr>
-            <tr><th>Differenz</th><td colspan="3">${euro(diff)} €</td></tr>
-            <tr><th>Ende (Übertrag)</th><td colspan="3"><strong>${euro(entry.ende)} €</strong></td></tr>
-          </table>
-        </body>
-        </html>
-      `;
-    }
-    
-    // HTML format
-    else {
-      content = `
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Kassen-Zählprotokoll - ${entry.date}</title>
-        </head>
-        <body style="font-family:Arial;padding:20px;">
-          <h2>Kassen-Zählprotokoll - ${entry.date}</h2>
-          <p>Start: ${euro(entry.start)} € | Z-Bon: ${euro(entry.zbon)} € | Ist: ${euro(entry.ist)} €</p>
-          <p>Bank: ${euro(entry.bank)} € | Differenz: ${euro(diff)} € | Ende: ${euro(entry.ende)} €</p>
         </body>
         </html>
       `;
     }
 
     return content;
+  };
+
+  // Preview Funktionen
+  let currentPreviewHTML = '';
+
+  window.previewDay = () => {
+    const date = document.getElementById("datum").value;
+    const schicht = document.getElementById("schicht").value;
+    const printFormat = document.getElementById("printFormat").value;
+    
+    if (!date) {
+      alert("Bitte Datum wählen.");
+      return;
+    }
+    
+    const arr = loadAll();
+    const e = findEntry(arr, date, schicht);
+    if (!e) {
+      alert("Bitte erst speichern / Tag öffnen.");
+      return;
+    }
+
+    currentPreviewHTML = generateA5HTML(e, printFormat);
+    const previewFrame = document.getElementById("previewFrame");
+    previewFrame.srcdoc = currentPreviewHTML;
+    
+    document.getElementById("printPreview").classList.remove("hidden");
+  };
+
+  window.closePreview = () => {
+    document.getElementById("printPreview").classList.add("hidden");
+  };
+
+  window.printFromPreview = () => {
+    const previewFrame = document.getElementById("previewFrame");
+    previewFrame.contentWindow.print();
   };
 
   window.printDay = () => {
@@ -1245,39 +1235,10 @@
     }
 
     const printWindow = window.open("", "_blank");
-    printWindow.document.open();
-    printWindow.document.write(dayPrintableHTML(e, printFormat));
+    printWindow.document.write(generateA5HTML(e, printFormat));
     printWindow.document.close();
     printWindow.focus();
-    
-    // Auto-print for HTML formats
-    if (printFormat === 'html') {
-      setTimeout(() => printWindow.print(), 250);
-    }
-  };
-
-  window.previewDay = () => {
-    const date = document.getElementById("datum").value;
-    const schicht = document.getElementById("schicht").value;
-    const printFormat = document.getElementById("printFormat").value;
-    
-    if (!date) {
-      alert("Bitte Datum wählen.");
-      return;
-    }
-    
-    const arr = loadAll();
-    const e = findEntry(arr, date, schicht);
-    if (!e) {
-      alert("Bitte erst speichern / Tag öffnen.");
-      return;
-    }
-
-    const previewWindow = window.open("", "_blank");
-    previewWindow.document.open();
-    previewWindow.document.write(dayPrintableHTML(e, printFormat));
-    previewWindow.document.close();
-    previewWindow.focus();
+    printWindow.print();
   };
 
   // ===== MONTHLY REPORT FUNCTIONS =====
@@ -1353,11 +1314,10 @@
     }
     
     const printWindow = window.open("", "_blank");
-    printWindow.document.open();
     printWindow.document.write(`
       <html>
       <head><meta charset="UTF-8"><title>Monatsbericht ${month}</title>
-      <style>body{font-family:Arial;padding:20px;} table{border-collapse:collapse;} th,td{border:1px solid #ccc;padding:5px;}</style>
+      <style>body{font-family:Arial;padding:20px; font-size:10pt;} table{border-collapse:collapse; width:100%;} th,td{border:1px solid #ccc;padding:3px;}</style>
       </head>
       <body>
         <h2>Kassen-Zählprotokoll - Monatsbericht</h2>
@@ -1367,7 +1327,7 @@
       </html>`);
     printWindow.document.close();
     printWindow.focus();
-    setTimeout(() => printWindow.print(), 250);
+    printWindow.print();
   };
 
   // ===== EXPORT/IMPORT FUNCTIONS =====
@@ -1407,34 +1367,76 @@
     inp.click();
   };
 
+  // ===== LOCK / PIN FUNCTIONS =====
+  const setLocked = (isLocked) => {
+    const app = document.getElementById("app");
+    const login = document.getElementById("loginCard");
+    const st = document.getElementById("lockState");
+    if (isLocked) {
+      app.classList.add("hidden");
+      login.classList.remove("hidden");
+      st.textContent = "GESPERRT";
+      st.className = "status lock";
+    } else {
+      login.classList.add("hidden");
+      app.classList.remove("hidden");
+      st.textContent = "ENTSPERRT";
+      st.className = "status open";
+    }
+  };
+
+  window.unlock = () => {
+    const p = (document.getElementById("pinInput").value || "").trim();
+    if (p === getPin()) {
+      setLocked(false);
+      document.getElementById("pinInput").value = "";
+    } else {
+      alert("Falscher PIN.");
+    }
+  };
+
+  window.lock = () => setLocked(true);
+
+  window.showPinChange = () => {
+    document.getElementById("pinChangeBox").classList.remove("hidden");
+  };
+
+  window.hidePinChange = () => {
+    document.getElementById("pinChangeBox").classList.add("hidden");
+  };
+
+  window.savePin = () => {
+    const np = (document.getElementById("newPin").value || "").trim();
+    if (!/^\d{4,}$/.test(np)) {
+      alert("Neuer PIN muss mindestens 4 Ziffern haben.");
+      return;
+    }
+    localStorage.setItem(KEY_PIN, np);
+    document.getElementById("newPin").value = "";
+    hidePinChange();
+    alert("PIN gespeichert.");
+  };
+
   // ===== INITIALIZATION =====
   const init = () => {
+    // Initialize grids
+    initializeCountingGrid();
+    initializeBankGrid();
+
     // Set default dates
     document.getElementById("datum").value = todayISO();
     
     const d = new Date();
     const m = String(d.getMonth() + 1).padStart(2, "0");
     document.getElementById("monthPick").value = `${d.getFullYear()}-${m}`;
-    document.getElementById("printFormat").value = "word-detailed";
-
-    // Initialize bank details
-    initializeBankDetails();
-
-    // Bind input events
-    document.querySelectorAll("#app input, #app select").forEach(el => {
-      el.addEventListener("input", refreshKPI);
-      el.addEventListener("change", refreshKPI);
-    });
-    
-    DENOMS.forEach(([id]) => {
-      document.getElementById(id).addEventListener("input", recalc);
-    });
+    document.getElementById("printFormat").value = "a5-detailed";
 
     // Start locked
     setLocked(true);
     showHistory();
     setStartValue(0);
-    refreshKPI();
+    updateIstTotal();
+    calculateBankTotal();
   };
 
   // Start the application
