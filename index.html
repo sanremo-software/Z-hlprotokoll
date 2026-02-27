@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kassen-Zählprotokoll PRO – Sanremo</title>
+  <title>Kassen-Zählprotokoll</title>
   <style>
     /* ===== RESET & BASE ===== */
     * {
@@ -36,7 +36,16 @@
     /* ===== TYPOGRAPHY ===== */
     h1 {
       margin: 0 0 6px 0;
-      font-size: 22px;
+      font-size: 24px;
+      color: #2b6cb0;
+    }
+
+    h2 {
+      margin: 15px 0 10px 0;
+      font-size: 18px;
+      color: #2b6cb0;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 5px;
     }
 
     h3 {
@@ -50,215 +59,248 @@
     }
 
     /* ===== LAYOUT ===== */
-  .row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    margin: 10px 0;
-  }
-
-  .w-50 {
-    flex: 1 1 420px;
-  }
-
-  .w-100 {
-    flex: 1 1 100%;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(120px, 1fr));
-    gap: 10px;
-  }
-
-  @media (max-width: 900px) {
-    .grid {
-      grid-template-columns: repeat(2, minmax(120px, 1fr));
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-  }
 
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      margin: 10px 0;
+    }
 
-  .brand {
-    display: flex;
-    flex-direction: column;
-  }
+    .w-50 {
+      flex: 1 1 420px;
+    }
 
-  .status {
-    font-size: 13px;
-    font-weight: 700;
-  }
+    .w-100 {
+      flex: 1 1 100%;
+    }
 
-  .status.lock {
-    color: var(--bad);
-  }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+    }
 
-  .status.open {
-    color: var(--good);
-  }
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+    }
 
-  /* ===== FORMS ===== */
-  label {
-    display: block;
-    font-size: 12px;
-    color: var(--muted);
-    margin: 8px 0 4px;
-  }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
 
-  input, select {
-    width: 100%;
-    padding: 9px;
-    border: 1px solid #d8d8d8;
-    border-radius: var(--border-radius);
-    background: #ffffff;
-    font-size: 14px;
-  }
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
 
-  input[type="number"] {
-    text-align: right;
-  }
+    .status {
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-  /* ===== BUTTONS ===== */
-  .btns {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-  }
+    .status.lock {
+      color: var(--bad);
+    }
 
-  button {
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 10px 12px;
-    cursor: pointer;
-    color: #ffffff;
-    background: var(--btn);
-    font-size: 13px;
-    font-weight: 500;
-    transition: opacity 0.2s;
-  }
+    .status.open {
+      color: var(--good);
+    }
 
-  button:hover {
-    opacity: 0.9;
-  }
+    /* ===== FORMS ===== */
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 8px 0 4px;
+      font-weight: 500;
+    }
 
-  button.secondary {
-    background: var(--btn2);
-  }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px;
+      border: 1px solid #d8d8d8;
+      border-radius: var(--border-radius);
+      background: #ffffff;
+      font-size: 14px;
+    }
 
-  button.ghost {
-    background: #ffffff;
-    color: #111111;
-    border: 1px solid #d8d8d8;
-  }
+    input[type="number"] {
+      text-align: right;
+    }
 
-  button.danger {
-    background: var(--bad);
-  }
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-  button.ok {
-    background: var(--good);
-  }
+    /* ===== BUTTONS ===== */
+    .btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
 
-  /* ===== KPI PILLS ===== */
-  .kpi {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-  }
+    button {
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 10px 12px;
+      cursor: pointer;
+      color: #ffffff;
+      background: var(--btn);
+      font-size: 13px;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
 
-  .pill {
-    padding: 8px 10px;
-    border-radius: 999px;
-    background: #f1f1f1;
-    border: 1px solid var(--line);
-    font-size: 13px;
-  }
+    button:hover {
+      opacity: 0.9;
+    }
 
-  .pill b {
-    font-weight: 700;
-  }
+    button.secondary {
+      background: var(--btn2);
+    }
 
-  /* ===== TABLES ===== */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 13px;
-  }
+    button.ghost {
+      background: #ffffff;
+      color: #111111;
+      border: 1px solid #d8d8d8;
+    }
 
-  th, td {
-    border: 1px solid var(--line);
-    padding: 8px;
-    text-align: center;
-  }
+    button.danger {
+      background: var(--bad);
+    }
 
-  th {
-    background: #fafafa;
-    font-weight: 600;
-  }
+    button.ok {
+      background: var(--good);
+    }
 
-  .right {
-    text-align: right;
-  }
+    /* ===== KPI PILLS ===== */
+    .kpi {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
 
-  /* ===== UTILITIES ===== */
-  .hidden {
-    display: none !important;
-  }
+    .pill {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #f1f1f1;
+      border: 1px solid var(--line);
+      font-size: 13px;
+    }
 
-  .hr {
-    height: 1px;
-    background: var(--line);
-    margin: 10px 0;
-  }
+    .pill b {
+      font-weight: 700;
+    }
 
-  .note {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.35;
-    margin-top: 8px;
-  }
+    /* ===== TABLES ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
 
-  .mini {
-    font-size: 12px;
-  }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: center;
+    }
 
-  .flex {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
+    th {
+      background: #f0f7ff;
+      font-weight: 600;
+    }
 
-  .print-section {
-    background: #f8f9fa;
-    border-left: 3px solid var(--btn2);
-    padding: 10px;
-    margin: 10px 0;
-  }
+    .right {
+      text-align: right;
+    }
+
+    .left {
+      text-align: left;
+    }
+
+    .bank-details-table {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .bank-details-table td {
+      padding: 5px;
+      border: 1px solid #ddd;
+    }
+
+    /* ===== UTILITIES ===== */
+    .hidden {
+      display: none !important;
+    }
+
+    .hr {
+      height: 1px;
+      background: var(--line);
+      margin: 10px 0;
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+      margin-top: 8px;
+    }
+
+    .mini {
+      font-size: 12px;
+    }
+
+    .flex {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .print-section {
+      background: #f8f9fa;
+      border-left: 3px solid var(--btn2);
+      padding: 15px;
+      margin: 10px 0;
+    }
+
+    .bank-detail-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .bank-detail-row input {
+      width: 80px;
+    }
   </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="brand">
-    <h1>Kassen-Zählprotokoll PRO</h1>
+    <h1>Kassen-Zählprotokoll</h1>
     <small>Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</small>
   </div>
   <div>
@@ -308,7 +350,7 @@
 
   <!-- DAY SELECTION CARD -->
   <div class="card">
-    <h3>1) Tag auswählen (automatischer Übertrag)</h3>
+    <h2>📅 1) Tag auswählen</h2>
     <div class="row">
       <div class="w-50">
         <label>Datum</label>
@@ -331,7 +373,7 @@
       <div class="pill">Ist (gezählt): <b><span id="kIst">0,00</span> €</b></div>
       <div class="pill">Bank Einzahlung: <b><span id="kBank">0,00</span> €</b></div>
       <div class="pill">Ende (Ist−Bank): <b><span id="kEnde">0,00</span> €</b></div>
-      <div class="pill">Differenz (Ist − Soll): <b><span id="kDiff">0,00</span> €</b></div>
+      <div class="pill">Differenz: <b><span id="kDiff">0,00</span> €</b></div>
     </div>
 
     <!-- DAY ACTIONS -->
@@ -346,26 +388,79 @@
     </div>
   </div>
 
-  <!-- Z-BON & BANK SECTION -->
-  <div class="row">
-    <div class="card w-50">
-      <h3>2) Z-Bon (Soll)</h3>
-      <label>Z-Bon Betrag (€)</label>
-      <input id="zbon" type="number" step="0.01" value="0" placeholder="0,00" />
-      <div class="note">Z-Bon = Tagesumsatz laut Kasse. Soll-Kasse = Start + Z-Bon.</div>
+  <!-- Z-BON SECTION -->
+  <div class="card">
+    <h2>💰 2) Z-Bon (Soll)</h2>
+    <div class="row">
+      <div class="w-50">
+        <label>Z-Bon Betrag (€)</label>
+        <input id="zbon" type="number" step="0.01" value="0" placeholder="0,00" />
+        <div class="note">Z-Bon = Tagesumsatz laut Kasse. Soll = Start + Z-Bon.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANK EINZAHLUNG DETAIL SECTION -->
+  <div class="card">
+    <h2>🏦 3) Bank Einzahlung - DETAILIERT</h2>
+    <div class="row">
+      <div class="w-50">
+        <label>Gesamtbetrag Einzahlung (€)</label>
+        <input id="bank" type="number" step="0.01" value="0" placeholder="0,00" onchange="updateBankDetails()" />
+      </div>
+      <div class="w-50">
+        <label>&nbsp;</label>
+        <div class="btns">
+          <button class="ghost" onclick="addBankDetailRow()">+ Zeile hinzufügen</button>
+          <button class="ghost" onclick="clearBankDetails()">Zurücksetzen</button>
+        </div>
+      </div>
     </div>
 
-    <div class="card w-50">
-      <h3>3) Einzahlung Bank</h3>
-      <label>Einzahlung Betrag (€)</label>
-      <input id="bank" type="number" step="0.01" value="0" placeholder="0,00" />
-      <div class="note">Optional: Wenn du Geld in die Bank einzahlst. Ende = Ist − Einzahlung.</div>
+    <div style="margin-top: 15px;">
+      <label>Stückelung der Einzahlung (für Finanzamt):</label>
+      <div id="bankDetailsContainer">
+        <!-- Bank detail rows will be added here dynamically -->
+        <div class="bank-detail-row" id="bankDetailTemplate" style="display: none;">
+          <select class="bank-denom" style="width: 100px;">
+            <option value="500">500 €</option>
+            <option value="200">200 €</option>
+            <option value="100">100 €</option>
+            <option value="50">50 €</option>
+            <option value="20">20 €</option>
+            <option value="10">10 €</option>
+            <option value="5">5 €</option>
+            <option value="2">2 € (Münze)</option>
+            <option value="1">1 € (Münze)</option>
+            <option value="0.5">0,50 €</option>
+            <option value="0.2">0,20 €</option>
+            <option value="0.1">0,10 €</option>
+            <option value="0.05">0,05 €</option>
+            <option value="0.02">0,02 €</option>
+            <option value="0.01">0,01 €</option>
+          </select>
+          <input type="number" class="bank-count" min="0" value="1" placeholder="Anzahl" style="width: 80px;" onchange="calculateBankTotal()" />
+          <span class="bank-item-total" style="min-width: 80px; text-align: right;">0,00 €</span>
+          <button class="ghost" style="padding: 5px 8px;" onclick="removeBankDetailRow(this)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex" style="justify-content: flex-end; margin-top: 10px; padding: 10px; background: #f0f7ff; border-radius: 8px;">
+      <strong>Kontrollsumme: </strong>
+      <span id="bankDetailTotal">0,00</span> €
+      <span id="bankDetailMatch" style="margin-left: 10px;">✓</span>
+    </div>
+    
+    <div class="note">
+      <b>Wichtig für Finanzamt:</b> Gib hier genau ein, aus wie vielen Scheinen/Münzen sich die Einzahlung zusammensetzt. 
+      Diese Details werden gespeichert und beim nächsten Tag als Übertrag berücksichtigt.
     </div>
   </div>
 
   <!-- COUNTING SECTION -->
   <div class="card">
-    <h3>4) Ist-Kasse zählen (Scheine & Münzen)</h3>
+    <h2>🧾 4) Ist-Kasse zählen (detailliert)</h2>
     <div class="grid">
       <div><label>200 €</label><input id="n200" type="number" min="0" value="0" /></div>
       <div><label>100 €</label><input id="n100" type="number" min="0" value="0" /></div>
@@ -390,27 +485,27 @@
     </div>
   </div>
 
-  <!-- PRINT SECTION - ENHANCED DAILY PRINT -->
+  <!-- PRINT SECTION - ENHANCED FOR WORD -->
   <div class="card print-section">
     <div class="flex" style="justify-content: space-between; align-items: center;">
-      <h3 style="margin:0;">5) Drucken</h3>
-      <span class="muted">Tägliches Protokoll</span>
+      <h2 style="margin:0; border-bottom: none;">🖨️ 5) Drucken / Export</h2>
     </div>
+    
     <div class="row">
       <div class="w-50">
-        <label>Druck-Optionen</label>
-        <select id="printOption" class="muted">
-          <option value="full">Vollständiges Protokoll</option>
-          <option value="compact">Kompakte Übersicht</option>
-          <option value="count">Nur Stückelung</option>
+        <label>Format wählen:</label>
+        <select id="printFormat" class="muted">
+          <option value="word-detailed">Word-Tabelle (detailliert) ⭐</option>
+          <option value="word-compact">Word-Tabelle (kompakt)</option>
+          <option value="html">HTML-Ansicht</option>
         </select>
       </div>
       <div class="w-50">
-        <label>&nbsp;</label>
+        <label>Optionen:</label>
         <div class="btns">
           <button class="secondary" onclick="printDay()">
             <span style="display:flex; align-items:center; gap:5px;">
-              🖨️ Tagesbericht drucken
+              📄 Drucken / Export
             </span>
           </button>
           <button class="ghost" onclick="previewDay()">
@@ -419,20 +514,22 @@
         </div>
       </div>
     </div>
-    <div class="note">
-      <b>Hinweis:</b> Speichere vor dem Drucken. Du kannst zwischen verschiedenen Formaten wählen.
+    
+    <div class="note" style="background: #e8f4fd; padding: 8px; border-radius: 5px;">
+      <b>⭐ Word-Tabelle (detailliert):</b> Enthält alle Stückelungen von der Kasse UND der Bank-Einzahlung.
+      Perfekt für die Finanzamt-Archivierung. Kann direkt in Word kopiert werden.
     </div>
   </div>
 
   <!-- HISTORY SECTION -->
   <div class="card">
-    <h3>6) Historie</h3>
+    <h2>📋 6) Historie</h2>
     <div id="history" class="muted">Noch keine Einträge.</div>
   </div>
 
   <!-- MONTHLY REPORT SECTION -->
   <div class="card">
-    <h3>7) Monatsbericht</h3>
+    <h2>📊 7) Monatsbericht</h2>
     <div class="row">
       <div class="w-50">
         <label>Monat auswählen</label>
@@ -464,8 +561,28 @@
     ["m005", 0.05], ["m002", 0.02], ["m001", 0.01]
   ];
 
+  // Bank denomination options
+  const BANK_DENOMS = [
+    { value: 500, label: "500 €" },
+    { value: 200, label: "200 €" },
+    { value: 100, label: "100 €" },
+    { value: 50, label: "50 €" },
+    { value: 20, label: "20 €" },
+    { value: 10, label: "10 €" },
+    { value: 5, label: "5 €" },
+    { value: 2, label: "2 € (Münze)" },
+    { value: 1, label: "1 € (Münze)" },
+    { value: 0.5, label: "0,50 €" },
+    { value: 0.2, label: "0,20 €" },
+    { value: 0.1, label: "0,10 €" },
+    { value: 0.05, label: "0,05 €" },
+    { value: 0.02, label: "0,02 €" },
+    { value: 0.01, label: "0,01 €" }
+  ];
+
   // Helper functions
   const euro = (n) => (Number(n) || 0).toFixed(2).replace(".", ",");
+  const euroDot = (n) => (Number(n) || 0).toFixed(2);
   const num = (v) => Number(v) || 0;
 
   const todayISO = () => {
@@ -537,6 +654,168 @@
     alert("PIN gespeichert.");
   };
 
+  // ===== BANK DETAILS FUNCTIONS =====
+  const initializeBankDetails = () => {
+    const container = document.getElementById("bankDetailsContainer");
+    const template = document.getElementById("bankDetailTemplate");
+    
+    // Clear existing rows (except template)
+    while (container.children.length > 1) {
+      container.removeChild(container.lastChild);
+    }
+    
+    // Add 3 default rows
+    for (let i = 0; i < 3; i++) {
+      addBankDetailRow();
+    }
+    calculateBankTotal();
+  };
+
+  window.addBankDetailRow = () => {
+    const container = document.getElementById("bankDetailsContainer");
+    const template = document.getElementById("bankDetailTemplate");
+    const newRow = template.cloneNode(true);
+    newRow.style.display = "flex";
+    newRow.id = "";
+    
+    // Add event listeners
+    const select = newRow.querySelector(".bank-denom");
+    const count = newRow.querySelector(".bank-count");
+    
+    select.addEventListener("change", calculateBankTotal);
+    count.addEventListener("input", calculateBankTotal);
+    count.addEventListener("change", calculateBankTotal);
+    
+    container.appendChild(newRow);
+    calculateBankTotal();
+  };
+
+  window.removeBankDetailRow = (btn) => {
+    const row = btn.closest(".bank-detail-row");
+    if (row && row.id !== "bankDetailTemplate") {
+      row.remove();
+      calculateBankTotal();
+    }
+  };
+
+  window.calculateBankTotal = () => {
+    let total = 0;
+    const rows = document.querySelectorAll("#bankDetailsContainer .bank-detail-row:not(#bankDetailTemplate)");
+    
+    rows.forEach(row => {
+      const select = row.querySelector(".bank-denom");
+      const count = row.querySelector(".bank-count");
+      const itemTotalSpan = row.querySelector(".bank-item-total");
+      
+      const denom = num(select.value);
+      const quantity = num(count.value);
+      const itemTotal = denom * quantity;
+      total += itemTotal;
+      
+      if (itemTotalSpan) {
+        itemTotalSpan.textContent = euro(itemTotal) + " €";
+      }
+    });
+    
+    document.getElementById("bankDetailTotal").textContent = euro(total);
+    
+    // Check if matches bank total
+    const bankTotal = num(document.getElementById("bank").value);
+    const matchSpan = document.getElementById("bankDetailMatch");
+    
+    if (Math.abs(total - bankTotal) < 0.01) {
+      matchSpan.innerHTML = "✓✓ Übereinstimmung ✓✓";
+      matchSpan.style.color = "green";
+      matchSpan.style.fontWeight = "bold";
+    } else {
+      matchSpan.innerHTML = "✗ Summe stimmt nicht mit Gesamtbetrag überein";
+      matchSpan.style.color = "red";
+    }
+    
+    return total;
+  };
+
+  window.clearBankDetails = () => {
+    const container = document.getElementById("bankDetailsContainer");
+    const template = document.getElementById("bankDetailTemplate");
+    
+    // Remove all rows except template
+    while (container.children.length > 1) {
+      container.removeChild(container.lastChild);
+    }
+    
+    // Add 3 empty rows
+    for (let i = 0; i < 3; i++) {
+      addBankDetailRow();
+    }
+    
+    document.getElementById("bank").value = "0";
+    calculateBankTotal();
+  };
+
+  window.updateBankDetails = () => {
+    calculateBankTotal();
+  };
+
+  const getBankDetails = () => {
+    const details = [];
+    const rows = document.querySelectorAll("#bankDetailsContainer .bank-detail-row:not(#bankDetailTemplate)");
+    
+    rows.forEach(row => {
+      const select = row.querySelector(".bank-denom");
+      const count = row.querySelector(".bank-count");
+      
+      const denom = num(select.value);
+      const quantity = num(count.value);
+      
+      if (quantity > 0) {
+        details.push({
+          denom: denom,
+          quantity: quantity,
+          total: denom * quantity
+        });
+      }
+    });
+    
+    return details;
+  };
+
+  const setBankDetails = (details) => {
+    clearBankDetails();
+    
+    if (details && details.length > 0) {
+      const container = document.getElementById("bankDetailsContainer");
+      const template = document.getElementById("bankDetailTemplate");
+      
+      // Remove default rows
+      while (container.children.length > 1) {
+        container.removeChild(container.lastChild);
+      }
+      
+      // Add rows from data
+      details.forEach(detail => {
+        const newRow = template.cloneNode(true);
+        newRow.style.display = "flex";
+        newRow.id = "";
+        
+        const select = newRow.querySelector(".bank-denom");
+        const count = newRow.querySelector(".bank-count");
+        
+        // Set values
+        select.value = detail.denom.toString();
+        count.value = detail.quantity;
+        
+        select.addEventListener("change", calculateBankTotal);
+        count.addEventListener("input", calculateBankTotal);
+        count.addEventListener("change", calculateBankTotal);
+        
+        container.appendChild(newRow);
+      });
+    }
+    
+    calculateBankTotal();
+  };
+
   // ===== COUNTING FUNCTIONS =====
   const getCounts = () => {
     const o = {};
@@ -587,6 +866,7 @@
     zbon: 0,
     ist: 0,
     bank: 0,
+    bankDetails: [],
     ende: num(start),
     diff: 0,
     counts: getCounts()
@@ -643,6 +923,14 @@
     setStartValue(entry.start);
     document.getElementById("zbon").value = num(entry.zbon).toFixed(2);
     document.getElementById("bank").value = num(entry.bank).toFixed(2);
+    
+    // Load bank details
+    if (entry.bankDetails && entry.bankDetails.length > 0) {
+      setBankDetails(entry.bankDetails);
+    } else {
+      initializeBankDetails();
+    }
+    
     setCounts(entry.counts || {});
     recalc();
     showHistory();
@@ -674,6 +962,7 @@
     const zbon = num(document.getElementById("zbon").value);
     const ist = calcIst();
     const bank = num(document.getElementById("bank").value);
+    const bankDetails = getBankDetails();
 
     const soll = start + zbon;
     const diff = ist - soll;
@@ -683,6 +972,7 @@
     entry.zbon = zbon;
     entry.ist = ist;
     entry.bank = bank;
+    entry.bankDetails = bankDetails;
     entry.ende = ende;
     entry.diff = diff;
     entry.counts = getCounts();
@@ -760,124 +1050,187 @@
     setStartValue(e.start);
     document.getElementById("zbon").value = num(e.zbon).toFixed(2);
     document.getElementById("bank").value = num(e.bank).toFixed(2);
+    
+    if (e.bankDetails && e.bankDetails.length > 0) {
+      setBankDetails(e.bankDetails);
+    } else {
+      initializeBankDetails();
+    }
+    
     setCounts(e.counts || {});
     recalc();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ===== PRINT FUNCTIONS - ENHANCED =====
-  const dayPrintableHTML = (entry, format = 'full') => {
+  // ===== PRINT FUNCTIONS - WORD OPTIMIZED =====
+  const dayPrintableHTML = (entry, format = 'word-detailed') => {
     const soll = num(entry.start) + num(entry.zbon);
     const diff = num(entry.diff);
     const diffColor = diff < 0 ? "#c53030" : "#2f855a";
+    const counts = entry.counts || {};
     
     let content = '';
 
-    // Header always included
-    const header = `
-      <div style="font-family:Arial;padding:18px;max-width:1200px;margin:0 auto;">
-        <h2 style="margin:0;color:#2b6cb0;">Kassen-Zählprotokoll PRO – Sanremo</h2>
-        <div style="margin-top:6px;color:#666;">Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</div>
-        <hr style="margin:15px 0;"/>
-        <table style="width:100%;margin-bottom:20px;">
-          <tr>
-            <td><b>Datum:</b> ${entry.date}</td>
-            <td><b>Schicht:</b> ${entry.schicht}</td>
-            <td><b>Uhrzeit:</b> ${new Date().toLocaleTimeString('de-DE')}</td>
-          </tr>
-        </table>
-    `;
-
-    // Full version
-    if (format === 'full') {
+    // WORD-DETAILED format (for Finanzamt)
+    if (format === 'word-detailed') {
       content = `
-        ${header}
-        <h3 style="color:#2b6cb0;">Übersicht</h3>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-          <tr style="background:#f0f0f0;">
-            <th style="border:1px solid #ccc;padding:8px;">Start (Übertrag)</th>
-            <th style="border:1px solid #ccc;padding:8px;">Z-Bon (Soll)</th>
-            <th style="border:1px solid #ccc;padding:8px;">Soll-Kasse</th>
-            <th style="border:1px solid #ccc;padding:8px;">Ist</th>
-            <th style="border:1px solid #ccc;padding:8px;">Differenz</th>
-            <th style="border:1px solid #ccc;padding:8px;">Einzahlung Bank</th>
-            <th style="border:1px solid #ccc;padding:8px;">Ende</th>
-          </tr>
-          <tr>
-            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(entry.start)} €</td>
-            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(entry.zbon)} €</td>
-            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(soll)} €</td>
-            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(entry.ist)} €</td>
-            <td style="border:1px solid #ccc;padding:8px;text-align:right;color:${diffColor};font-weight:bold;">${euro(entry.diff)} €</td>
-            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(entry.bank)} €</td>
-            <td style="border:1px solid #ccc;padding:8px;text-align:right;font-weight:bold;">${euro(entry.ende)} €</td>
-          </tr>
-        </table>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Kassen-Zählprotokoll - ${entry.date}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 2cm; }
+            h1 { color: #2b6cb0; font-size: 24px; margin-bottom: 5px; }
+            h2 { color: #2b6cb0; font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 20px; }
+            table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+            th { background: #f0f7ff; border: 1px solid #999; padding: 8px; text-align: center; }
+            td { border: 1px solid #999; padding: 8px; }
+            .right { text-align: right; }
+            .center { text-align: center; }
+            .footer { margin-top: 30px; display: flex; justify-content: space-between; }
+            .summary { background: #f9f9f9; padding: 10px; border: 1px solid #999; }
+          </style>
+        </head>
+        <body>
+          <h1>Kassen-Zählprotokoll</h1>
+          <p><strong>Eiscafé Sanremo</strong> · Bad Berleburg · Tel. 0176 72809926</p>
+          <p><strong>Datum:</strong> ${entry.date} | <strong>Schicht:</strong> ${entry.schicht}</p>
+          <hr>
 
-        <h3 style="color:#2b6cb0;">Gezählte Stückelung</h3>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-          <tr style="background:#f0f0f0;">
-            <th style="border:1px solid #ccc;padding:6px;">200€</th><th style="border:1px solid #ccc;padding:6px;">100€</th>
-            <th style="border:1px solid #ccc;padding:6px;">50€</th><th style="border:1px solid #ccc;padding:6px;">20€</th>
-            <th style="border:1px solid #ccc;padding:6px;">10€</th><th style="border:1px solid #ccc;padding:6px;">5€</th>
-            <th style="border:1px solid #ccc;padding:6px;">2€</th><th style="border:1px solid #ccc;padding:6px;">1€</th>
-            <th style="border:1px solid #ccc;padding:6px;">0,50€</th><th style="border:1px solid #ccc;padding:6px;">0,20€</th>
-            <th style="border:1px solid #ccc;padding:6px;">0,10€</th><th style="border:1px solid #ccc;padding:6px;">0,05€</th>
-            <th style="border:1px solid #ccc;padding:6px;">0,02€</th><th style="border:1px solid #ccc;padding:6px;">0,01€</th>
-          </tr>
-          <tr>
-            ${["n200","n100","n50","n20","n10","n5","m2","m1","m050","m020","m010","m005","m002","m001"]
-              .map(id => `<td style="border:1px solid #ccc;padding:6px;text-align:center;">${Number(entry.counts?.[id]||0)}</td>`).join("")}
-          </tr>
-        </table>
+          <h2>1. Übersicht</h2>
+          <table>
+            <tr>
+              <th>Start (Übertrag)</th>
+              <th>Z-Bon (Soll)</th>
+              <th>Soll-Kasse</th>
+              <th>Ist (gezählt)</th>
+              <th>Differenz</th>
+              <th>Bank Einzahlung</th>
+              <th>Ende (Ist-Bank)</th>
+            </tr>
+            <tr>
+              <td class="right">${euro(entry.start)} €</td>
+              <td class="right">${euro(entry.zbon)} €</td>
+              <td class="right">${euro(soll)} €</td>
+              <td class="right">${euro(entry.ist)} €</td>
+              <td class="right" style="color:${diffColor}; font-weight:bold;">${euro(diff)} €</td>
+              <td class="right">${euro(entry.bank)} €</td>
+              <td class="right"><strong>${euro(entry.ende)} €</strong></td>
+            </tr>
+          </table>
 
-        <div style="margin-top:30px;display:flex;justify-content:space-between;">
-          <div>Unterschrift: _______________________</div>
-          <div>Datum: _______________________</div>
-        </div>
+          <h2>2. Kassenbestand - Detaillierte Stückelung (Ist)</h2>
+          <table>
+            <tr>
+              <th>Wert</th>
+              <th>Anzahl</th>
+              <th>Betrag</th>
+            </tr>
+            ${DENOMS.map(([id, val]) => {
+              const count = num(counts[id]);
+              if (count > 0 || format === 'word-detailed') {
+                return `<tr>
+                  <td>${val.toFixed(2).replace('.', ',')} €</td>
+                  <td class="center">${count}</td>
+                  <td class="right">${euro(count * val)} €</td>
+                </tr>`;
+              }
+              return '';
+            }).join('')}
+            <tr style="background: #f0f7ff; font-weight: bold;">
+              <td colspan="2">Summe Ist-Kasse</td>
+              <td class="right">${euro(entry.ist)} €</td>
+            </tr>
+          </table>
+
+          <h2>3. Bank Einzahlung - Detaillierte Stückelung</h2>
+          <table>
+            <tr>
+              <th>Wert</th>
+              <th>Anzahl</th>
+              <th>Betrag</th>
+            </tr>
+            ${entry.bankDetails && entry.bankDetails.length > 0 
+              ? entry.bankDetails.map(detail => `
+                  <tr>
+                    <td>${detail.denom.toFixed(2).replace('.', ',')} €</td>
+                    <td class="center">${detail.quantity}</td>
+                    <td class="right">${euro(detail.total)} €</td>
+                  </tr>
+                `).join('')
+              : '<tr><td colspan="3" class="center">Keine Bank-Einzahlung an diesem Tag</td></tr>'
+            }
+            <tr style="background: #f0f7ff; font-weight: bold;">
+              <td colspan="2">Summe Bank Einzahlung</td>
+              <td class="right">${euro(entry.bank)} €</td>
+            </tr>
+          </table>
+
+          <h2>4. Übertrag für den nächsten Tag</h2>
+          <div class="summary">
+            <p><strong>Endbestand (wird morgen als Start übernommen):</strong> ${euro(entry.ende)} €</p>
+            <p><em>Setzt sich zusammen aus: Ist-Kasse (${euro(entry.ist)} €) - Bank Einzahlung (${euro(entry.bank)} €)</em></p>
+          </div>
+
+          <div class="footer">
+            <div>Unterschrift: _______________________</div>
+            <div>Datum: _______________________</div>
+          </div>
+        </body>
+        </html>
       `;
     }
     
-    // Compact version
-    else if (format === 'compact') {
+    // WORD-COMPACT format
+    else if (format === 'word-compact') {
       content = `
-        ${header}
-        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-          <tr><td><b>Start:</b> ${euro(entry.start)} €</td><td><b>Z-Bon:</b> ${euro(entry.zbon)} €</td></tr>
-          <tr><td><b>Ist:</b> ${euro(entry.ist)} €</td><td><b>Bank:</b> ${euro(entry.bank)} €</td></tr>
-          <tr><td colspan="2" style="font-size:16px;padding-top:10px;"><b>Ende:</b> ${euro(entry.ende)} € | <b>Differenz:</b> <span style="color:${diffColor};">${euro(entry.diff)} €</span></td></tr>
-        </table>
-        <div style="margin-top:20px;">Unterschrift: _______________________</div>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Kassen-Zählprotokoll - ${entry.date}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 2cm; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #999; padding: 5px; }
+          </style>
+        </head>
+        <body>
+          <h2>Kassen-Zählprotokoll - ${entry.date} (${entry.schicht})</h2>
+          <table>
+            <tr><th>Start</th><td>${euro(entry.start)} €</td><th>Z-Bon</th><td>${euro(entry.zbon)} €</td></tr>
+            <tr><th>Ist</th><td>${euro(entry.ist)} €</td><th>Bank</th><td>${euro(entry.bank)} €</td></tr>
+            <tr><th>Differenz</th><td colspan="3">${euro(diff)} €</td></tr>
+            <tr><th>Ende (Übertrag)</th><td colspan="3"><strong>${euro(entry.ende)} €</strong></td></tr>
+          </table>
+        </body>
+        </html>
       `;
     }
     
-    // Count only version
-    else if (format === 'count') {
+    // HTML format
+    else {
       content = `
-        ${header}
-        <h3 style="color:#2b6cb0;">Stückelung</h3>
-        <table style="width:100%;border-collapse:collapse;">
-          <tr>
-            ${["200","100","50","20","10","5","2€","1€","0,50","0,20","0,10","0,05","0,02","0,01"]
-              .map(v => `<th style="border:1px solid #ccc;padding:4px;">${v}</th>`).join("")}
-          </tr>
-          <tr>
-            ${["n200","n100","n50","n20","n10","n5","m2","m1","m050","m020","m010","m005","m002","m001"]
-              .map(id => `<td style="border:1px solid #ccc;padding:4px;text-align:center;">${Number(entry.counts?.[id]||0)}</td>`).join("")}
-          </tr>
-        </table>
-        <p style="margin-top:20px;"><b>Summe Ist:</b> ${euro(entry.ist)} €</p>
-        <div style="margin-top:20px;">Unterschrift: _______________________</div>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Kassen-Zählprotokoll - ${entry.date}</title>
+        </head>
+        <body style="font-family:Arial;padding:20px;">
+          <h2>Kassen-Zählprotokoll - ${entry.date}</h2>
+          <p>Start: ${euro(entry.start)} € | Z-Bon: ${euro(entry.zbon)} € | Ist: ${euro(entry.ist)} €</p>
+          <p>Bank: ${euro(entry.bank)} € | Differenz: ${euro(diff)} € | Ende: ${euro(entry.ende)} €</p>
+        </body>
+        </html>
       `;
     }
 
-    return content + '</div>';
+    return content;
   };
 
   window.printDay = () => {
     const date = document.getElementById("datum").value;
     const schicht = document.getElementById("schicht").value;
-    const printOption = document.getElementById("printOption").value;
+    const printFormat = document.getElementById("printFormat").value;
     
     if (!date) {
       alert("Bitte Datum wählen.");
@@ -893,16 +1246,20 @@
 
     const printWindow = window.open("", "_blank");
     printWindow.document.open();
-    printWindow.document.write(dayPrintableHTML(e, printOption));
+    printWindow.document.write(dayPrintableHTML(e, printFormat));
     printWindow.document.close();
     printWindow.focus();
-    setTimeout(() => printWindow.print(), 250);
+    
+    // Auto-print for HTML formats
+    if (printFormat === 'html') {
+      setTimeout(() => printWindow.print(), 250);
+    }
   };
 
   window.previewDay = () => {
     const date = document.getElementById("datum").value;
     const schicht = document.getElementById("schicht").value;
-    const printOption = document.getElementById("printOption").value;
+    const printFormat = document.getElementById("printFormat").value;
     
     if (!date) {
       alert("Bitte Datum wählen.");
@@ -918,7 +1275,7 @@
 
     const previewWindow = window.open("", "_blank");
     previewWindow.document.open();
-    previewWindow.document.write(dayPrintableHTML(e, printOption));
+    previewWindow.document.write(dayPrintableHTML(e, printFormat));
     previewWindow.document.close();
     previewWindow.focus();
   };
@@ -941,7 +1298,7 @@
 
     let sumStart = 0, sumZ = 0, sumIst = 0, sumBank = 0, sumDiff = 0, sumEnde = 0;
     let rows = `
-      <h4 style="margin:8px 0;">Eiscafé Sanremo – Monatsbericht (${month})</h4>
+      <h4 style="margin:8px 0;">Monatsbericht (${month})</h4>
       <table>
         <tr>
           <th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th>
@@ -998,11 +1355,16 @@
     const printWindow = window.open("", "_blank");
     printWindow.document.open();
     printWindow.document.write(`
-      <div style="font-family:Arial;padding:18px;">
-        <h2 style="margin:0;color:#2b6cb0;">Kassen-Zählprotokoll PRO – Sanremo</h2>
-        <div style="margin-top:6px;color:#666;">Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</div>
-        <hr/>${html}
-      </div>`);
+      <html>
+      <head><meta charset="UTF-8"><title>Monatsbericht ${month}</title>
+      <style>body{font-family:Arial;padding:20px;} table{border-collapse:collapse;} th,td{border:1px solid #ccc;padding:5px;}</style>
+      </head>
+      <body>
+        <h2>Kassen-Zählprotokoll - Monatsbericht</h2>
+        <p>Eiscafé Sanremo · Bad Berleburg · ${month}</p>
+        <hr>${html}
+      </body>
+      </html>`);
     printWindow.document.close();
     printWindow.focus();
     setTimeout(() => printWindow.print(), 250);
@@ -1015,7 +1377,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `sanremo_kasse_backup_${todayISO()}.json`;
+    a.download = `kassen_protokoll_backup_${todayISO()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -1053,7 +1415,10 @@
     const d = new Date();
     const m = String(d.getMonth() + 1).padStart(2, "0");
     document.getElementById("monthPick").value = `${d.getFullYear()}-${m}`;
-    document.getElementById("printOption").value = "full";
+    document.getElementById("printFormat").value = "word-detailed";
+
+    // Initialize bank details
+    initializeBankDetails();
 
     // Bind input events
     document.querySelectorAll("#app input, #app select").forEach(el => {
