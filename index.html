@@ -2,840 +2,778 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kassen-Zählprotokoll PRO – Sanremo</title>
 <style>
   :root{
-    --bg:#f6f7f9; --card:#fff; --text:#111; --muted:#666;
-    --line:#e7e7ea; --radius:14px; --btn:#111; --btnText:#fff;
-    --danger:#8b1e1e; --ok:#1f7a3b;
+    --bg:#f5f6f7; --card:#fff; --text:#111; --muted:#666; --line:#e6e6e6;
+    --btn:#111; --btn2:#2b6cb0; --bad:#c53030; --good:#2f855a;
   }
   *{box-sizing:border-box}
-  body{font-family:Arial, sans-serif;margin:0;background:var(--bg);color:var(--text)}
-  header{
-    position:sticky; top:0; z-index:10;
-    background:rgba(246,247,249,.92); backdrop-filter: blur(8px);
-    border-bottom:1px solid var(--line);
-    padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px;
-  }
-  header h1{margin:0;font-size:16px}
-  header .sub{font-size:12px;color:var(--muted)}
-  main{max-width:1100px;margin:0 auto;padding:14px;display:grid;gap:12px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
-  .card h2{margin:0 0 10px 0;font-size:14px}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:900px){.row{grid-template-columns:1fr}}
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
-  input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;font:inherit}
-  table{width:100%;border-collapse:collapse;margin-top:8px}
-  th,td{border:1px solid #ccc;padding:7px;text-align:right}
-  th{background:#f0f0f0}
-  td:first-child, th:first-child{text-align:left}
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  @media(max-width:900px){.kpis{grid-template-columns:1fr 1fr}}
-  .kpi{border:1px solid var(--line);border-radius:14px;padding:10px}
-  .kpi .v{font-weight:900;font-size:16px}
-  .kpi .l{font-size:12px;color:var(--muted)}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-  .btn{border:1px solid #111;background:var(--btn);color:var(--btnText);border-radius:12px;padding:10px 12px;font-weight:900;cursor:pointer}
-  .btn.alt{background:#fff;color:#111;border-color:var(--line)}
-  .btn.danger{background:var(--danger);border-color:var(--danger)}
-  .btn.ok{background:var(--ok);border-color:var(--ok)}
-  .small{font-size:12px;color:var(--muted);line-height:1.35}
-  .hidden{display:none !important}
-
-  /* Modal */
-  .modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:14px;z-index:999}
-  .modal{max-width:980px;width:100%;background:#fff;border-radius:16px;border:1px solid #ddd;overflow:hidden}
-  .modalHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid #eee}
-  .modalHeader h3{margin:0;font-size:14px}
-  .modalBody{padding:12px 14px}
-  .modalFooter{padding:12px 14px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
-
-  /* Print */
-  @media print{
-    header, .noPrint{display:none !important}
-    body{background:#fff}
-    main{padding:0}
-    .card{border:none}
-    .modalOverlay{display:none !important}
-  }
+  body{font-family:Arial,Helvetica,sans-serif;margin:18px;background:var(--bg);color:var(--text)}
+  h1{margin:0 0 6px 0;font-size:22px}
+  small{color:var(--muted)}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin:10px 0}
+  .w-50{flex:1 1 420px}
+  .w-100{flex:1 1 100%}
+  label{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
+  input,select{width:100%;padding:9px;border:1px solid #d8d8d8;border-radius:10px;background:#fff}
+  input[type="number"]{text-align:right}
+  .grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px}
+  @media (max-width:900px){ .grid{grid-template-columns:repeat(2,minmax(120px,1fr));} }
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  button{border:none;border-radius:10px;padding:10px 12px;cursor:pointer;color:#fff;background:var(--btn)}
+  button.secondary{background:var(--btn2)}
+  button.ghost{background:#fff;color:#111;border:1px solid #d8d8d8}
+  button.danger{background:var(--bad)}
+  button.ok{background:var(--good)}
+  .hidden{display:none}
+  .kpi{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .pill{padding:8px 10px;border-radius:999px;background:#f1f1f1;border:1px solid var(--line);font-size:13px}
+  .pill b{font-weight:700}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th,td{border:1px solid var(--line);padding:8px;text-align:center;font-size:13px}
+  th{background:#fafafa}
+  .right{text-align:right}
+  .muted{color:var(--muted)}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .brand{display:flex;flex-direction:column}
+  .status{font-size:13px}
+  .status.lock{color:var(--bad);font-weight:700}
+  .status.open{color:var(--good);font-weight:700}
+  .mini{font-size:12px}
+  .hr{height:1px;background:var(--line);margin:10px 0}
+  .note{font-size:12px;color:var(--muted);line-height:1.35}
 </style>
 </head>
 <body>
 
-<header>
+<div class="topbar">
+  <div class="brand">
+    <h1>Kassen-Zählprotokoll PRO</h1>
+    <small>Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</small>
+  </div>
   <div>
-    <h1>Eiscafé Sanremo – Kassen-Zählprotokoll PRO</h1>
-    <div class="sub">Fürst-Richard-Str. 1 · 57319 Bad Berleburg · Tel: 0176 72809926</div>
+    <div id="lockState" class="status lock">GESPERRT</div>
+    <div class="mini muted">Nur du kannst speichern / drucken / Berichte öffnen.</div>
   </div>
-  <div class="actions noPrint">
-    <button class="btn alt" id="btnMonthly">Monatsbericht</button>
-    <button class="btn alt" id="btnLock">Sperren</button>
-  </div>
-</header>
+</div>
 
-<main>
-
-  <!-- LOCK -->
-  <section class="card" id="lockCard">
-    <h2>PIN eingeben</h2>
-    <div class="row">
-      <div>
-        <label>PIN</label>
-        <input id="pin" type="password" inputmode="numeric" placeholder="••••" maxlength="12" />
-        <div class="small">Nur du kannst speichern, drucken und Berichte öffnen.</div>
-      </div>
-      <div style="display:flex; align-items:flex-end; justify-content:flex-end;">
-        <button class="btn" id="btnUnlock">Entsperren</button>
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+  <h3 style="margin:0 0 6px 0;">PIN eingeben</h3>
+  <div class="row">
+    <div class="w-50">
+      <label>PIN</label>
+      <input id="pinInput" type="password" placeholder="PIN" />
+    </div>
+    <div class="w-50">
+      <label>&nbsp;</label>
+      <div class="btns">
+        <button class="ok" onclick="unlock()">Entsperren</button>
+        <button class="ghost" onclick="showPinChange()">PIN ändern</button>
       </div>
     </div>
-    <div class="small">Standard-PIN: <b>3515</b> (kannst du später ändern)</div>
-  </section>
+  </div>
+  <div class="note">Standard-PIN: <b>3515</b> (kannst du später ändern)</div>
 
-  <!-- APP -->
-  <section class="card hidden" id="appCard">
-    <h2>1) Basis</h2>
+  <div id="pinChangeBox" class="hidden" style="margin-top:10px;">
+    <div class="hr"></div>
     <div class="row">
-      <div>
+      <div class="w-50">
+        <label>Neuer PIN (mind. 4 Ziffern)</label>
+        <input id="newPin" type="password" placeholder="z.B. 1234" />
+      </div>
+      <div class="w-50">
+        <label>&nbsp;</label>
+        <div class="btns">
+          <button class="secondary" onclick="savePin()">Speichern</button>
+          <button class="ghost" onclick="hidePinChange()">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <div class="card">
+    <h3 style="margin:0;">1) Tag auswählen (automatischer Übertrag)</h3>
+    <div class="row">
+      <div class="w-50">
         <label>Datum</label>
         <input id="datum" type="date" />
-        <div class="small">Beim Datum-Wechsel wird der <b>Kassenanfangsbestand automatisch</b> vom Vortag übernommen (Endbestand).</div>
       </div>
-      <div>
+      <div class="w-50">
         <label>Schicht</label>
         <select id="schicht">
           <option value="Tag">Tag</option>
           <option value="Abend">Abend</option>
+          <option value="Ganzer Tag">Ganzer Tag</option>
         </select>
       </div>
-      <div>
-        <label>Kassenanfangsbestand (automatisch vom Vortag)</label>
-        <input id="start" type="number" step="0.01" value="0" />
-      </div>
-      <div>
-        <label>Z-Bon / Tagesumsatz</label>
-        <input id="zbon" type="number" step="0.01" value="0" />
-      </div>
     </div>
 
-    <div class="actions noPrint" style="margin-top:10px; justify-content:flex-start">
-      <button class="btn alt" id="btnPrevDay">Vortag übernehmen</button>
-      <button class="btn alt" id="btnResetCounts">Zählfelder leeren</button>
-      <button class="btn alt" id="btnChangePin">PIN ändern</button>
-    </div>
-    <div class="small noPrint" id="prevInfo"></div>
-  </section>
-
-  <section class="card hidden" id="countCard">
-    <h2>2) Kassen-Zählung (IST) – alle Stückelungen</h2>
-    <div class="small noPrint">Tipp: Schreib die Anzahl rein und drück <b>Tab</b>. Summe wird sofort berechnet.</div>
-    <table id="tblIst" class="noPrint">
-      <thead><tr><th>Stückelung</th><th>Anzahl</th><th>Summe</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <section class="card hidden" id="bankCard">
-    <h2>3) Bankeinzahlung (detailliert nach Scheinen)</h2>
-    <div class="small noPrint">Hier trägst du ein, welche Scheine du zur Bank bringst. Das wird automatisch als <b>Entnahme</b> gerechnet.</div>
-    <table id="tblBank" class="noPrint">
-      <thead><tr><th>Schein</th><th>Anzahl</th><th>Summe</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <section class="card hidden" id="resultCard">
-    <h2>4) Ergebnis</h2>
-
-    <div class="kpis">
-      <div class="kpi"><div class="v" id="kIst">0,00 €</div><div class="l">IST-Bestand (gezählt)</div></div>
-      <div class="kpi"><div class="v" id="kBank">0,00 €</div><div class="l">Bankeinzahlung (Entnahme)</div></div>
-      <div class="kpi"><div class="v" id="kSoll">0,00 €</div><div class="l">SOLL (Start + Z-Bon − Bank)</div></div>
-      <div class="kpi"><div class="v" id="kDiff">0,00 €</div><div class="l">Differenz (IST − SOLL)</div></div>
+    <div class="kpi">
+      <div class="pill">Start (Übertrag): <b><span id="kStart">0,00</span> €</b></div>
+      <div class="pill">Z-Bon (Soll): <b><span id="kZbon">0,00</span> €</b></div>
+      <div class="pill">Ist (gezählt): <b><span id="kIst">0,00</span> €</b></div>
+      <div class="pill">Bank Einzahlung: <b><span id="kBank">0,00</span> €</b></div>
+      <div class="pill">Ende (Ist−Bank): <b><span id="kEnde">0,00</span> €</b></div>
+      <div class="pill">Differenz (Ist − Soll): <b><span id="kDiff">0,00</span> €</b></div>
     </div>
 
-    <div class="kpis" style="margin-top:10px">
-      <div class="kpi"><div class="v" id="kEnde">0,00 €</div><div class="l">Endbestand (IST − Bank) → Start morgen</div></div>
-      <div class="kpi"><div class="v" id="kKey">—</div><div class="l">Eintrag-Schlüssel</div></div>
-      <div class="kpi"><div class="v" id="kSaved">—</div><div class="l">Letztes Speichern</div></div>
-      <div class="kpi"><div class="v" id="kStatus">Bereit</div><div class="l">Status</div></div>
+    <div class="btns">
+      <button class="secondary" onclick="loadOrCreateDay()">Tag öffnen / neu</button>
+      <button class="ghost" onclick="lock()">Sperren</button>
+      <button class="ghost" onclick="resetInputs()">Zählfelder leeren</button>
+      <button class="danger" onclick="deleteDay()">Tag löschen</button>
     </div>
 
-    <div class="actions noPrint" style="margin-top:10px">
-      <button class="btn alt" id="btnLoad">Laden</button>
-      <select id="history"></select>
-      <button class="btn ok" id="btnSave">Speichern</button>
-      <button class="btn" id="btnPrint">Drucken</button>
-      <button class="btn danger" id="btnDelete">Löschen</button>
-    </div>
-    <div class="small noPrint">Historie wird lokal im Browser gespeichert. Für Backup kannst du monatlich drucken.</div>
-  </section>
-
-</main>
-
-<!-- MONTHLY MODAL -->
-<div class="modalOverlay hidden" id="monthlyModal">
-  <div class="modal">
-    <div class="modalHeader">
-      <h3>Monatsbericht</h3>
-      <button class="btn alt" id="btnCloseMonthly">Schließen</button>
-    </div>
-    <div class="modalBody">
-      <div class="row">
-        <div>
-          <label>Monat</label>
-          <input type="month" id="monthPick" />
-          <div class="small">Zeigt alle gespeicherten Tage im ausgewählten Monat.</div>
-        </div>
-        <div style="display:flex; align-items:flex-end; justify-content:flex-end; gap:10px; flex-wrap:wrap">
-          <button class="btn alt" id="btnBuildMonthly">Erstellen</button>
-          <button class="btn" id="btnPrintMonthly">Bericht drucken</button>
-        </div>
-      </div>
-
-      <div id="monthlyOut" style="margin-top:12px"></div>
-    </div>
-    <div class="modalFooter">
-      <button class="btn alt" id="btnCloseMonthly2">Schließen</button>
+    <div class="note" style="margin-top:8px;">
+      Tipp: <b>Start</b> wird automatisch vom letzten gespeicherten Tag übernommen (Ende vom Vortag).
     </div>
   </div>
-</div>
 
-<!-- PIN CHANGE MODAL -->
-<div class="modalOverlay hidden" id="pinModal">
-  <div class="modal" style="max-width:560px">
-    <div class="modalHeader">
-      <h3>PIN ändern</h3>
-      <button class="btn alt" id="btnClosePin">Schließen</button>
-    </div>
-    <div class="modalBody">
-      <div class="row">
-        <div>
-          <label>Alter PIN</label>
-          <input id="oldPin" type="password" inputmode="numeric" />
-        </div>
-        <div>
-          <label>Neuer PIN</label>
-          <input id="newPin" type="password" inputmode="numeric" />
-        </div>
+  <div class="row">
+    <!-- LEFT -->
+    <div class="card w-50">
+      <h3 style="margin:0;">2) Z-Bon (Soll)</h3>
+      <label>Z-Bon Betrag (€)</label>
+      <input id="zbon" type="number" step="0.01" value="0" />
+
+      <div class="btns">
+        <button class="ok" onclick="saveAll()">Speichern</button>
+        <button class="ghost" onclick="printDay()">Drucken (Tag)</button>
       </div>
-      <div class="small" style="margin-top:8px">Tipp: nimm 4–6 Ziffern.</div>
+      <div class="note">Z-Bon = Tagesumsatz laut Kasse. Soll-Kasse = Start + Z-Bon.</div>
     </div>
-    <div class="modalFooter">
-      <button class="btn" id="btnSavePin">Speichern</button>
-      <button class="btn alt" id="btnClosePin2">Abbrechen</button>
+
+    <!-- RIGHT -->
+    <div class="card w-50">
+      <h3 style="margin:0;">3) Einzahlung Bank</h3>
+      <label>Einzahlung Betrag (€)</label>
+      <input id="bank" type="number" step="0.01" value="0" />
+      <div class="note">Optional: Wenn du Geld in die Bank einzahlst. Ende = Ist − Einzahlung.</div>
     </div>
   </div>
+
+  <div class="card">
+    <h3 style="margin:0;">4) Ist-Kasse zählen (Scheine & Münzen)</h3>
+    <div class="grid">
+      <div>
+        <label>200 €</label><input id="n200" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>100 €</label><input id="n100" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>50 €</label><input id="n50" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>20 €</label><input id="n20" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>10 €</label><input id="n10" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>5 €</label><input id="n5" type="number" min="0" value="0" />
+      </div>
+
+      <div>
+        <label>2 €</label><input id="m2" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>1 €</label><input id="m1" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>0,50 €</label><input id="m050" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>0,20 €</label><input id="m020" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>0,10 €</label><input id="m010" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>0,05 €</label><input id="m005" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>0,02 €</label><input id="m002" type="number" min="0" value="0" />
+      </div>
+      <div>
+        <label>0,01 €</label><input id="m001" type="number" min="0" value="0" />
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="secondary" onclick="recalc()">Neu berechnen</button>
+      <button class="ok" onclick="saveAll()">Speichern</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0;">5) Historie</h3>
+    <div id="history" class="muted">Noch keine Einträge.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin:0;">6) Monatsbericht</h3>
+    <div class="row">
+      <div class="w-50">
+        <label>Monat auswählen</label>
+        <input id="monthPick" type="month" />
+      </div>
+      <div class="w-50">
+        <label>&nbsp;</label>
+        <div class="btns">
+          <button class="secondary" onclick="buildMonthly()">Monatsbericht anzeigen</button>
+          <button class="ghost" onclick="printMonthly()">Drucken (Monat)</button>
+          <button class="ghost" onclick="exportData()">Export (Backup)</button>
+          <button class="ghost" onclick="importData()">Import</button>
+        </div>
+      </div>
+    </div>
+    <div id="monthlyOut" class="muted">Wähle einen Monat.</div>
+  </div>
+
 </div>
 
 <script>
-(() => {
-  // ---------- Config / Storage ----------
-  const KEY_DATA = "sanremo_kasse_pro_v1";
-  const KEY_PIN  = "sanremo_kasse_pin_v1";
-  const DEFAULT_PIN = "3515";
+/* =========================
+   STORAGE / HELPERS
+========================= */
+const KEY_PIN = "sanremo_kasse_pin";
+const KEY_DATA = "sanremo_kasse_data";
 
-  const IST_DENOMS = [200,100,50,20,10,5,2,1,0.50,0.20,0.10,0.05,0.02,0.01];
-  const BANK_DENOMS = [200,100,50,20,10,5];
+function euro(n){ return (Number(n)||0).toFixed(2).replace(".", ","); }
+function num(v){ return Number(v)||0; }
+function todayISO(){
+  const d = new Date();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+function loadAll(){
+  try { return JSON.parse(localStorage.getItem(KEY_DATA) || "[]"); }
+  catch(e){ return []; }
+}
+function saveAllData(arr){
+  localStorage.setItem(KEY_DATA, JSON.stringify(arr));
+}
+function getPin(){
+  return localStorage.getItem(KEY_PIN) || "3515";
+}
 
-  const $ = (id)=>document.getElementById(id);
-
-  // UI
-  const lockCard = $("lockCard");
-  const appCard = $("appCard");
-  const countCard = $("countCard");
-  const bankCard = $("bankCard");
-  const resultCard = $("resultCard");
-
-  const pin = $("pin");
-  const btnUnlock = $("btnUnlock");
-  const btnLock = $("btnLock");
-
-  const datum = $("datum");
-  const schicht = $("schicht");
-  const start = $("start");
-  const zbon = $("zbon");
-  const prevInfo = $("prevInfo");
-
-  const tblIstBody = $("tblIst").querySelector("tbody");
-  const tblBankBody = $("tblBank").querySelector("tbody");
-
-  const kIst = $("kIst");
-  const kBank = $("kBank");
-  const kSoll = $("kSoll");
-  const kDiff = $("kDiff");
-  const kEnde = $("kEnde");
-  const kKey = $("kKey");
-  const kSaved = $("kSaved");
-  const kStatus = $("kStatus");
-
-  const history = $("history");
-  const btnSave = $("btnSave");
-  const btnPrint = $("btnPrint");
-  const btnLoad = $("btnLoad");
-  const btnDelete = $("btnDelete");
-  const btnResetCounts = $("btnResetCounts");
-  const btnPrevDay = $("btnPrevDay");
-
-  // Monthly
-  const btnMonthly = $("btnMonthly");
-  const monthlyModal = $("monthlyModal");
-  const btnCloseMonthly = $("btnCloseMonthly");
-  const btnCloseMonthly2 = $("btnCloseMonthly2");
-  const monthPick = $("monthPick");
-  const btnBuildMonthly = $("btnBuildMonthly");
-  const btnPrintMonthly = $("btnPrintMonthly");
-  const monthlyOut = $("monthlyOut");
-
-  // PIN modal
-  const btnChangePin = $("btnChangePin");
-  const pinModal = $("pinModal");
-  const btnClosePin = $("btnClosePin");
-  const btnClosePin2 = $("btnClosePin2");
-  const btnSavePin = $("btnSavePin");
-  const oldPin = $("oldPin");
-  const newPin = $("newPin");
-
-  // Inputs references
-  const istInputs = new Map();  // denom -> input
-  const bankInputs = new Map(); // denom -> input
-
-  // ---------- Helpers ----------
-  function euro(n){
-    const v = (Math.round((n + Number.EPSILON)*100)/100).toFixed(2);
-    return v.replace(".", ",") + " €";
+/* =========================
+   LOCK / PIN
+========================= */
+function setLocked(isLocked){
+  const app = document.getElementById("app");
+  const login = document.getElementById("loginCard");
+  const st = document.getElementById("lockState");
+  if(isLocked){
+    app.classList.add("hidden");
+    login.classList.remove("hidden");
+    st.textContent = "GESPERRT";
+    st.className = "status lock";
+  } else {
+    login.classList.add("hidden");
+    app.classList.remove("hidden");
+    st.textContent = "ENTSPERRT";
+    st.className = "status open";
   }
-  function numVal(el){
-    const v = parseFloat(String(el.value).replace(",", "."));
-    return isFinite(v) ? v : 0;
+}
+function unlock(){
+  const p = (document.getElementById("pinInput").value || "").trim();
+  if(p === getPin()){
+    setLocked(false);
+    document.getElementById("pinInput").value = "";
+  } else {
+    alert("Falscher PIN.");
   }
-  function getPin(){ return localStorage.getItem(KEY_PIN) || DEFAULT_PIN; }
-
-  function loadAll(){
-    try{ return JSON.parse(localStorage.getItem(KEY_DATA) || "{}"); }catch(e){ return {}; }
+}
+function lock(){ setLocked(true); }
+function showPinChange(){ document.getElementById("pinChangeBox").classList.remove("hidden"); }
+function hidePinChange(){ document.getElementById("pinChangeBox").classList.add("hidden"); }
+function savePin(){
+  const np = (document.getElementById("newPin").value || "").trim();
+  if(!/^\d{4,}$/.test(np)){
+    alert("Neuer PIN muss mindestens 4 Ziffern haben.");
+    return;
   }
-  function saveAll(obj){
-    localStorage.setItem(KEY_DATA, JSON.stringify(obj));
+  localStorage.setItem(KEY_PIN, np);
+  document.getElementById("newPin").value = "";
+  hidePinChange();
+  alert("PIN gespeichert.");
+}
+
+/* =========================
+   DENOM CALC
+========================= */
+const DENOMS = [
+  ["n200",200],["n100",100],["n50",50],["n20",20],["n10",10],["n5",5],
+  ["m2",2],["m1",1],["m050",0.5],["m020",0.2],["m010",0.1],["m005",0.05],["m002",0.02],["m001",0.01]
+];
+
+function getCounts(){
+  const o = {};
+  for(const [id,val] of DENOMS){
+    o[id] = num(document.getElementById(id).value);
   }
-
-  function todayISO(){
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,"0");
-    const dd = String(d.getDate()).padStart(2,"0");
-    return `${yyyy}-${mm}-${dd}`;
+  return o;
+}
+function setCounts(o){
+  for(const [id,val] of DENOMS){
+    document.getElementById(id).value = num(o?.[id] ?? 0);
   }
-
-  function entryKey(dateStr, shiftStr){
-    return `${dateStr}__${shiftStr}`;
+}
+function calcIst(){
+  let s=0;
+  for(const [id,val] of DENOMS){
+    s += num(document.getElementById(id).value) * val;
   }
+  return s;
+}
 
-  function listKeysSorted(all){
-    return Object.keys(all).sort((a,b)=> (a>b?-1:1)); // desc
+/* =========================
+   DAY MODEL
+========================= */
+function dayKey(date, schicht){
+  return `${date}__${schicht}`;
+}
+function findEntry(arr, date, schicht){
+  const k = dayKey(date, schicht);
+  return arr.find(x => x.key === k);
+}
+function lastEndeBefore(arr, date){
+  // last saved day with date < selected date (by time)
+  const target = new Date(date + "T00:00:00").getTime();
+  const sorted = [...arr].sort((a,b)=> (a.ts||0)-(b.ts||0));
+  let last = null;
+  for(const e of sorted){
+    const t = e.ts || 0;
+    if(t < target) last = e;
   }
+  return last ? num(last.ende) : 0;
+}
 
-  function findPreviousEntry(all, dateStr){
-    // find max date < dateStr (ignore shift), use the latest shift if multiple
-    const target = dateStr;
-    const candidates = Object.values(all)
-      .filter(e => e && e.date && e.date < target)
-      .sort((a,b)=> (a.date > b.date ? -1 : 1)); // newest first
+function makeNewEntry(date, schicht, start){
+  return {
+    key: dayKey(date, schicht),
+    date,
+    schicht,
+    ts: new Date(date + "T00:00:00").getTime(),
+    start: num(start),
+    zbon: 0,
+    ist: 0,
+    bank: 0,
+    ende: num(start),
+    diff: 0,
+    counts: getCounts()
+  };
+}
 
-    if(candidates.length === 0) return null;
+/* =========================
+   UI / LOAD / SAVE
+========================= */
+function refreshKPI(){
+  const start = num(document.getElementById("kStart").dataset.v || 0);
+  const zbon = num(document.getElementById("zbon").value);
+  const ist  = calcIst();
+  const bank = num(document.getElementById("bank").value);
 
-    // if same date appears with different shift, pick the one saved later
-    const newestDate = candidates[0].date;
-    const sameDate = candidates.filter(e => e.date === newestDate);
-    sameDate.sort((a,b)=> (a.savedAt > b.savedAt ? -1 : 1));
-    return sameDate[0];
-  }
+  const soll = start + zbon;
+  const diff = ist - soll;
+  const ende = ist - bank;
 
-  // ---------- Build tables ----------
-  function buildTable(bodyEl, denoms, map){
-    bodyEl.innerHTML = "";
-    denoms.forEach((d,i)=>{
-      const tr = document.createElement("tr");
+  document.getElementById("kZbon").textContent = euro(zbon);
+  document.getElementById("kIst").textContent  = euro(ist);
+  document.getElementById("kBank").textContent = euro(bank);
+  document.getElementById("kEnde").textContent = euro(ende);
+  document.getElementById("kDiff").textContent = euro(diff);
 
-      const td1 = document.createElement("td");
-      td1.textContent = d >= 1 ? `${d} €` : `${String(d).replace(".", ",")} €`;
+  document.getElementById("kIst").dataset.v = ist;
+  document.getElementById("kEnde").dataset.v = ende;
+  document.getElementById("kDiff").dataset.v = diff;
+}
 
-      const td2 = document.createElement("td");
-      const inp = document.createElement("input");
-      inp.type = "number";
-      inp.min = "0";
-      inp.step = "1";
-      inp.value = "0";
-      inp.style.width = "90px";
-      inp.addEventListener("input", recalc);
-      td2.appendChild(inp);
+function setStartValue(v){
+  const el = document.getElementById("kStart");
+  el.textContent = euro(v);
+  el.dataset.v = num(v);
+  refreshKPI();
+}
 
-      const td3 = document.createElement("td");
-      td3.textContent = "0,00 €";
+function loadOrCreateDay(){
+  const date = document.getElementById("datum").value;
+  const schicht = document.getElementById("schicht").value;
+  if(!date){ alert("Bitte Datum wählen."); return; }
 
-      tr.append(td1, td2, td3);
-      bodyEl.appendChild(tr);
+  const arr = loadAll();
+  let entry = findEntry(arr, date, schicht);
 
-      map.set(d, {input: inp, sumCell: td3});
-    });
-  }
-
-  // ---------- Calculations ----------
-  function calcSum(map, denoms){
-    let total = 0;
-    denoms.forEach(d=>{
-      const ref = map.get(d);
-      const qty = ref ? (parseFloat(ref.input.value) || 0) : 0;
-      const sum = d * qty;
-      if(ref) ref.sumCell.textContent = euro(sum);
-      total += sum;
-    });
-    total = Math.round(total*100)/100;
-    return total;
-  }
-
-  function recalc(){
-    const ist = calcSum(istInputs, IST_DENOMS);
-    const bank = calcSum(bankInputs, BANK_DENOMS);
-
-    const startV = numVal(start);
-    const zbonV  = numVal(zbon);
-
-    const soll = Math.round((startV + zbonV - bank)*100)/100;
-    const diff = Math.round((ist - soll)*100)/100;
-    const ende = Math.round((ist - bank)*100)/100;
-
-    kIst.textContent = euro(ist);
-    kBank.textContent = euro(bank);
-    kSoll.textContent = euro(soll);
-    kDiff.textContent = euro(diff);
-    kEnde.textContent = euro(ende);
-
-    kKey.textContent = entryKey(datum.value || "—", schicht.value || "—");
+  if(!entry){
+    const start = lastEndeBefore(arr, date);
+    entry = makeNewEntry(date, schicht, start);
+    arr.push(entry);
+    saveAllData(arr);
   }
 
-  // ---------- Snapshot / Apply ----------
-  function snapshot(){
-    const istCounts = {};
-    IST_DENOMS.forEach(d=>{
-      istCounts[String(d)] = parseInt(istInputs.get(d).input.value || "0", 10) || 0;
-    });
-    const bankCounts = {};
-    BANK_DENOMS.forEach(d=>{
-      bankCounts[String(d)] = parseInt(bankInputs.get(d).input.value || "0", 10) || 0;
-    });
-
-    const ist = calcSum(istInputs, IST_DENOMS);
-    const bank = calcSum(bankInputs, BANK_DENOMS);
-
-    const startV = numVal(start);
-    const zbonV  = numVal(zbon);
-    const soll = Math.round((startV + zbonV - bank)*100)/100;
-    const diff = Math.round((ist - soll)*100)/100;
-    const ende = Math.round((ist - bank)*100)/100;
-
-    return {
-      date: datum.value,
-      shift: schicht.value,
-      start: startV,
-      zbon: zbonV,
-      istCounts,
-      bankCounts,
-      ist, bank, soll, diff, ende,
-      savedAt: new Date().toISOString()
-    };
-  }
-
-  function applyEntry(e){
-    if(!e) return;
-
-    datum.value = e.date || datum.value;
-    schicht.value = e.shift || schicht.value;
-
-    start.value = (e.start ?? 0);
-    zbon.value  = (e.zbon ?? 0);
-
-    IST_DENOMS.forEach(d=>{
-      const v = e.istCounts ? (e.istCounts[String(d)] ?? 0) : 0;
-      istInputs.get(d).input.value = v;
-    });
-    BANK_DENOMS.forEach(d=>{
-      const v = e.bankCounts ? (e.bankCounts[String(d)] ?? 0) : 0;
-      bankInputs.get(d).input.value = v;
-    });
-
-    kSaved.textContent = e.savedAt ? new Date(e.savedAt).toLocaleString() : "—";
-    kStatus.textContent = "Geladen";
-    recalc();
-  }
-
-  // ---------- History UI ----------
-  function refreshHistory(){
-    const all = loadAll();
-    const keys = listKeysSorted(all);
-    history.innerHTML = "";
-    keys.forEach(k=>{
-      const e = all[k];
-      const opt = document.createElement("option");
-      opt.value = k;
-      opt.textContent = `${e.date} (${e.shift}) · IST ${euro(e.ist)} · Bank ${euro(e.bank)} · Ende ${euro(e.ende)}`;
-      history.appendChild(opt);
-    });
-  }
-
-  // ---------- Previous day carryover ----------
-  function applyPreviousDayStart(){
-    const all = loadAll();
-    const prev = findPreviousEntry(all, datum.value);
-    if(!prev){
-      prevInfo.textContent = "Kein Vortag gefunden.";
-      return;
-    }
-    start.value = prev.ende ?? 0;
-    prevInfo.innerHTML = `Vortag: <b>${prev.date}</b> · Endbestand: <b>${euro(prev.ende)}</b> → Start übernommen.`;
-    kStatus.textContent = "Vortag übernommen";
-    recalc();
-  }
-
-  function autoCarryoverIfPossible(){
-    // Only auto-fill start if user didn't change it manually (heuristic: start == 0 and there is a previous)
-    if(!datum.value) return;
-    const all = loadAll();
-    const prev = findPreviousEntry(all, datum.value);
-    if(prev){
-      // If start is empty or 0, auto
-      const startNow = numVal(start);
-      if(startNow === 0){
-        start.value = prev.ende ?? 0;
-        prevInfo.innerHTML = `Auto-Start: Vortag <b>${prev.date}</b> Endbestand <b>${euro(prev.ende)}</b> übernommen.`;
-      }else{
-        prevInfo.innerHTML = `Vortag <b>${prev.date}</b> Endbestand <b>${euro(prev.ende)}</b> (Auto-Start verfügbar).`;
-      }
-    } else {
-      prevInfo.textContent = "Kein Vortag im Speicher.";
-    }
-    recalc();
-  }
-
-  // ---------- Print (single day) ----------
-  function printEntry(e){
-    const linesIst = IST_DENOMS.map(d=>{
-      const qty = e.istCounts[String(d)] || 0;
-      if(!qty) return "";
-      const sum = d*qty;
-      const label = d>=1 ? `${d} €` : `${String(d).replace(".", ",")} €`;
-      return `<tr><td>${label}</td><td style="text-align:right">${qty}</td><td style="text-align:right">${euro(sum)}</td></tr>`;
-    }).filter(Boolean).join("");
-
-    const linesBank = BANK_DENOMS.map(d=>{
-      const qty = e.bankCounts[String(d)] || 0;
-      if(!qty) return "";
-      const sum = d*qty;
-      return `<tr><td>${d} €</td><td style="text-align:right">${qty}</td><td style="text-align:right">${euro(sum)}</td></tr>`;
-    }).filter(Boolean).join("");
-
-    const html = `
-<!doctype html><html lang="de"><head><meta charset="utf-8">
-<title>Zählprotokoll ${e.date}</title>
-<style>
-  body{font-family:Arial, sans-serif; margin:24px; color:#111}
-  h1{font-size:18px; margin:0 0 6px 0}
-  .sub{font-size:12px; color:#444; margin-bottom:14px}
-  table{width:100%; border-collapse:collapse; margin:12px 0}
-  th,td{border:1px solid #ddd; padding:8px; font-size:12px}
-  th{background:#f3f3f3; text-align:left}
-  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px}
-  .box{border:1px solid #ddd; padding:10px}
-  .v{font-weight:bold; font-size:14px}
-</style></head>
-<body>
-  <h1>Eiscafé Sanremo – Kassen-Zählprotokoll</h1>
-  <div class="sub">Fürst-Richard-Str. 1 · 57319 Bad Berleburg · Tel: 0176 72809926<br>
-  Datum: <b>${e.date}</b> · Schicht: <b>${e.shift}</b> · Gespeichert: ${new Date(e.savedAt).toLocaleString()}</div>
-
-  <h3 style="margin:0">Kassen-Zählung (IST)</h3>
-  <table>
-    <thead><tr><th>Stückelung</th><th style="text-align:right">Anzahl</th><th style="text-align:right">Summe</th></tr></thead>
-    <tbody>${linesIst || `<tr><td colspan="3">Keine Eingaben</td></tr>`}</tbody>
-  </table>
-
-  <h3 style="margin:0">Bankeinzahlung (detailliert)</h3>
-  <table>
-    <thead><tr><th>Schein</th><th style="text-align:right">Anzahl</th><th style="text-align:right">Summe</th></tr></thead>
-    <tbody>${linesBank || `<tr><td colspan="3">Keine Bankeinzahlung</td></tr>`}</tbody>
-  </table>
-
-  <table>
-    <tbody>
-      <tr><th>Kassenanfangsbestand</th><td style="text-align:right">${euro(e.start)}</td></tr>
-      <tr><th>Z-Bon</th><td style="text-align:right">${euro(e.zbon)}</td></tr>
-      <tr><th>Bankeinzahlung (Entnahme)</th><td style="text-align:right">${euro(e.bank)}</td></tr>
-    </tbody>
-  </table>
-
-  <div class="kpis">
-    <div class="box"><div>IST</div><div class="v">${euro(e.ist)}</div></div>
-    <div class="box"><div>SOLL</div><div class="v">${euro(e.soll)}</div></div>
-    <div class="box"><div>Differenz</div><div class="v">${euro(e.diff)}</div></div>
-    <div class="box"><div>Endbestand</div><div class="v">${euro(e.ende)}</div></div>
-  </div>
-
-  <script>window.print()</script>
-</body></html>`;
-    const w = window.open("", "_blank");
-    w.document.open(); w.document.write(html); w.document.close();
-  }
-
-  // ---------- Monthly Report ----------
-  function buildMonthly(monthStr){
-    // monthStr format: YYYY-MM
-    const all = loadAll();
-    const items = Object.values(all).filter(e => e && e.date && e.date.startsWith(monthStr));
-    items.sort((a,b)=> (a.date > b.date ? 1 : -1));
-
-    if(items.length === 0){
-      monthlyOut.innerHTML = `<div class="small">Keine Einträge im Monat ${monthStr}.</div>`;
-      return;
-    }
-
-    let sumIst=0, sumBank=0, sumZ=0, sumDiff=0, lastEnde=null;
-
-    const rows = items.map(e=>{
-      sumIst += e.ist;
-      sumBank += e.bank;
-      sumZ += e.zbon;
-      sumDiff += e.diff;
-      lastEnde = e.ende;
-
-      return `<tr>
-        <td style="text-align:left">${e.date}</td>
-        <td style="text-align:left">${e.shift}</td>
-        <td style="text-align:right">${euro(e.start)}</td>
-        <td style="text-align:right">${euro(e.zbon)}</td>
-        <td style="text-align:right">${euro(e.ist)}</td>
-        <td style="text-align:right">${euro(e.bank)}</td>
-        <td style="text-align:right">${euro(e.diff)}</td>
-        <td style="text-align:right">${euro(e.ende)}</td>
-      </tr>`;
-    }).join("");
-
-    const totals = `
-      <tr style="font-weight:900;background:#f7f7f7">
-        <td colspan="3" style="text-align:left">Summe</td>
-        <td style="text-align:right">${euro(sumZ)}</td>
-        <td style="text-align:right">${euro(sumIst)}</td>
-        <td style="text-align:right">${euro(sumBank)}</td>
-        <td style="text-align:right">${euro(sumDiff)}</td>
-        <td style="text-align:right">${lastEnde !== null ? euro(lastEnde) : "—"}</td>
-      </tr>`;
-
-    monthlyOut.innerHTML = `
-      <div id="monthlyPrintable">
-        <div style="margin-bottom:8px">
-          <div style="font-weight:900">Eiscafé Sanremo – Monatsbericht</div>
-          <div class="small">Monat: <b>${monthStr}</b></div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th style="text-align:left">Datum</th>
-              <th style="text-align:left">Schicht</th>
-              <th style="text-align:right">Start</th>
-              <th style="text-align:right">Z-Bon</th>
-              <th style="text-align:right">IST</th>
-              <th style="text-align:right">Bank</th>
-              <th style="text-align:right">Diff</th>
-              <th style="text-align:right">Ende</th>
-            </tr>
-          </thead>
-          <tbody>${rows}${totals}</tbody>
-        </table>
-        <div class="small">Hinweis: Historie ist lokal gespeichert. Monatsbericht bitte für Archiv/Steuerberater ausdrucken.</div>
-      </div>
-    `;
-  }
-
-  function printMonthly(){
-    const node = document.getElementById("monthlyPrintable");
-    if(!node){ alert("Bitte erst Bericht erstellen."); return; }
-
-    const html = `
-<!doctype html><html lang="de"><head><meta charset="utf-8">
-<title>Monatsbericht</title>
-<style>
-  body{font-family:Arial, sans-serif; margin:24px; color:#111}
-  h1{font-size:18px; margin:0 0 6px 0}
-  .sub{font-size:12px; color:#444; margin-bottom:14px}
-  table{width:100%; border-collapse:collapse; margin:12px 0}
-  th,td{border:1px solid #ddd; padding:8px; font-size:12px}
-  th{background:#f3f3f3; text-align:left}
-</style></head>
-<body>
-  <h1>Eiscafé Sanremo – Monatsbericht</h1>
-  <div class="sub">Fürst-Richard-Str. 1 · 57319 Bad Berleburg · Tel: 0176 72809926</div>
-  ${node.outerHTML}
-  <script>window.print()</script>
-</body></html>`;
-    const w = window.open("", "_blank");
-    w.document.open(); w.document.write(html); w.document.close();
-  }
-
-  // ---------- Lock/Unlock ----------
-  function showApp(){
-    lockCard.classList.add("hidden");
-    appCard.classList.remove("hidden");
-    countCard.classList.remove("hidden");
-    bankCard.classList.remove("hidden");
-    resultCard.classList.remove("hidden");
-    kStatus.textContent = "Entsperrt";
-    refreshHistory();
-    autoCarryoverIfPossible();
-  }
-
-  function showLock(){
-    lockCard.classList.remove("hidden");
-    appCard.classList.add("hidden");
-    countCard.classList.add("hidden");
-    bankCard.classList.add("hidden");
-    resultCard.classList.add("hidden");
-    kStatus.textContent = "Gesperrt";
-  }
-
-  btnUnlock.addEventListener("click", ()=>{
-    if(pin.value.trim() === getPin()){
-      pin.value = "";
-      showApp();
-    } else {
-      alert("Falscher PIN.");
-    }
-  });
-
-  btnLock.addEventListener("click", ()=>{
-    showLock();
-  });
-
-  // ---------- Actions ----------
-  btnResetCounts.addEventListener("click", ()=>{
-    IST_DENOMS.forEach(d=> istInputs.get(d).input.value = 0);
-    BANK_DENOMS.forEach(d=> bankInputs.get(d).input.value = 0);
-    kSaved.textContent = "—";
-    kStatus.textContent = "Zählfelder geleert";
-    recalc();
-  });
-
-  btnPrevDay.addEventListener("click", applyPreviousDayStart);
-
-  btnSave.addEventListener("click", ()=>{
-    if(!datum.value){ alert("Bitte Datum wählen."); return; }
-    const all = loadAll();
-    const k = entryKey(datum.value, schicht.value);
-    const e = snapshot();
-    all[k] = e;
-    saveAll(all);
-    refreshHistory();
-    kSaved.textContent = new Date(e.savedAt).toLocaleString();
-    kStatus.textContent = "Gespeichert";
-  });
-
-  btnLoad.addEventListener("click", ()=>{
-    const k = history.value;
-    if(!k) return;
-    const all = loadAll();
-    const e = all[k];
-    applyEntry(e);
-  });
-
-  btnDelete.addEventListener("click", ()=>{
-    const k = history.value;
-    if(!k) return;
-    if(!confirm("Wirklich löschen?")) return;
-    const all = loadAll();
-    delete all[k];
-    saveAll(all);
-    refreshHistory();
-    kStatus.textContent = "Gelöscht";
-  });
-
-  btnPrint.addEventListener("click", ()=>{
-    if(!datum.value){ alert("Bitte Datum wählen."); return; }
-    const all = loadAll();
-    const k = entryKey(datum.value, schicht.value);
-    let e = all[k];
-    if(!e){
-      // auto-save before print
-      e = snapshot();
-      all[k] = e;
-      saveAll(all);
-      refreshHistory();
-      kSaved.textContent = new Date(e.savedAt).toLocaleString();
-      kStatus.textContent = "Auto-gespeichert + Drucken";
-    }
-    printEntry(e);
-  });
-
-  // Auto carryover when date changes
-  datum.addEventListener("change", ()=>{
-    // if user goes to a new day, offer carryover
-    autoCarryoverIfPossible();
-  });
-  schicht.addEventListener("change", recalc);
-  start.addEventListener("input", recalc);
-  zbon.addEventListener("input", recalc);
-
-  // Monthly modal
-  btnMonthly.addEventListener("click", ()=>{
-    monthlyModal.classList.remove("hidden");
-    // default to current month
-    const d = new Date();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    monthPick.value = `${d.getFullYear()}-${m}`;
-    monthlyOut.innerHTML = `<div class="small">Wähle einen Monat und klicke „Erstellen“.</div>`;
-  });
-  btnCloseMonthly.addEventListener("click", ()=> monthlyModal.classList.add("hidden"));
-  btnCloseMonthly2.addEventListener("click", ()=> monthlyModal.classList.add("hidden"));
-  btnBuildMonthly.addEventListener("click", ()=>{
-    if(!monthPick.value){ alert("Bitte Monat wählen."); return; }
-    buildMonthly(monthPick.value);
-  });
-  btnPrintMonthly.addEventListener("click", printMonthly);
-
-  // PIN change
-  btnChangePin.addEventListener("click", ()=>{
-    pinModal.classList.remove("hidden");
-    oldPin.value = "";
-    newPin.value = "";
-  });
-  function closePin(){ pinModal.classList.add("hidden"); }
-  btnClosePin.addEventListener("click", closePin);
-  btnClosePin2.addEventListener("click", closePin);
-  btnSavePin.addEventListener("click", ()=>{
-    if(oldPin.value.trim() !== getPin()){
-      alert("Alter PIN ist falsch.");
-      return;
-    }
-    const np = newPin.value.trim();
-    if(np.length < 4){
-      alert("Neuer PIN muss mindestens 4 Ziffern haben.");
-      return;
-    }
-    localStorage.setItem(KEY_PIN, np);
-    closePin();
-    alert("PIN gespeichert.");
-  });
-
-  // ---------- Init ----------
-  buildTable(tblIstBody, IST_DENOMS, istInputs);
-  buildTable(tblBankBody, BANK_DENOMS, bankInputs);
-
-  datum.value = todayISO();
-  schicht.value = "Tag";
-  start.value = "0";
-  zbon.value = "0";
-
-  kSaved.textContent = "—";
+  // load into UI
+  setStartValue(entry.start);
+  document.getElementById("zbon").value = num(entry.zbon).toFixed(2);
+  document.getElementById("bank").value = num(entry.bank).toFixed(2);
+  setCounts(entry.counts || {});
   recalc();
-  showLock(); // start locked
-})();
+  showHistory();
+  alert("Tag geöffnet.");
+}
+
+function recalc(){
+  // Update IST from counts
+  refreshKPI();
+}
+
+function saveAll(){
+  const date = document.getElementById("datum").value;
+  const schicht = document.getElementById("schicht").value;
+  if(!date){ alert("Bitte Datum wählen."); return; }
+
+  const arr = loadAll();
+  let entry = findEntry(arr, date, schicht);
+
+  // if not exists, create with start carryover
+  if(!entry){
+    const start = lastEndeBefore(arr, date);
+    entry = makeNewEntry(date, schicht, start);
+    arr.push(entry);
+  }
+
+  const start = num(document.getElementById("kStart").dataset.v || 0);
+  const zbon = num(document.getElementById("zbon").value);
+  const ist  = calcIst();
+  const bank = num(document.getElementById("bank").value);
+
+  const soll = start + zbon;
+  const diff = ist - soll;
+  const ende = ist - bank;
+
+  entry.start = start;
+  entry.zbon = zbon;
+  entry.ist = ist;
+  entry.bank = bank;
+  entry.ende = ende;
+  entry.diff = diff;
+  entry.counts = getCounts();
+
+  saveAllData(arr);
+  refreshKPI();
+  showHistory();
+  alert("Gespeichert.");
+}
+
+function resetInputs(){
+  // only counting fields
+  for(const [id,val] of DENOMS) document.getElementById(id).value = 0;
+  recalc();
+}
+
+function deleteDay(){
+  const date = document.getElementById("datum").value;
+  const schicht = document.getElementById("schicht").value;
+  if(!date){ alert("Bitte Datum wählen."); return; }
+  if(!confirm("Wirklich löschen?")) return;
+
+  const arr = loadAll();
+  const k = dayKey(date, schicht);
+  const out = arr.filter(x => x.key !== k);
+  saveAllData(out);
+  showHistory();
+  alert("Gelöscht.");
+}
+
+/* =========================
+   HISTORY
+========================= */
+function showHistory(){
+  const arr = loadAll().sort((a,b)=> (b.ts||0)-(a.ts||0));
+  if(arr.length===0){
+    document.getElementById("history").innerHTML = "Noch keine Einträge.";
+    return;
+  }
+
+  let html = `<table>
+    <tr>
+      <th>Datum</th><th>Schicht</th>
+      <th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Diff</th><th>Ende</th>
+      <th>Aktion</th>
+    </tr>`;
+
+  for(const e of arr){
+    html += `<tr>
+      <td>${e.date}</td>
+      <td>${e.schicht}</td>
+      <td class="right">${euro(e.start)} €</td>
+      <td class="right">${euro(e.zbon)} €</td>
+      <td class="right">${euro(e.ist)} €</td>
+      <td class="right">${euro(e.bank)} €</td>
+      <td class="right" style="color:${num(e.diff)<0?'#c53030':'#2f855a'}">${euro(e.diff)} €</td>
+      <td class="right"><b>${euro(e.ende)} €</b></td>
+      <td>
+        <button class="ghost" onclick="openFromHistory('${e.key}')">Öffnen</button>
+      </td>
+    </tr>`;
+  }
+  html += `</table>`;
+  document.getElementById("history").innerHTML = html;
+}
+
+function openFromHistory(key){
+  const arr = loadAll();
+  const e = arr.find(x=>x.key===key);
+  if(!e){ alert("Eintrag nicht gefunden."); return; }
+
+  document.getElementById("datum").value = e.date;
+  document.getElementById("schicht").value = e.schicht;
+
+  setStartValue(e.start);
+  document.getElementById("zbon").value = num(e.zbon).toFixed(2);
+  document.getElementById("bank").value = num(e.bank).toFixed(2);
+  setCounts(e.counts || {});
+  recalc();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* =========================
+   PRINT
+========================= */
+function dayPrintableHTML(entry){
+  const soll = num(entry.start) + num(entry.zbon);
+  const diff = num(entry.diff);
+  const diffColor = diff < 0 ? "#c53030" : "#2f855a";
+  return `
+  <div style="font-family:Arial;padding:18px;">
+    <h2 style="margin:0;">Kassen-Zählprotokoll PRO – Sanremo</h2>
+    <div style="margin-top:6px;color:#666;">Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</div>
+    <hr/>
+    <table style="width:100%;border-collapse:collapse;">
+      <tr>
+        <td><b>Datum:</b> ${entry.date}</td>
+        <td><b>Schicht:</b> ${entry.schicht}</td>
+      </tr>
+    </table>
+
+    <h3>Übersicht</h3>
+    <table style="width:100%;border-collapse:collapse;">
+      <tr>
+        <th style="border:1px solid #ccc;padding:6px;">Start (Übertrag)</th>
+        <th style="border:1px solid #ccc;padding:6px;">Z-Bon (Soll)</th>
+        <th style="border:1px solid #ccc;padding:6px;">Soll-Kasse</th>
+        <th style="border:1px solid #ccc;padding:6px;">Ist</th>
+        <th style="border:1px solid #ccc;padding:6px;">Differenz</th>
+        <th style="border:1px solid #ccc;padding:6px;">Einzahlung Bank</th>
+        <th style="border:1px solid #ccc;padding:6px;">Ende</th>
+      </tr>
+      <tr>
+        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(entry.start)} €</td>
+        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(entry.zbon)} €</td>
+        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(soll)} €</td>
+        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(entry.ist)} €</td>
+        <td style="border:1px solid #ccc;padding:6px;text-align:right;color:${diffColor};"><b>${euro(entry.diff)} €</b></td>
+        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(entry.bank)} €</td>
+        <td style="border:1px solid #ccc;padding:6px;text-align:right;"><b>${euro(entry.ende)} €</b></td>
+      </tr>
+    </table>
+
+    <h3>Gezählte Stückelung (Ist)</h3>
+    <table style="width:100%;border-collapse:collapse;">
+      <tr>
+        <th style="border:1px solid #ccc;padding:6px;">200</th>
+        <th style="border:1px solid #ccc;padding:6px;">100</th>
+        <th style="border:1px solid #ccc;padding:6px;">50</th>
+        <th style="border:1px solid #ccc;padding:6px;">20</th>
+        <th style="border:1px solid #ccc;padding:6px;">10</th>
+        <th style="border:1px solid #ccc;padding:6px;">5</th>
+        <th style="border:1px solid #ccc;padding:6px;">2€</th>
+        <th style="border:1px solid #ccc;padding:6px;">1€</th>
+        <th style="border:1px solid #ccc;padding:6px;">0,50</th>
+        <th style="border:1px solid #ccc;padding:6px;">0,20</th>
+        <th style="border:1px solid #ccc;padding:6px;">0,10</th>
+        <th style="border:1px solid #ccc;padding:6px;">0,05</th>
+        <th style="border:1px solid #ccc;padding:6px;">0,02</th>
+        <th style="border:1px solid #ccc;padding:6px;">0,01</th>
+      </tr>
+      <tr>
+        ${["n200","n100","n50","n20","n10","n5","m2","m1","m050","m020","m010","m005","m002","m001"]
+          .map(id => `<td style="border:1px solid #ccc;padding:6px;text-align:center;">${Number(entry.counts?.[id]||0)}</td>`).join("")}
+      </tr>
+    </table>
+
+    <div style="margin-top:28px;display:flex;justify-content:space-between;">
+      <div>Unterschrift: _______________________</div>
+      <div>Datum: _______________________</div>
+    </div>
+  </div>`;
+}
+
+function printDay(){
+  const date = document.getElementById("datum").value;
+  const schicht = document.getElementById("schicht").value;
+  if(!date){ alert("Bitte Datum wählen."); return; }
+  const arr = loadAll();
+  const e = findEntry(arr, date, schicht);
+  if(!e){ alert("Bitte erst speichern / Tag öffnen."); return; }
+
+  const w = window.open("", "_blank");
+  w.document.open();
+  w.document.write(dayPrintableHTML(e));
+  w.document.close();
+  w.focus();
+  w.print();
+}
+
+function buildMonthly(){
+  const month = document.getElementById("monthPick").value; // YYYY-MM
+  if(!month){ document.getElementById("monthlyOut").innerHTML="Wähle einen Monat."; return; }
+
+  const arr = loadAll().filter(e => (e.date||"").startsWith(month));
+  arr.sort((a,b)=> (a.ts||0)-(b.ts||0));
+
+  if(arr.length===0){
+    document.getElementById("monthlyOut").innerHTML = "Keine Einträge in diesem Monat.";
+    return;
+  }
+
+  let sumStart=0,sumZ=0,sumIst=0,sumBank=0,sumDiff=0,sumEnde=0;
+  let rows = `
+    <h4 style="margin:8px 0;">Eiscafé Sanremo – Monatsbericht (${month})</h4>
+    <table>
+      <tr>
+        <th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Diff</th><th>Ende</th>
+      </tr>`;
+
+  for(const e of arr){
+    sumStart += num(e.start);
+    sumZ += num(e.zbon);
+    sumIst += num(e.ist);
+    sumBank += num(e.bank);
+    sumDiff += num(e.diff);
+    sumEnde += num(e.ende);
+    rows += `
+      <tr>
+        <td>${e.date}</td>
+        <td>${e.schicht}</td>
+        <td class="right">${euro(e.start)} €</td>
+        <td class="right">${euro(e.zbon)} €</td>
+        <td class="right">${euro(e.ist)} €</td>
+        <td class="right">${euro(e.bank)} €</td>
+        <td class="right" style="color:${num(e.diff)<0?'#c53030':'#2f855a'}">${euro(e.diff)} €</td>
+        <td class="right"><b>${euro(e.ende)} €</b></td>
+      </tr>`;
+  }
+  rows += `</table>
+    <div style="margin-top:10px" class="kpi">
+      <div class="pill">Summe Start: <b>${euro(sumStart)} €</b></div>
+      <div class="pill">Summe Z-Bon: <b>${euro(sumZ)} €</b></div>
+      <div class="pill">Summe Ist: <b>${euro(sumIst)} €</b></div>
+      <div class="pill">Summe Bank: <b>${euro(sumBank)} €</b></div>
+      <div class="pill">Summe Diff: <b>${euro(sumDiff)} €</b></div>
+      <div class="pill">Summe Ende: <b>${euro(sumEnde)} €</b></div>
+    </div>`;
+
+  document.getElementById("monthlyOut").innerHTML = rows;
+}
+
+function printMonthly(){
+  const month = document.getElementById("monthPick").value;
+  if(!month){ alert("Bitte Monat wählen."); return; }
+  buildMonthly();
+  const html = document.getElementById("monthlyOut").innerHTML;
+  if(!html || html.includes("Wähle einen Monat") || html.includes("Keine Einträge")){
+    alert("Kein Bericht zum Drucken.");
+    return;
+  }
+  const w = window.open("", "_blank");
+  w.document.open();
+  w.document.write(`<div style="font-family:Arial;padding:18px;">
+    <h2 style="margin:0;">Kassen-Zählprotokoll PRO – Sanremo</h2>
+    <div style="margin-top:6px;color:#666;">Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</div>
+    <hr/>${html}</div>`);
+  w.document.close();
+  w.focus();
+  w.print();
+}
+
+/* =========================
+   EXPORT / IMPORT
+========================= */
+function exportData(){
+  const data = localStorage.getItem(KEY_DATA) || "[]";
+  const blob = new Blob([data], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "sanremo_kasse_backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(){
+  const inp = document.createElement("input");
+  inp.type = "file";
+  inp.accept = "application/json";
+  inp.onchange = () => {
+    const f = inp.files?.[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const parsed = JSON.parse(String(r.result||"[]"));
+        if(!Array.isArray(parsed)) throw new Error("no array");
+        saveAllData(parsed);
+        showHistory();
+        alert("Import OK.");
+      }catch(e){
+        alert("Import fehlgeschlagen. Datei ist ungültig.");
+      }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+/* =========================
+   INIT
+========================= */
+function init(){
+  document.getElementById("datum").value = todayISO();
+
+  // Month default = current month
+  const d = new Date();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  document.getElementById("monthPick").value = `${d.getFullYear()}-${m}`;
+
+  // bind inputs
+  document.querySelectorAll("#app input, #app select").forEach(el=>{
+    el.addEventListener("input", refreshKPI);
+    el.addEventListener("change", refreshKPI);
+  });
+  // denom inputs recalc
+  DENOMS.forEach(([id])=>{
+    document.getElementById(id).addEventListener("input", recalc);
+  });
+
+  // start locked
+  setLocked(true);
+  showHistory();
+  setStartValue(0);
+  refreshKPI();
+}
+init();
 </script>
+
 </body>
 </html>
