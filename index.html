@@ -1,51 +1,258 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kassen-Zählprotokoll PRO – Sanremo</title>
-<style>
-  :root{
-    --bg:#f5f6f7; --card:#fff; --text:#111; --muted:#666; --line:#e6e6e6;
-    --btn:#111; --btn2:#2b6cb0; --bad:#c53030; --good:#2f855a;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kassen-Zählprotokoll PRO – Sanremo</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f6f7;
+      --card: #ffffff;
+      --text: #111111;
+      --muted: #666666;
+      --line: #e6e6e6;
+      --btn: #111111;
+      --btn2: #2b6cb0;
+      --bad: #c53030;
+      --good: #2f855a;
+      --border-radius: 10px;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 18px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+    }
+
+    small, .muted {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* ===== LAYOUT ===== */
+  .row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
   }
-  *{box-sizing:border-box}
-  body{font-family:Arial,Helvetica,sans-serif;margin:18px;background:var(--bg);color:var(--text)}
-  h1{margin:0 0 6px 0;font-size:22px}
-  small{color:var(--muted)}
-  .row{display:flex;gap:12px;flex-wrap:wrap}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin:10px 0}
-  .w-50{flex:1 1 420px}
-  .w-100{flex:1 1 100%}
-  label{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
-  input,select{width:100%;padding:9px;border:1px solid #d8d8d8;border-radius:10px;background:#fff}
-  input[type="number"]{text-align:right}
-  .grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px}
-  @media (max-width:900px){ .grid{grid-template-columns:repeat(2,minmax(120px,1fr));} }
-  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  button{border:none;border-radius:10px;padding:10px 12px;cursor:pointer;color:#fff;background:var(--btn)}
-  button.secondary{background:var(--btn2)}
-  button.ghost{background:#fff;color:#111;border:1px solid #d8d8d8}
-  button.danger{background:var(--bad)}
-  button.ok{background:var(--good)}
-  .hidden{display:none}
-  .kpi{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-  .pill{padding:8px 10px;border-radius:999px;background:#f1f1f1;border:1px solid var(--line);font-size:13px}
-  .pill b{font-weight:700}
-  table{width:100%;border-collapse:collapse;margin-top:10px}
-  th,td{border:1px solid var(--line);padding:8px;text-align:center;font-size:13px}
-  th{background:#fafafa}
-  .right{text-align:right}
-  .muted{color:var(--muted)}
-  .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-  .brand{display:flex;flex-direction:column}
-  .status{font-size:13px}
-  .status.lock{color:var(--bad);font-weight:700}
-  .status.open{color:var(--good);font-weight:700}
-  .mini{font-size:12px}
-  .hr{height:1px;background:var(--line);margin:10px 0}
-  .note{font-size:12px;color:var(--muted);line-height:1.35}
-</style>
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    margin: 10px 0;
+  }
+
+  .w-50 {
+    flex: 1 1 420px;
+  }
+
+  .w-100 {
+    flex: 1 1 100%;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+    }
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .status {
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .status.lock {
+    color: var(--bad);
+  }
+
+  .status.open {
+    color: var(--good);
+  }
+
+  /* ===== FORMS ===== */
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 8px 0 4px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid #d8d8d8;
+    border-radius: var(--border-radius);
+    background: #ffffff;
+    font-size: 14px;
+  }
+
+  input[type="number"] {
+    text-align: right;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  button {
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 10px 12px;
+    cursor: pointer;
+    color: #ffffff;
+    background: var(--btn);
+    font-size: 13px;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  button.secondary {
+    background: var(--btn2);
+  }
+
+  button.ghost {
+    background: #ffffff;
+    color: #111111;
+    border: 1px solid #d8d8d8;
+  }
+
+  button.danger {
+    background: var(--bad);
+  }
+
+  button.ok {
+    background: var(--good);
+  }
+
+  /* ===== KPI PILLS ===== */
+  .kpi {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .pill {
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: #f1f1f1;
+    border: 1px solid var(--line);
+    font-size: 13px;
+  }
+
+  .pill b {
+    font-weight: 700;
+  }
+
+  /* ===== TABLES ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  th, td {
+    border: 1px solid var(--line);
+    padding: 8px;
+    text-align: center;
+  }
+
+  th {
+    background: #fafafa;
+    font-weight: 600;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  /* ===== UTILITIES ===== */
+  .hidden {
+    display: none !important;
+  }
+
+  .hr {
+    height: 1px;
+    background: var(--line);
+    margin: 10px 0;
+  }
+
+  .note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.35;
+    margin-top: 8px;
+  }
+
+  .mini {
+    font-size: 12px;
+  }
+
+  .flex {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .print-section {
+    background: #f8f9fa;
+    border-left: 3px solid var(--btn2);
+    padding: 10px;
+    margin: 10px 0;
+  }
+  </style>
 </head>
 <body>
 
@@ -60,13 +267,13 @@
   </div>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN SECTION -->
 <div class="card" id="loginCard">
-  <h3 style="margin:0 0 6px 0;">PIN eingeben</h3>
+  <h3>PIN eingeben</h3>
   <div class="row">
     <div class="w-50">
       <label>PIN</label>
-      <input id="pinInput" type="password" placeholder="PIN" />
+      <input id="pinInput" type="password" placeholder="PIN eingeben" />
     </div>
     <div class="w-50">
       <label>&nbsp;</label>
@@ -96,11 +303,12 @@
   </div>
 </div>
 
-<!-- APP -->
+<!-- MAIN APP SECTION -->
 <div id="app" class="hidden">
 
+  <!-- DAY SELECTION CARD -->
   <div class="card">
-    <h3 style="margin:0;">1) Tag auswählen (automatischer Übertrag)</h3>
+    <h3>1) Tag auswählen (automatischer Übertrag)</h3>
     <div class="row">
       <div class="w-50">
         <label>Datum</label>
@@ -116,6 +324,7 @@
       </div>
     </div>
 
+    <!-- KPI DASHBOARD -->
     <div class="kpi">
       <div class="pill">Start (Übertrag): <b><span id="kStart">0,00</span> €</b></div>
       <div class="pill">Z-Bon (Soll): <b><span id="kZbon">0,00</span> €</b></div>
@@ -125,102 +334,105 @@
       <div class="pill">Differenz (Ist − Soll): <b><span id="kDiff">0,00</span> €</b></div>
     </div>
 
+    <!-- DAY ACTIONS -->
     <div class="btns">
       <button class="secondary" onclick="loadOrCreateDay()">Tag öffnen / neu</button>
       <button class="ghost" onclick="lock()">Sperren</button>
       <button class="ghost" onclick="resetInputs()">Zählfelder leeren</button>
       <button class="danger" onclick="deleteDay()">Tag löschen</button>
     </div>
-
-    <div class="note" style="margin-top:8px;">
+    <div class="note">
       Tipp: <b>Start</b> wird automatisch vom letzten gespeicherten Tag übernommen (Ende vom Vortag).
     </div>
   </div>
 
+  <!-- Z-BON & BANK SECTION -->
   <div class="row">
-    <!-- LEFT -->
     <div class="card w-50">
-      <h3 style="margin:0;">2) Z-Bon (Soll)</h3>
+      <h3>2) Z-Bon (Soll)</h3>
       <label>Z-Bon Betrag (€)</label>
-      <input id="zbon" type="number" step="0.01" value="0" />
-
-      <div class="btns">
-        <button class="ok" onclick="saveAll()">Speichern</button>
-        <button class="ghost" onclick="printDay()">Drucken (Tag)</button>
-      </div>
+      <input id="zbon" type="number" step="0.01" value="0" placeholder="0,00" />
       <div class="note">Z-Bon = Tagesumsatz laut Kasse. Soll-Kasse = Start + Z-Bon.</div>
     </div>
 
-    <!-- RIGHT -->
     <div class="card w-50">
-      <h3 style="margin:0;">3) Einzahlung Bank</h3>
+      <h3>3) Einzahlung Bank</h3>
       <label>Einzahlung Betrag (€)</label>
-      <input id="bank" type="number" step="0.01" value="0" />
+      <input id="bank" type="number" step="0.01" value="0" placeholder="0,00" />
       <div class="note">Optional: Wenn du Geld in die Bank einzahlst. Ende = Ist − Einzahlung.</div>
     </div>
   </div>
 
+  <!-- COUNTING SECTION -->
   <div class="card">
-    <h3 style="margin:0;">4) Ist-Kasse zählen (Scheine & Münzen)</h3>
+    <h3>4) Ist-Kasse zählen (Scheine & Münzen)</h3>
     <div class="grid">
-      <div>
-        <label>200 €</label><input id="n200" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>100 €</label><input id="n100" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>50 €</label><input id="n50" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>20 €</label><input id="n20" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>10 €</label><input id="n10" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>5 €</label><input id="n5" type="number" min="0" value="0" />
-      </div>
-
-      <div>
-        <label>2 €</label><input id="m2" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>1 €</label><input id="m1" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>0,50 €</label><input id="m050" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>0,20 €</label><input id="m020" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>0,10 €</label><input id="m010" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>0,05 €</label><input id="m005" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>0,02 €</label><input id="m002" type="number" min="0" value="0" />
-      </div>
-      <div>
-        <label>0,01 €</label><input id="m001" type="number" min="0" value="0" />
-      </div>
+      <div><label>200 €</label><input id="n200" type="number" min="0" value="0" /></div>
+      <div><label>100 €</label><input id="n100" type="number" min="0" value="0" /></div>
+      <div><label>50 €</label><input id="n50" type="number" min="0" value="0" /></div>
+      <div><label>20 €</label><input id="n20" type="number" min="0" value="0" /></div>
+      <div><label>10 €</label><input id="n10" type="number" min="0" value="0" /></div>
+      <div><label>5 €</label><input id="n5" type="number" min="0" value="0" /></div>
+      <div><label>2 €</label><input id="m2" type="number" min="0" value="0" /></div>
+      <div><label>1 €</label><input id="m1" type="number" min="0" value="0" /></div>
+      <div><label>0,50 €</label><input id="m050" type="number" min="0" value="0" /></div>
+      <div><label>0,20 €</label><input id="m020" type="number" min="0" value="0" /></div>
+      <div><label>0,10 €</label><input id="m010" type="number" min="0" value="0" /></div>
+      <div><label>0,05 €</label><input id="m005" type="number" min="0" value="0" /></div>
+      <div><label>0,02 €</label><input id="m002" type="number" min="0" value="0" /></div>
+      <div><label>0,01 €</label><input id="m001" type="number" min="0" value="0" /></div>
     </div>
 
+    <!-- COUNTING ACTIONS -->
     <div class="btns">
       <button class="secondary" onclick="recalc()">Neu berechnen</button>
       <button class="ok" onclick="saveAll()">Speichern</button>
     </div>
   </div>
 
+  <!-- PRINT SECTION - ENHANCED DAILY PRINT -->
+  <div class="card print-section">
+    <div class="flex" style="justify-content: space-between; align-items: center;">
+      <h3 style="margin:0;">5) Drucken</h3>
+      <span class="muted">Tägliches Protokoll</span>
+    </div>
+    <div class="row">
+      <div class="w-50">
+        <label>Druck-Optionen</label>
+        <select id="printOption" class="muted">
+          <option value="full">Vollständiges Protokoll</option>
+          <option value="compact">Kompakte Übersicht</option>
+          <option value="count">Nur Stückelung</option>
+        </select>
+      </div>
+      <div class="w-50">
+        <label>&nbsp;</label>
+        <div class="btns">
+          <button class="secondary" onclick="printDay()">
+            <span style="display:flex; align-items:center; gap:5px;">
+              🖨️ Tagesbericht drucken
+            </span>
+          </button>
+          <button class="ghost" onclick="previewDay()">
+            👁️ Vorschau
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <b>Hinweis:</b> Speichere vor dem Drucken. Du kannst zwischen verschiedenen Formaten wählen.
+    </div>
+  </div>
+
+  <!-- HISTORY SECTION -->
   <div class="card">
-    <h3 style="margin:0;">5) Historie</h3>
+    <h3>6) Historie</h3>
     <div id="history" class="muted">Noch keine Einträge.</div>
   </div>
 
+  <!-- MONTHLY REPORT SECTION -->
   <div class="card">
-    <h3 style="margin:0;">6) Monatsbericht</h3>
+    <h3>7) Monatsbericht</h3>
     <div class="row">
       <div class="w-50">
         <label>Monat auswählen</label>
@@ -238,130 +450,135 @@
     </div>
     <div id="monthlyOut" class="muted">Wähle einen Monat.</div>
   </div>
-
 </div>
 
 <script>
-/* =========================
-   STORAGE / HELPERS
-========================= */
-const KEY_PIN = "sanremo_kasse_pin";
-const KEY_DATA = "sanremo_kasse_data";
+  // ===== CONSTANTS & HELPERS =====
+  const KEY_PIN = "sanremo_kasse_pin";
+  const KEY_DATA = "sanremo_kasse_data";
 
-function euro(n){ return (Number(n)||0).toFixed(2).replace(".", ","); }
-function num(v){ return Number(v)||0; }
-function todayISO(){
-  const d = new Date();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${d.getFullYear()}-${m}-${day}`;
-}
-function loadAll(){
-  try { return JSON.parse(localStorage.getItem(KEY_DATA) || "[]"); }
-  catch(e){ return []; }
-}
-function saveAllData(arr){
-  localStorage.setItem(KEY_DATA, JSON.stringify(arr));
-}
-function getPin(){
-  return localStorage.getItem(KEY_PIN) || "3515";
-}
+  // Denominations: [id, value]
+  const DENOMS = [
+    ["n200", 200], ["n100", 100], ["n50", 50], ["n20", 20], ["n10", 10], ["n5", 5],
+    ["m2", 2], ["m1", 1], ["m050", 0.5], ["m020", 0.2], ["m010", 0.1],
+    ["m005", 0.05], ["m002", 0.02], ["m001", 0.01]
+  ];
 
-/* =========================
-   LOCK / PIN
-========================= */
-function setLocked(isLocked){
-  const app = document.getElementById("app");
-  const login = document.getElementById("loginCard");
-  const st = document.getElementById("lockState");
-  if(isLocked){
-    app.classList.add("hidden");
-    login.classList.remove("hidden");
-    st.textContent = "GESPERRT";
-    st.className = "status lock";
-  } else {
-    login.classList.add("hidden");
-    app.classList.remove("hidden");
-    st.textContent = "ENTSPERRT";
-    st.className = "status open";
-  }
-}
-function unlock(){
-  const p = (document.getElementById("pinInput").value || "").trim();
-  if(p === getPin()){
-    setLocked(false);
-    document.getElementById("pinInput").value = "";
-  } else {
-    alert("Falscher PIN.");
-  }
-}
-function lock(){ setLocked(true); }
-function showPinChange(){ document.getElementById("pinChangeBox").classList.remove("hidden"); }
-function hidePinChange(){ document.getElementById("pinChangeBox").classList.add("hidden"); }
-function savePin(){
-  const np = (document.getElementById("newPin").value || "").trim();
-  if(!/^\d{4,}$/.test(np)){
-    alert("Neuer PIN muss mindestens 4 Ziffern haben.");
-    return;
-  }
-  localStorage.setItem(KEY_PIN, np);
-  document.getElementById("newPin").value = "";
-  hidePinChange();
-  alert("PIN gespeichert.");
-}
+  // Helper functions
+  const euro = (n) => (Number(n) || 0).toFixed(2).replace(".", ",");
+  const num = (v) => Number(v) || 0;
 
-/* =========================
-   DENOM CALC
-========================= */
-const DENOMS = [
-  ["n200",200],["n100",100],["n50",50],["n20",20],["n10",10],["n5",5],
-  ["m2",2],["m1",1],["m050",0.5],["m020",0.2],["m010",0.1],["m005",0.05],["m002",0.02],["m001",0.01]
-];
+  const todayISO = () => {
+    const d = new Date();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${m}-${day}`;
+  };
 
-function getCounts(){
-  const o = {};
-  for(const [id,val] of DENOMS){
-    o[id] = num(document.getElementById(id).value);
-  }
-  return o;
-}
-function setCounts(o){
-  for(const [id,val] of DENOMS){
-    document.getElementById(id).value = num(o?.[id] ?? 0);
-  }
-}
-function calcIst(){
-  let s=0;
-  for(const [id,val] of DENOMS){
-    s += num(document.getElementById(id).value) * val;
-  }
-  return s;
-}
+  // Storage functions
+  const loadAll = () => {
+    try { return JSON.parse(localStorage.getItem(KEY_DATA) || "[]"); }
+    catch (e) { return []; }
+  };
 
-/* =========================
-   DAY MODEL
-========================= */
-function dayKey(date, schicht){
-  return `${date}__${schicht}`;
-}
-function findEntry(arr, date, schicht){
-  const k = dayKey(date, schicht);
-  return arr.find(x => x.key === k);
-}
-function lastEndeBefore(arr, date){
-  // last saved day with date < selected date (by time)
-  const target = new Date(date + "T00:00:00").getTime();
-  const sorted = [...arr].sort((a,b)=> (a.ts||0)-(b.ts||0));
-  let last = null;
-  for(const e of sorted){
-    const t = e.ts || 0;
-    if(t < target) last = e;
-  }
-  return last ? num(last.ende) : 0;
-}
+  const saveAllData = (arr) => {
+    localStorage.setItem(KEY_DATA, JSON.stringify(arr));
+  };
 
-function makeNewEntry(date, schicht, start){
-  return {
+  const getPin = () => localStorage.getItem(KEY_PIN) || "3515";
+
+  // ===== LOCK / PIN FUNCTIONS =====
+  const setLocked = (isLocked) => {
+    const app = document.getElementById("app");
+    const login = document.getElementById("loginCard");
+    const st = document.getElementById("lockState");
+    if (isLocked) {
+      app.classList.add("hidden");
+      login.classList.remove("hidden");
+      st.textContent = "GESPERRT";
+      st.className = "status lock";
+    } else {
+      login.classList.add("hidden");
+      app.classList.remove("hidden");
+      st.textContent = "ENTSPERRT";
+      st.className = "status open";
+    }
+  };
+
+  window.unlock = () => {
+    const p = (document.getElementById("pinInput").value || "").trim();
+    if (p === getPin()) {
+      setLocked(false);
+      document.getElementById("pinInput").value = "";
+    } else {
+      alert("Falscher PIN.");
+    }
+  };
+
+  window.lock = () => setLocked(true);
+
+  window.showPinChange = () => {
+    document.getElementById("pinChangeBox").classList.remove("hidden");
+  };
+
+  window.hidePinChange = () => {
+    document.getElementById("pinChangeBox").classList.add("hidden");
+  };
+
+  window.savePin = () => {
+    const np = (document.getElementById("newPin").value || "").trim();
+    if (!/^\d{4,}$/.test(np)) {
+      alert("Neuer PIN muss mindestens 4 Ziffern haben.");
+      return;
+    }
+    localStorage.setItem(KEY_PIN, np);
+    document.getElementById("newPin").value = "";
+    hidePinChange();
+    alert("PIN gespeichert.");
+  };
+
+  // ===== COUNTING FUNCTIONS =====
+  const getCounts = () => {
+    const o = {};
+    for (const [id] of DENOMS) {
+      o[id] = num(document.getElementById(id).value);
+    }
+    return o;
+  };
+
+  const setCounts = (o) => {
+    for (const [id] of DENOMS) {
+      document.getElementById(id).value = num(o?.[id] ?? 0);
+    }
+  };
+
+  const calcIst = () => {
+    let sum = 0;
+    for (const [id, val] of DENOMS) {
+      sum += num(document.getElementById(id).value) * val;
+    }
+    return sum;
+  };
+
+  // ===== DAY MODEL FUNCTIONS =====
+  const dayKey = (date, schicht) => `${date}__${schicht}`;
+
+  const findEntry = (arr, date, schicht) => {
+    const k = dayKey(date, schicht);
+    return arr.find(x => x.key === k);
+  };
+
+  const lastEndeBefore = (arr, date) => {
+    const target = new Date(date + "T00:00:00").getTime();
+    const sorted = [...arr].sort((a, b) => (a.ts || 0) - (b.ts || 0));
+    let last = null;
+    for (const e of sorted) {
+      if ((e.ts || 0) < target) last = e;
+    }
+    return last ? num(last.ende) : 0;
+  };
+
+  const makeNewEntry = (date, schicht, start) => ({
     key: dayKey(date, schicht),
     date,
     schicht,
@@ -373,407 +590,490 @@ function makeNewEntry(date, schicht, start){
     ende: num(start),
     diff: 0,
     counts: getCounts()
+  });
+
+  // ===== UI UPDATE FUNCTIONS =====
+  const refreshKPI = () => {
+    const start = num(document.getElementById("kStart").dataset.v || 0);
+    const zbon = num(document.getElementById("zbon").value);
+    const ist = calcIst();
+    const bank = num(document.getElementById("bank").value);
+
+    const soll = start + zbon;
+    const diff = ist - soll;
+    const ende = ist - bank;
+
+    document.getElementById("kZbon").textContent = euro(zbon);
+    document.getElementById("kIst").textContent = euro(ist);
+    document.getElementById("kBank").textContent = euro(bank);
+    document.getElementById("kEnde").textContent = euro(ende);
+    document.getElementById("kDiff").textContent = euro(diff);
+
+    document.getElementById("kIst").dataset.v = ist;
+    document.getElementById("kEnde").dataset.v = ende;
+    document.getElementById("kDiff").dataset.v = diff;
   };
-}
 
-/* =========================
-   UI / LOAD / SAVE
-========================= */
-function refreshKPI(){
-  const start = num(document.getElementById("kStart").dataset.v || 0);
-  const zbon = num(document.getElementById("zbon").value);
-  const ist  = calcIst();
-  const bank = num(document.getElementById("bank").value);
+  const setStartValue = (v) => {
+    const el = document.getElementById("kStart");
+    el.textContent = euro(v);
+    el.dataset.v = num(v);
+    refreshKPI();
+  };
 
-  const soll = start + zbon;
-  const diff = ist - soll;
-  const ende = ist - bank;
+  // ===== MAIN ACTIONS =====
+  window.loadOrCreateDay = () => {
+    const date = document.getElementById("datum").value;
+    const schicht = document.getElementById("schicht").value;
+    if (!date) {
+      alert("Bitte Datum wählen.");
+      return;
+    }
 
-  document.getElementById("kZbon").textContent = euro(zbon);
-  document.getElementById("kIst").textContent  = euro(ist);
-  document.getElementById("kBank").textContent = euro(bank);
-  document.getElementById("kEnde").textContent = euro(ende);
-  document.getElementById("kDiff").textContent = euro(diff);
+    const arr = loadAll();
+    let entry = findEntry(arr, date, schicht);
 
-  document.getElementById("kIst").dataset.v = ist;
-  document.getElementById("kEnde").dataset.v = ende;
-  document.getElementById("kDiff").dataset.v = diff;
-}
+    if (!entry) {
+      const start = lastEndeBefore(arr, date);
+      entry = makeNewEntry(date, schicht, start);
+      arr.push(entry);
+      saveAllData(arr);
+    }
 
-function setStartValue(v){
-  const el = document.getElementById("kStart");
-  el.textContent = euro(v);
-  el.dataset.v = num(v);
-  refreshKPI();
-}
+    setStartValue(entry.start);
+    document.getElementById("zbon").value = num(entry.zbon).toFixed(2);
+    document.getElementById("bank").value = num(entry.bank).toFixed(2);
+    setCounts(entry.counts || {});
+    recalc();
+    showHistory();
+    alert("Tag geöffnet.");
+  };
 
-function loadOrCreateDay(){
-  const date = document.getElementById("datum").value;
-  const schicht = document.getElementById("schicht").value;
-  if(!date){ alert("Bitte Datum wählen."); return; }
+  window.recalc = () => {
+    refreshKPI();
+  };
 
-  const arr = loadAll();
-  let entry = findEntry(arr, date, schicht);
+  window.saveAll = () => {
+    const date = document.getElementById("datum").value;
+    const schicht = document.getElementById("schicht").value;
+    if (!date) {
+      alert("Bitte Datum wählen.");
+      return;
+    }
 
-  if(!entry){
-    const start = lastEndeBefore(arr, date);
-    entry = makeNewEntry(date, schicht, start);
-    arr.push(entry);
+    const arr = loadAll();
+    let entry = findEntry(arr, date, schicht);
+
+    if (!entry) {
+      const start = lastEndeBefore(arr, date);
+      entry = makeNewEntry(date, schicht, start);
+      arr.push(entry);
+    }
+
+    const start = num(document.getElementById("kStart").dataset.v || 0);
+    const zbon = num(document.getElementById("zbon").value);
+    const ist = calcIst();
+    const bank = num(document.getElementById("bank").value);
+
+    const soll = start + zbon;
+    const diff = ist - soll;
+    const ende = ist - bank;
+
+    entry.start = start;
+    entry.zbon = zbon;
+    entry.ist = ist;
+    entry.bank = bank;
+    entry.ende = ende;
+    entry.diff = diff;
+    entry.counts = getCounts();
+
     saveAllData(arr);
-  }
+    refreshKPI();
+    showHistory();
+    alert("Gespeichert.");
+  };
 
-  // load into UI
-  setStartValue(entry.start);
-  document.getElementById("zbon").value = num(entry.zbon).toFixed(2);
-  document.getElementById("bank").value = num(entry.bank).toFixed(2);
-  setCounts(entry.counts || {});
-  recalc();
-  showHistory();
-  alert("Tag geöffnet.");
-}
+  window.resetInputs = () => {
+    for (const [id] of DENOMS) document.getElementById(id).value = 0;
+    recalc();
+  };
 
-function recalc(){
-  // Update IST from counts
-  refreshKPI();
-}
+  window.deleteDay = () => {
+    const date = document.getElementById("datum").value;
+    const schicht = document.getElementById("schicht").value;
+    if (!date) {
+      alert("Bitte Datum wählen.");
+      return;
+    }
+    if (!confirm("Wirklich löschen?")) return;
 
-function saveAll(){
-  const date = document.getElementById("datum").value;
-  const schicht = document.getElementById("schicht").value;
-  if(!date){ alert("Bitte Datum wählen."); return; }
+    const arr = loadAll();
+    const k = dayKey(date, schicht);
+    const out = arr.filter(x => x.key !== k);
+    saveAllData(out);
+    showHistory();
+    alert("Gelöscht.");
+  };
 
-  const arr = loadAll();
-  let entry = findEntry(arr, date, schicht);
+  // ===== HISTORY FUNCTIONS =====
+  const showHistory = () => {
+    const arr = loadAll().sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    if (arr.length === 0) {
+      document.getElementById("history").innerHTML = "Noch keine Einträge.";
+      return;
+    }
 
-  // if not exists, create with start carryover
-  if(!entry){
-    const start = lastEndeBefore(arr, date);
-    entry = makeNewEntry(date, schicht, start);
-    arr.push(entry);
-  }
-
-  const start = num(document.getElementById("kStart").dataset.v || 0);
-  const zbon = num(document.getElementById("zbon").value);
-  const ist  = calcIst();
-  const bank = num(document.getElementById("bank").value);
-
-  const soll = start + zbon;
-  const diff = ist - soll;
-  const ende = ist - bank;
-
-  entry.start = start;
-  entry.zbon = zbon;
-  entry.ist = ist;
-  entry.bank = bank;
-  entry.ende = ende;
-  entry.diff = diff;
-  entry.counts = getCounts();
-
-  saveAllData(arr);
-  refreshKPI();
-  showHistory();
-  alert("Gespeichert.");
-}
-
-function resetInputs(){
-  // only counting fields
-  for(const [id,val] of DENOMS) document.getElementById(id).value = 0;
-  recalc();
-}
-
-function deleteDay(){
-  const date = document.getElementById("datum").value;
-  const schicht = document.getElementById("schicht").value;
-  if(!date){ alert("Bitte Datum wählen."); return; }
-  if(!confirm("Wirklich löschen?")) return;
-
-  const arr = loadAll();
-  const k = dayKey(date, schicht);
-  const out = arr.filter(x => x.key !== k);
-  saveAllData(out);
-  showHistory();
-  alert("Gelöscht.");
-}
-
-/* =========================
-   HISTORY
-========================= */
-function showHistory(){
-  const arr = loadAll().sort((a,b)=> (b.ts||0)-(a.ts||0));
-  if(arr.length===0){
-    document.getElementById("history").innerHTML = "Noch keine Einträge.";
-    return;
-  }
-
-  let html = `<table>
-    <tr>
-      <th>Datum</th><th>Schicht</th>
-      <th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Diff</th><th>Ende</th>
-      <th>Aktion</th>
-    </tr>`;
-
-  for(const e of arr){
-    html += `<tr>
-      <td>${e.date}</td>
-      <td>${e.schicht}</td>
-      <td class="right">${euro(e.start)} €</td>
-      <td class="right">${euro(e.zbon)} €</td>
-      <td class="right">${euro(e.ist)} €</td>
-      <td class="right">${euro(e.bank)} €</td>
-      <td class="right" style="color:${num(e.diff)<0?'#c53030':'#2f855a'}">${euro(e.diff)} €</td>
-      <td class="right"><b>${euro(e.ende)} €</b></td>
-      <td>
-        <button class="ghost" onclick="openFromHistory('${e.key}')">Öffnen</button>
-      </td>
-    </tr>`;
-  }
-  html += `</table>`;
-  document.getElementById("history").innerHTML = html;
-}
-
-function openFromHistory(key){
-  const arr = loadAll();
-  const e = arr.find(x=>x.key===key);
-  if(!e){ alert("Eintrag nicht gefunden."); return; }
-
-  document.getElementById("datum").value = e.date;
-  document.getElementById("schicht").value = e.schicht;
-
-  setStartValue(e.start);
-  document.getElementById("zbon").value = num(e.zbon).toFixed(2);
-  document.getElementById("bank").value = num(e.bank).toFixed(2);
-  setCounts(e.counts || {});
-  recalc();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-/* =========================
-   PRINT
-========================= */
-function dayPrintableHTML(entry){
-  const soll = num(entry.start) + num(entry.zbon);
-  const diff = num(entry.diff);
-  const diffColor = diff < 0 ? "#c53030" : "#2f855a";
-  return `
-  <div style="font-family:Arial;padding:18px;">
-    <h2 style="margin:0;">Kassen-Zählprotokoll PRO – Sanremo</h2>
-    <div style="margin-top:6px;color:#666;">Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</div>
-    <hr/>
-    <table style="width:100%;border-collapse:collapse;">
+    let html = `<table>
       <tr>
-        <td><b>Datum:</b> ${entry.date}</td>
-        <td><b>Schicht:</b> ${entry.schicht}</td>
-      </tr>
-    </table>
-
-    <h3>Übersicht</h3>
-    <table style="width:100%;border-collapse:collapse;">
-      <tr>
-        <th style="border:1px solid #ccc;padding:6px;">Start (Übertrag)</th>
-        <th style="border:1px solid #ccc;padding:6px;">Z-Bon (Soll)</th>
-        <th style="border:1px solid #ccc;padding:6px;">Soll-Kasse</th>
-        <th style="border:1px solid #ccc;padding:6px;">Ist</th>
-        <th style="border:1px solid #ccc;padding:6px;">Differenz</th>
-        <th style="border:1px solid #ccc;padding:6px;">Einzahlung Bank</th>
-        <th style="border:1px solid #ccc;padding:6px;">Ende</th>
-      </tr>
-      <tr>
-        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(entry.start)} €</td>
-        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(entry.zbon)} €</td>
-        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(soll)} €</td>
-        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(entry.ist)} €</td>
-        <td style="border:1px solid #ccc;padding:6px;text-align:right;color:${diffColor};"><b>${euro(entry.diff)} €</b></td>
-        <td style="border:1px solid #ccc;padding:6px;text-align:right;">${euro(entry.bank)} €</td>
-        <td style="border:1px solid #ccc;padding:6px;text-align:right;"><b>${euro(entry.ende)} €</b></td>
-      </tr>
-    </table>
-
-    <h3>Gezählte Stückelung (Ist)</h3>
-    <table style="width:100%;border-collapse:collapse;">
-      <tr>
-        <th style="border:1px solid #ccc;padding:6px;">200</th>
-        <th style="border:1px solid #ccc;padding:6px;">100</th>
-        <th style="border:1px solid #ccc;padding:6px;">50</th>
-        <th style="border:1px solid #ccc;padding:6px;">20</th>
-        <th style="border:1px solid #ccc;padding:6px;">10</th>
-        <th style="border:1px solid #ccc;padding:6px;">5</th>
-        <th style="border:1px solid #ccc;padding:6px;">2€</th>
-        <th style="border:1px solid #ccc;padding:6px;">1€</th>
-        <th style="border:1px solid #ccc;padding:6px;">0,50</th>
-        <th style="border:1px solid #ccc;padding:6px;">0,20</th>
-        <th style="border:1px solid #ccc;padding:6px;">0,10</th>
-        <th style="border:1px solid #ccc;padding:6px;">0,05</th>
-        <th style="border:1px solid #ccc;padding:6px;">0,02</th>
-        <th style="border:1px solid #ccc;padding:6px;">0,01</th>
-      </tr>
-      <tr>
-        ${["n200","n100","n50","n20","n10","n5","m2","m1","m050","m020","m010","m005","m002","m001"]
-          .map(id => `<td style="border:1px solid #ccc;padding:6px;text-align:center;">${Number(entry.counts?.[id]||0)}</td>`).join("")}
-      </tr>
-    </table>
-
-    <div style="margin-top:28px;display:flex;justify-content:space-between;">
-      <div>Unterschrift: _______________________</div>
-      <div>Datum: _______________________</div>
-    </div>
-  </div>`;
-}
-
-function printDay(){
-  const date = document.getElementById("datum").value;
-  const schicht = document.getElementById("schicht").value;
-  if(!date){ alert("Bitte Datum wählen."); return; }
-  const arr = loadAll();
-  const e = findEntry(arr, date, schicht);
-  if(!e){ alert("Bitte erst speichern / Tag öffnen."); return; }
-
-  const w = window.open("", "_blank");
-  w.document.open();
-  w.document.write(dayPrintableHTML(e));
-  w.document.close();
-  w.focus();
-  w.print();
-}
-
-function buildMonthly(){
-  const month = document.getElementById("monthPick").value; // YYYY-MM
-  if(!month){ document.getElementById("monthlyOut").innerHTML="Wähle einen Monat."; return; }
-
-  const arr = loadAll().filter(e => (e.date||"").startsWith(month));
-  arr.sort((a,b)=> (a.ts||0)-(b.ts||0));
-
-  if(arr.length===0){
-    document.getElementById("monthlyOut").innerHTML = "Keine Einträge in diesem Monat.";
-    return;
-  }
-
-  let sumStart=0,sumZ=0,sumIst=0,sumBank=0,sumDiff=0,sumEnde=0;
-  let rows = `
-    <h4 style="margin:8px 0;">Eiscafé Sanremo – Monatsbericht (${month})</h4>
-    <table>
-      <tr>
-        <th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Diff</th><th>Ende</th>
+        <th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th>
+        <th>Ist</th><th>Bank</th><th>Diff</th><th>Ende</th><th>Aktion</th>
       </tr>`;
 
-  for(const e of arr){
-    sumStart += num(e.start);
-    sumZ += num(e.zbon);
-    sumIst += num(e.ist);
-    sumBank += num(e.bank);
-    sumDiff += num(e.diff);
-    sumEnde += num(e.ende);
-    rows += `
-      <tr>
+    for (const e of arr) {
+      const diff = num(e.diff);
+      html += `<tr>
         <td>${e.date}</td>
         <td>${e.schicht}</td>
         <td class="right">${euro(e.start)} €</td>
         <td class="right">${euro(e.zbon)} €</td>
         <td class="right">${euro(e.ist)} €</td>
         <td class="right">${euro(e.bank)} €</td>
-        <td class="right" style="color:${num(e.diff)<0?'#c53030':'#2f855a'}">${euro(e.diff)} €</td>
+        <td class="right" style="color:${diff < 0 ? '#c53030' : '#2f855a'}">${euro(diff)} €</td>
         <td class="right"><b>${euro(e.ende)} €</b></td>
+        <td><button class="ghost" onclick="openFromHistory('${e.key}')">Öffnen</button></td>
       </tr>`;
-  }
-  rows += `</table>
-    <div style="margin-top:10px" class="kpi">
-      <div class="pill">Summe Start: <b>${euro(sumStart)} €</b></div>
-      <div class="pill">Summe Z-Bon: <b>${euro(sumZ)} €</b></div>
-      <div class="pill">Summe Ist: <b>${euro(sumIst)} €</b></div>
-      <div class="pill">Summe Bank: <b>${euro(sumBank)} €</b></div>
-      <div class="pill">Summe Diff: <b>${euro(sumDiff)} €</b></div>
-      <div class="pill">Summe Ende: <b>${euro(sumEnde)} €</b></div>
-    </div>`;
-
-  document.getElementById("monthlyOut").innerHTML = rows;
-}
-
-function printMonthly(){
-  const month = document.getElementById("monthPick").value;
-  if(!month){ alert("Bitte Monat wählen."); return; }
-  buildMonthly();
-  const html = document.getElementById("monthlyOut").innerHTML;
-  if(!html || html.includes("Wähle einen Monat") || html.includes("Keine Einträge")){
-    alert("Kein Bericht zum Drucken.");
-    return;
-  }
-  const w = window.open("", "_blank");
-  w.document.open();
-  w.document.write(`<div style="font-family:Arial;padding:18px;">
-    <h2 style="margin:0;">Kassen-Zählprotokoll PRO – Sanremo</h2>
-    <div style="margin-top:6px;color:#666;">Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</div>
-    <hr/>${html}</div>`);
-  w.document.close();
-  w.focus();
-  w.print();
-}
-
-/* =========================
-   EXPORT / IMPORT
-========================= */
-function exportData(){
-  const data = localStorage.getItem(KEY_DATA) || "[]";
-  const blob = new Blob([data], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "sanremo_kasse_backup.json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importData(){
-  const inp = document.createElement("input");
-  inp.type = "file";
-  inp.accept = "application/json";
-  inp.onchange = () => {
-    const f = inp.files?.[0];
-    if(!f) return;
-    const r = new FileReader();
-    r.onload = () => {
-      try{
-        const parsed = JSON.parse(String(r.result||"[]"));
-        if(!Array.isArray(parsed)) throw new Error("no array");
-        saveAllData(parsed);
-        showHistory();
-        alert("Import OK.");
-      }catch(e){
-        alert("Import fehlgeschlagen. Datei ist ungültig.");
-      }
-    };
-    r.readAsText(f);
+    }
+    html += `</table>`;
+    document.getElementById("history").innerHTML = html;
   };
-  inp.click();
-}
 
-/* =========================
-   INIT
-========================= */
-function init(){
-  document.getElementById("datum").value = todayISO();
+  window.openFromHistory = (key) => {
+    const arr = loadAll();
+    const e = arr.find(x => x.key === key);
+    if (!e) {
+      alert("Eintrag nicht gefunden.");
+      return;
+    }
 
-  // Month default = current month
-  const d = new Date();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  document.getElementById("monthPick").value = `${d.getFullYear()}-${m}`;
+    document.getElementById("datum").value = e.date;
+    document.getElementById("schicht").value = e.schicht;
+    setStartValue(e.start);
+    document.getElementById("zbon").value = num(e.zbon).toFixed(2);
+    document.getElementById("bank").value = num(e.bank).toFixed(2);
+    setCounts(e.counts || {});
+    recalc();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  // bind inputs
-  document.querySelectorAll("#app input, #app select").forEach(el=>{
-    el.addEventListener("input", refreshKPI);
-    el.addEventListener("change", refreshKPI);
-  });
-  // denom inputs recalc
-  DENOMS.forEach(([id])=>{
-    document.getElementById(id).addEventListener("input", recalc);
-  });
+  // ===== PRINT FUNCTIONS - ENHANCED =====
+  const dayPrintableHTML = (entry, format = 'full') => {
+    const soll = num(entry.start) + num(entry.zbon);
+    const diff = num(entry.diff);
+    const diffColor = diff < 0 ? "#c53030" : "#2f855a";
+    
+    let content = '';
 
-  // start locked
-  setLocked(true);
-  showHistory();
-  setStartValue(0);
-  refreshKPI();
-}
-init();
+    // Header always included
+    const header = `
+      <div style="font-family:Arial;padding:18px;max-width:1200px;margin:0 auto;">
+        <h2 style="margin:0;color:#2b6cb0;">Kassen-Zählprotokoll PRO – Sanremo</h2>
+        <div style="margin-top:6px;color:#666;">Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</div>
+        <hr style="margin:15px 0;"/>
+        <table style="width:100%;margin-bottom:20px;">
+          <tr>
+            <td><b>Datum:</b> ${entry.date}</td>
+            <td><b>Schicht:</b> ${entry.schicht}</td>
+            <td><b>Uhrzeit:</b> ${new Date().toLocaleTimeString('de-DE')}</td>
+          </tr>
+        </table>
+    `;
+
+    // Full version
+    if (format === 'full') {
+      content = `
+        ${header}
+        <h3 style="color:#2b6cb0;">Übersicht</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+          <tr style="background:#f0f0f0;">
+            <th style="border:1px solid #ccc;padding:8px;">Start (Übertrag)</th>
+            <th style="border:1px solid #ccc;padding:8px;">Z-Bon (Soll)</th>
+            <th style="border:1px solid #ccc;padding:8px;">Soll-Kasse</th>
+            <th style="border:1px solid #ccc;padding:8px;">Ist</th>
+            <th style="border:1px solid #ccc;padding:8px;">Differenz</th>
+            <th style="border:1px solid #ccc;padding:8px;">Einzahlung Bank</th>
+            <th style="border:1px solid #ccc;padding:8px;">Ende</th>
+          </tr>
+          <tr>
+            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(entry.start)} €</td>
+            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(entry.zbon)} €</td>
+            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(soll)} €</td>
+            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(entry.ist)} €</td>
+            <td style="border:1px solid #ccc;padding:8px;text-align:right;color:${diffColor};font-weight:bold;">${euro(entry.diff)} €</td>
+            <td style="border:1px solid #ccc;padding:8px;text-align:right;">${euro(entry.bank)} €</td>
+            <td style="border:1px solid #ccc;padding:8px;text-align:right;font-weight:bold;">${euro(entry.ende)} €</td>
+          </tr>
+        </table>
+
+        <h3 style="color:#2b6cb0;">Gezählte Stückelung</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+          <tr style="background:#f0f0f0;">
+            <th style="border:1px solid #ccc;padding:6px;">200€</th><th style="border:1px solid #ccc;padding:6px;">100€</th>
+            <th style="border:1px solid #ccc;padding:6px;">50€</th><th style="border:1px solid #ccc;padding:6px;">20€</th>
+            <th style="border:1px solid #ccc;padding:6px;">10€</th><th style="border:1px solid #ccc;padding:6px;">5€</th>
+            <th style="border:1px solid #ccc;padding:6px;">2€</th><th style="border:1px solid #ccc;padding:6px;">1€</th>
+            <th style="border:1px solid #ccc;padding:6px;">0,50€</th><th style="border:1px solid #ccc;padding:6px;">0,20€</th>
+            <th style="border:1px solid #ccc;padding:6px;">0,10€</th><th style="border:1px solid #ccc;padding:6px;">0,05€</th>
+            <th style="border:1px solid #ccc;padding:6px;">0,02€</th><th style="border:1px solid #ccc;padding:6px;">0,01€</th>
+          </tr>
+          <tr>
+            ${["n200","n100","n50","n20","n10","n5","m2","m1","m050","m020","m010","m005","m002","m001"]
+              .map(id => `<td style="border:1px solid #ccc;padding:6px;text-align:center;">${Number(entry.counts?.[id]||0)}</td>`).join("")}
+          </tr>
+        </table>
+
+        <div style="margin-top:30px;display:flex;justify-content:space-between;">
+          <div>Unterschrift: _______________________</div>
+          <div>Datum: _______________________</div>
+        </div>
+      `;
+    }
+    
+    // Compact version
+    else if (format === 'compact') {
+      content = `
+        ${header}
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+          <tr><td><b>Start:</b> ${euro(entry.start)} €</td><td><b>Z-Bon:</b> ${euro(entry.zbon)} €</td></tr>
+          <tr><td><b>Ist:</b> ${euro(entry.ist)} €</td><td><b>Bank:</b> ${euro(entry.bank)} €</td></tr>
+          <tr><td colspan="2" style="font-size:16px;padding-top:10px;"><b>Ende:</b> ${euro(entry.ende)} € | <b>Differenz:</b> <span style="color:${diffColor};">${euro(entry.diff)} €</span></td></tr>
+        </table>
+        <div style="margin-top:20px;">Unterschrift: _______________________</div>
+      `;
+    }
+    
+    // Count only version
+    else if (format === 'count') {
+      content = `
+        ${header}
+        <h3 style="color:#2b6cb0;">Stückelung</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            ${["200","100","50","20","10","5","2€","1€","0,50","0,20","0,10","0,05","0,02","0,01"]
+              .map(v => `<th style="border:1px solid #ccc;padding:4px;">${v}</th>`).join("")}
+          </tr>
+          <tr>
+            ${["n200","n100","n50","n20","n10","n5","m2","m1","m050","m020","m010","m005","m002","m001"]
+              .map(id => `<td style="border:1px solid #ccc;padding:4px;text-align:center;">${Number(entry.counts?.[id]||0)}</td>`).join("")}
+          </tr>
+        </table>
+        <p style="margin-top:20px;"><b>Summe Ist:</b> ${euro(entry.ist)} €</p>
+        <div style="margin-top:20px;">Unterschrift: _______________________</div>
+      `;
+    }
+
+    return content + '</div>';
+  };
+
+  window.printDay = () => {
+    const date = document.getElementById("datum").value;
+    const schicht = document.getElementById("schicht").value;
+    const printOption = document.getElementById("printOption").value;
+    
+    if (!date) {
+      alert("Bitte Datum wählen.");
+      return;
+    }
+    
+    const arr = loadAll();
+    const e = findEntry(arr, date, schicht);
+    if (!e) {
+      alert("Bitte erst speichern / Tag öffnen.");
+      return;
+    }
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.open();
+    printWindow.document.write(dayPrintableHTML(e, printOption));
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 250);
+  };
+
+  window.previewDay = () => {
+    const date = document.getElementById("datum").value;
+    const schicht = document.getElementById("schicht").value;
+    const printOption = document.getElementById("printOption").value;
+    
+    if (!date) {
+      alert("Bitte Datum wählen.");
+      return;
+    }
+    
+    const arr = loadAll();
+    const e = findEntry(arr, date, schicht);
+    if (!e) {
+      alert("Bitte erst speichern / Tag öffnen.");
+      return;
+    }
+
+    const previewWindow = window.open("", "_blank");
+    previewWindow.document.open();
+    previewWindow.document.write(dayPrintableHTML(e, printOption));
+    previewWindow.document.close();
+    previewWindow.focus();
+  };
+
+  // ===== MONTHLY REPORT FUNCTIONS =====
+  window.buildMonthly = () => {
+    const month = document.getElementById("monthPick").value;
+    if (!month) {
+      document.getElementById("monthlyOut").innerHTML = "Wähle einen Monat.";
+      return;
+    }
+
+    const arr = loadAll().filter(e => (e.date || "").startsWith(month));
+    arr.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+
+    if (arr.length === 0) {
+      document.getElementById("monthlyOut").innerHTML = "Keine Einträge in diesem Monat.";
+      return;
+    }
+
+    let sumStart = 0, sumZ = 0, sumIst = 0, sumBank = 0, sumDiff = 0, sumEnde = 0;
+    let rows = `
+      <h4 style="margin:8px 0;">Eiscafé Sanremo – Monatsbericht (${month})</h4>
+      <table>
+        <tr>
+          <th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th>
+          <th>Ist</th><th>Bank</th><th>Diff</th><th>Ende</th>
+        </tr>`;
+
+    for (const e of arr) {
+      sumStart += num(e.start);
+      sumZ += num(e.zbon);
+      sumIst += num(e.ist);
+      sumBank += num(e.bank);
+      sumDiff += num(e.diff);
+      sumEnde += num(e.ende);
+      const diff = num(e.diff);
+      rows += `
+        <tr>
+          <td>${e.date}</td>
+          <td>${e.schicht}</td>
+          <td class="right">${euro(e.start)} €</td>
+          <td class="right">${euro(e.zbon)} €</td>
+          <td class="right">${euro(e.ist)} €</td>
+          <td class="right">${euro(e.bank)} €</td>
+          <td class="right" style="color:${diff < 0 ? '#c53030' : '#2f855a'}">${euro(diff)} €</td>
+          <td class="right"><b>${euro(e.ende)} €</b></td>
+        </tr>`;
+    }
+    
+    rows += `</table>
+      <div style="margin-top:10px" class="kpi">
+        <div class="pill">Summe Start: <b>${euro(sumStart)} €</b></div>
+        <div class="pill">Summe Z-Bon: <b>${euro(sumZ)} €</b></div>
+        <div class="pill">Summe Ist: <b>${euro(sumIst)} €</b></div>
+        <div class="pill">Summe Bank: <b>${euro(sumBank)} €</b></div>
+        <div class="pill">Summe Diff: <b>${euro(sumDiff)} €</b></div>
+        <div class="pill">Summe Ende: <b>${euro(sumEnde)} €</b></div>
+      </div>`;
+
+    document.getElementById("monthlyOut").innerHTML = rows;
+  };
+
+  window.printMonthly = () => {
+    const month = document.getElementById("monthPick").value;
+    if (!month) {
+      alert("Bitte Monat wählen.");
+      return;
+    }
+    buildMonthly();
+    const html = document.getElementById("monthlyOut").innerHTML;
+    if (!html || html.includes("Wähle einen Monat") || html.includes("Keine Einträge")) {
+      alert("Kein Bericht zum Drucken.");
+      return;
+    }
+    
+    const printWindow = window.open("", "_blank");
+    printWindow.document.open();
+    printWindow.document.write(`
+      <div style="font-family:Arial;padding:18px;">
+        <h2 style="margin:0;color:#2b6cb0;">Kassen-Zählprotokoll PRO – Sanremo</h2>
+        <div style="margin-top:6px;color:#666;">Eiscafé Sanremo · Bad Berleburg · Tel. 0176 72809926</div>
+        <hr/>${html}
+      </div>`);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 250);
+  };
+
+  // ===== EXPORT/IMPORT FUNCTIONS =====
+  window.exportData = () => {
+    const data = localStorage.getItem(KEY_DATA) || "[]";
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `sanremo_kasse_backup_${todayISO()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  window.importData = () => {
+    const inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = "application/json";
+    inp.onchange = () => {
+      const f = inp.files?.[0];
+      if (!f) return;
+      
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(String(reader.result || "[]"));
+          if (!Array.isArray(parsed)) throw new Error("No array");
+          saveAllData(parsed);
+          showHistory();
+          alert("Import erfolgreich.");
+        } catch (e) {
+          alert("Import fehlgeschlagen. Datei ist ungültig.");
+        }
+      };
+      reader.readAsText(f);
+    };
+    inp.click();
+  };
+
+  // ===== INITIALIZATION =====
+  const init = () => {
+    // Set default dates
+    document.getElementById("datum").value = todayISO();
+    
+    const d = new Date();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    document.getElementById("monthPick").value = `${d.getFullYear()}-${m}`;
+    document.getElementById("printOption").value = "full";
+
+    // Bind input events
+    document.querySelectorAll("#app input, #app select").forEach(el => {
+      el.addEventListener("input", refreshKPI);
+      el.addEventListener("change", refreshKPI);
+    });
+    
+    DENOMS.forEach(([id]) => {
+      document.getElementById(id).addEventListener("input", recalc);
+    });
+
+    // Start locked
+    setLocked(true);
+    showHistory();
+    setStartValue(0);
+    refreshKPI();
+  };
+
+  // Start the application
+  init();
 </script>
-
 </body>
 </html>
