@@ -1,1923 +1,840 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Sanremo Gelato – LMIV Etikett (Brother QL-810W)</title>
-  <style>
-    :root{
-      --bg:#0b1020; --card:#111a33; --line:#22305c;
-      --txt:#e9eefc; --mut:#b7c2ea; --acc:#4dd4ff; --ok:#33d17a; --bad:#ff6b6b;
-      --shadow: 0 16px 40px rgba(0,0,0,.35);
-      --r:18px; --pad:14px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:var(--sans);
-      background: radial-gradient(1200px 600px at 10% -10%, rgba(77,212,255,.22), transparent 50%),
-                  radial-gradient(900px 500px at 90% 0%, rgba(51,209,122,.20), transparent 55%),
-                  linear-gradient(180deg, #060a16 0%, #0b1020 60%, #070b15 100%);
-      color:var(--txt);
-    }
-    .wrap{max-width:1200px; margin:0 auto; padding:18px 14px 80px}
-    .top{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      position:sticky; top:0; z-index:20; padding:14px 0 10px;
-      backdrop-filter: blur(10px);
-      background: linear-gradient(180deg, rgba(7,10,20,.92) 0%, rgba(7,10,20,.65) 70%, transparent 100%);
-    }
-    .brand{display:flex; gap:12px; align-items:center;}
-    .logo{
-      width:44px; height:44px; border-radius:14px;
-      background: conic-gradient(from 200deg, #33d17a, #4dd4ff, #9b7bff, #33d17a);
-      box-shadow: var(--shadow);
-    }
-    .title h1{margin:0; font-size:16px; letter-spacing:.2px}
-    .title .sub{margin:2px 0 0; color:var(--mut); font-size:12px}
-    .actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-    button{
-      border:1px solid rgba(255,255,255,.08);
-      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
-      color:var(--txt); padding:10px 12px; border-radius:14px;
-      cursor:pointer; box-shadow: 0 10px 22px rgba(0,0,0,.22);
-      font-weight:650; font-size:13px;
-    }
-    button:hover{border-color: rgba(77,212,255,.35)}
-    .btnPrimary{
-      background: linear-gradient(180deg, rgba(77,212,255,.26), rgba(77,212,255,.12));
-      border-color: rgba(77,212,255,.35);
-    }
-    .btnOk{
-      background: linear-gradient(180deg, rgba(51,209,122,.26), rgba(51,209,122,.12));
-      border-color: rgba(51,209,122,.35);
-    }
-    .btnBad{
-      background: linear-gradient(180deg, rgba(255,107,107,.26), rgba(255,107,107,.12));
-      border-color: rgba(255,107,107,.35);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kassen-Zählprotokoll PRO – Sanremo</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --text:#111; --muted:#666;
+    --line:#e7e7ea; --radius:14px; --btn:#111; --btnText:#fff;
+    --danger:#8b1e1e; --ok:#1f7a3b;
+  }
+  *{box-sizing:border-box}
+  body{font-family:Arial, sans-serif;margin:0;background:var(--bg);color:var(--text)}
+  header{
+    position:sticky; top:0; z-index:10;
+    background:rgba(246,247,249,.92); backdrop-filter: blur(8px);
+    border-bottom:1px solid var(--line);
+    padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  header h1{margin:0;font-size:16px}
+  header .sub{font-size:12px;color:var(--muted)}
+  main{max-width:1100px;margin:0 auto;padding:14px;display:grid;gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+  .card h2{margin:0 0 10px 0;font-size:14px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:900px){.row{grid-template-columns:1fr}}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+  input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;font:inherit}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{border:1px solid #ccc;padding:7px;text-align:right}
+  th{background:#f0f0f0}
+  td:first-child, th:first-child{text-align:left}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:900px){.kpis{grid-template-columns:1fr 1fr}}
+  .kpi{border:1px solid var(--line);border-radius:14px;padding:10px}
+  .kpi .v{font-weight:900;font-size:16px}
+  .kpi .l{font-size:12px;color:var(--muted)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .btn{border:1px solid #111;background:var(--btn);color:var(--btnText);border-radius:12px;padding:10px 12px;font-weight:900;cursor:pointer}
+  .btn.alt{background:#fff;color:#111;border-color:var(--line)}
+  .btn.danger{background:var(--danger);border-color:var(--danger)}
+  .btn.ok{background:var(--ok);border-color:var(--ok)}
+  .small{font-size:12px;color:var(--muted);line-height:1.35}
+  .hidden{display:none !important}
 
-    .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 14px;}
-    .tab{
-      padding:10px 12px; border-radius:999px; cursor:pointer; user-select:none;
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--mut);
-      background: rgba(255,255,255,.04);
-      font-weight:700; font-size:13px;
-    }
-    .tab.active{
-      color:var(--txt);
-      border-color: rgba(77,212,255,.45);
-      background: rgba(77,212,255,.12);
-    }
+  /* Modal */
+  .modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:14px;z-index:999}
+  .modal{max-width:980px;width:100%;background:#fff;border-radius:16px;border:1px solid #ddd;overflow:hidden}
+  .modalHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid #eee}
+  .modalHeader h3{margin:0;font-size:14px}
+  .modalBody{padding:12px 14px}
+  .modalFooter{padding:12px 14px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
 
-    .grid{display:grid; gap:14px; grid-template-columns: 1.05fr .95fr; align-items:start;}
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-      .actions{justify-content:flex-start}
-    }
-
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: var(--r);
-      padding: var(--pad);
-      box-shadow: var(--shadow);
-    }
-    .card h2{margin:0 0 10px; font-size:14px}
-    .mut{color:var(--mut)}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    .row > *{flex:1}
-    label{display:block; font-size:12px; color:var(--mut); margin:0 0 6px}
-    input, select, textarea{
-      width:100%; padding:11px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(10,14,26,.65);
-      color:var(--txt);
-      outline:none;
-    }
-    textarea{min-height:90px; resize:vertical}
-    input:focus, select:focus, textarea:focus{border-color: rgba(77,212,255,.5)}
-    .hr{height:1px; background: rgba(255,255,255,.08); margin:12px 0}
-
-    .list{display:flex; flex-direction:column; gap:10px; max-height: 520px; overflow:auto; padding-right:4px;}
-    .item{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:10px;
-      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
-    }
-    .item .meta{flex:1; min-width:0}
-    .item .meta .name{font-weight:850; font-size:13px}
-    .item .meta .small{font-size:12px; color:var(--mut); margin-top:2px}
-    .miniBtns{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-    .miniBtns button{padding:8px 10px; font-size:12px; border-radius:12px; box-shadow:none}
-
-    .table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      overflow:hidden;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-    }
-    .table th, .table td{
-      padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      font-size:12px;
-      text-align:left;
-      vertical-align:top;
-    }
-    .table th{color:var(--mut); font-weight:800; background: rgba(255,255,255,.03)}
-    .table tr:last-child td{border-bottom:none}
-    .mono{font-family:var(--mono)}
-    .hint{
-      padding:10px 12px; border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      color:var(--mut);
-      font-size:12px;
-    }
-    .toast{
-      position:fixed; left:50%; bottom:14px; transform:translateX(-50%);
-      background: rgba(17,26,51,.92);
-      border:1px solid rgba(255,255,255,.12);
-      color:var(--txt); padding:10px 12px;
-      border-radius:14px; box-shadow: var(--shadow);
-      font-size:13px; display:none; z-index:999;
-      max-width: min(720px, 92vw);
-    }
-    .hidden{display:none !important;}
-
-    /* RIGHT sticky */
-    .labelCard{position:sticky; top:92px;}
-    @media (max-width:980px){ .labelCard{position:relative; top:auto} }
-
-    /* LABEL PREVIEW */
-    .labelWrap{
-      display:flex; justify-content:center; align-items:center;
-      padding:10px; border-radius:16px;
-      background: rgba(0,0,0,.25);
-      border:1px dashed rgba(255,255,255,.16);
-      overflow:auto;
-    }
-    .label{
-      background:#fff; color:#000;
-      border-radius:7px;
-      box-shadow: 0 14px 30px rgba(0,0,0,.35);
-      overflow:hidden;
-      position:relative;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    /* Professional label layout - FIXED ZONES */
-    .lbl{
-      width:100%; height:100%;
-      position:relative;
-      padding: 2.6mm 2.6mm 20mm 2.6mm; /* Bottom area reserved for barcode */
-      padding-right: 16mm;            /* Right for QR */
-      display:flex;
-      flex-direction:column;
-    }
-    .labelContent{
-      flex:1;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-    }
-    .lblTitle{
-      font-weight:900; letter-spacing:.2px;
-      font-size: 13.2pt;
-      line-height:1.05;
-      margin:0;
-    }
-    .lblMeta{
-      margin-top:1mm;
-      font-size:8.2pt;
-      line-height:1.2;
-      display:flex; gap:6mm; flex-wrap:wrap;
-      align-items:baseline;
-    }
-    .lblMeta b{font-weight:900}
-    .lblLine{margin-top:1mm; font-size:7.6pt; line-height:1.25;}
-    .lblLine b{font-weight:900}
-    .lblCols{
-      margin-top:1.6mm;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:2.2mm;
-      align-items:start;
-    }
-    .nvTitle{font-size:7.6pt; font-weight:900; margin:0 0 .8mm 0;}
-    .nv{
-      width:100%;
-      border-collapse:collapse;
-      font-size:7.2pt;
-    }
-    .nv th,.nv td{
-      border:0.3mm solid #000;
-      padding:0.6mm 0.8mm;
-      vertical-align:top;
-    }
-    .nv th{text-align:left; width:62%}
-    .rightBlock{font-size:7.2pt; line-height:1.25;}
-    .rightBlock b{font-weight:900}
-    .warnLine{
-      margin-top:1.2mm;
-      font-size:7.1pt;
-      font-weight:900;
-    }
-
-    /* FIXED BOTTOM AREA: barcode + lot/mhd */
-    .fixedBottom{
-      position:absolute;
-      left:2.6mm; right:2.6mm; bottom:2.2mm;
-      height:18mm;
-      display:flex;
-      gap:3mm;
-      align-items:flex-end;
-      justify-content:space-between;
-      border-top:0.3mm dotted #ccc;
-      padding-top:1mm;
-    }
-    .barcodeBox{
-      flex:1;
-      min-width:0;
-      height:14mm;
-      display:flex;
-      align-items:flex-end;
-    }
-    .barcodeBox svg{ width:100%; height:14mm; }
-    .lotBox{
-      width:44%;
-      min-width:40mm;
-      font-size:7.1pt;
-      line-height:1.2;
-      text-align:right;
-    }
-
-    /* QR */
-    .qrBox{
-      position:absolute;
-      top:2.2mm;
-      right:2.2mm;
-      width:13mm;
-      height:13mm;
-      border:0.3mm solid #000;
-      background:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-    }
-    .qrBox svg{width:100%; height:100%}
-
-    /* size tweaks */
-    .label.size38x90 .lbl{ padding-bottom: 18mm; padding-right: 14mm; }
-    .label.size38x90 .lblTitle{ font-size:12.6pt; }
-    .label.size38x90 .lblMeta{ font-size:8.0pt; }
-    .label.size38x90 .lblLine{ font-size:7.2pt; }
-    .label.size38x90 .nv{ font-size:6.9pt; }
-    .label.size38x90 .lotBox{ width:46%; }
-    .label.size38x90 .qrBox{ width:11mm; height:11mm; }
-    .label.size38x90 .fixedBottom{ height:16mm; }
-
-    .label.size62x100 .lblTitle{ font-size:14.2pt; }
-    .label.size62x100 .lblMeta{ font-size:8.6pt; }
-    .label.size62x100 .lblLine{ font-size:7.8pt; }
-    .label.size62x100 .nv{ font-size:7.4pt; }
-    .label.size62x100 .fixedBottom{ height:20mm; }
-
-  </style>
+  /* Print */
+  @media print{
+    header, .noPrint{display:none !important}
+    body{background:#fff}
+    main{padding:0}
+    .card{border:none}
+    .modalOverlay{display:none !important}
+  }
+</style>
 </head>
-
 <body>
-  <div class="wrap">
 
-    <div class="top">
-      <div class="brand">
-        <div class="logo"></div>
-        <div class="title">
-          <h1>Sanremo Gelato – LMIV Etikett</h1>
-          <div class="sub">Brother QL-810W • DK11208 (38×90) / DK11202 (62×100) • EAN + QR real</div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btnPrimary" id="btnExport">Backup exportieren</button>
-        <button class="btnPrimary" id="btnImport">Backup importieren</button>
-        <input id="fileImport" type="file" accept="application/json" class="hidden" />
-        <button class="btnOk" id="btnPrint">Etikett drucken</button>
-      </div>
-    </div>
-
-    <div class="tabs" id="tabs">
-      <div class="tab active" data-tab="ingredients">Zutaten / Produkte</div>
-      <div class="tab" data-tab="recipes">Rezept / Etikett</div>
-      <div class="tab" data-tab="settings">Betrieb / Standardtexte</div>
-    </div>
-
-    <div class="grid">
-      <!-- LEFT -->
-      <div id="leftCol">
-
-        <!-- TAB: INGREDIENTS -->
-        <div class="card" id="tab-ingredients">
-          <h2>Zutaten-Bibliothek</h2>
-
-          <div class="row">
-            <div>
-              <label>Suche</label>
-              <input id="ingSearch" placeholder="z.B. Milch, Pistazie, Variegato, Glukose, Lemon Piu..." />
-            </div>
-            <div>
-              <label>Kategorie</label>
-              <select id="ingFilterCat"></select>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="row">
-            <div>
-              <label>Name</label>
-              <input id="ingName" placeholder="z.B. Pistazienpaste 100%" />
-            </div>
-            <div>
-              <label>Kategorie</label>
-              <select id="ingCat"></select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Allergene (GROSS, Komma)</label>
-              <input id="ingAll" placeholder="z.B. MILCH, SOJA, SCHALENFRÜCHTE" />
-            </div>
-            <div>
-              <label>Zusatzstoffe / E-Nummern (Komma)</label>
-              <input id="ingAdd" placeholder="z.B. E471, E410, E129" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Zutatenliste (für dieses Produkt)</label>
-              <textarea id="ingText" placeholder="z.B. Dextrose, Glukosesirup, ... (wie am Lieferantenetikett)"></textarea>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Hinweis (optional)</label>
-              <input id="ingNote" placeholder="z.B. Kann Aktivität und Aufmerksamkeit bei Kindern beeinträchtigen." />
-            </div>
-          </div>
-
-          <div class="hr"></div>
-          <div class="hint">
-            <b>Tipp:</b> Für Pasten/Variegato/Pulver nutze die Nährwerte vom Lieferantenetikett (pro 100 g).
-            Für Obst/Wasser kannst du auch 0 lassen und später ergänzen.
-          </div>
-
-          <div class="hr"></div>
-
-          <h2>Nährwerte pro 100 g (vom Lieferanten)</h2>
-          <div class="row">
-            <div><label>Energie (kJ)</label><input id="n_kj" type="number" step="0.1" value="0"></div>
-            <div><label>Energie (kcal)</label><input id="n_kcal" type="number" step="0.1" value="0"></div>
-          </div>
-          <div class="row">
-            <div><label>Fett (g)</label><input id="n_fat" type="number" step="0.1" value="0"></div>
-            <div><label>davon gesättigt (g)</label><input id="n_sat" type="number" step="0.1" value="0"></div>
-          </div>
-          <div class="row">
-            <div><label>Kohlenhydrate (g)</label><input id="n_carb" type="number" step="0.1" value="0"></div>
-            <div><label>davon Zucker (g)</label><input id="n_sugar" type="number" step="0.1" value="0"></div>
-          </div>
-          <div class="row">
-            <div><label>Eiweiß (g)</label><input id="n_protein" type="number" step="0.1" value="0"></div>
-            <div><label>Salz (g)</label><input id="n_salt" type="number" step="0.01" value="0"></div>
-          </div>
-          <div class="row">
-            <div><label>Ballaststoffe (g) (optional)</label><input id="n_fiber" type="number" step="0.1" value="0"></div>
-            <div style="display:flex; gap:8px; align-items:flex-end; justify-content:flex-end">
-              <button class="btnOk" id="btnSaveIng">Speichern</button>
-              <button class="btnBad" id="btnResetIng">Neu</button>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h2>Liste</h2>
-          <div class="list" id="ingList"></div>
-        </div>
-
-        <!-- TAB: RECIPES -->
-        <div class="card hidden" id="tab-recipes">
-          <h2>Rezept (Gelato) + Etikett</h2>
-
-          <div class="row">
-            <div>
-              <label>Rezeptname / Sorte</label>
-              <input id="r_name" placeholder="z.B. Erdbeere, Mango, Pistazie..." />
-            </div>
-            <div>
-              <label>Nettofüllmenge (Barcode automatisch)</label>
-              <select id="r_netto">
-                <option value="170">170 g (EAN klein: 4170000057765)</option>
-                <option value="750">750 g (EAN groß: 4170000057949)</option>
-                <option value="1000">1000 g (ohne EAN)</option>
-                <option value="custom">Eigen (ohne EAN)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row" id="customNetRow" style="display:none;">
-            <div>
-              <label>Eigen Netto (Text)</label>
-              <input id="r_netto_custom" placeholder="z.B. 500 g / 0,5 kg / 240 ml" />
-            </div>
-            <div></div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Charge / Lot</label>
-              <input id="r_lot" placeholder="z.B. L2513681" />
-            </div>
-            <div>
-              <label>MHD</label>
-              <input id="r_mhd" type="date" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>QR Link (optional) – real QR</label>
-              <input id="r_qr" placeholder="https://..." />
-            </div>
-            <div>
-              <label>Etikettgröße</label>
-              <select id="labelSize">
-                <option value="38x90">DK11208 – 38×90 mm</option>
-                <option value="62x100">DK11202 – 62×100 mm</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h2>Zutaten ins Rezept</h2>
-          <div class="row">
-            <div>
-              <label>Zutat wählen</label>
-              <select id="r_pick"></select>
-            </div>
-            <div>
-              <label>Menge</label>
-              <input id="r_qty" type="number" step="0.1" value="100" />
-            </div>
-            <div>
-              <label>Einheit</label>
-              <select id="r_unit">
-                <option value="g">g</option>
-                <option value="ml">ml</option>
-              </select>
-            </div>
-            <div style="flex:0">
-              <label>&nbsp;</label>
-              <button class="btnOk" id="btnAddToRecipe">Hinzufügen</button>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h2>Rezeptliste</h2>
-          <table class="table" id="recipeTable">
-            <thead>
-              <tr>
-                <th style="width:42%">Zutat</th>
-                <th style="width:14%">Menge</th>
-                <th style="width:10%">Einheit</th>
-                <th style="width:26%">Hinweise</th>
-                <th style="width:8%"></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-
-          <div class="hr"></div>
-
-          <div class="row">
-            <div class="hint">
-              <b>Automatik:</b> Zutatenliste (absteigend nach Menge), Allergene + Zusatzstoffe werden gesammelt.
-              <br><b>Produktart:</b> Wenn keine MILCH/Sahne/Magermilch im Rezept → <b>Fruchteis</b>.
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="row">
-            <button class="btnOk" id="btnSaveRecipe">Rezept speichern</button>
-            <button class="btnBad" id="btnNewRecipe">Neues Rezept</button>
-            <button class="btnPrimary" id="btnLoadRecipe">Rezept laden</button>
-            <select id="recipePicker"></select>
-          </div>
-        </div>
-
-        <!-- TAB: SETTINGS -->
-        <div class="card hidden" id="tab-settings">
-          <h2>Betrieb / Standard (LMIV)</h2>
-
-          <div class="row">
-            <div>
-              <label>Verkehrsbezeichnung (Standard Speiseeis)</label>
-              <input id="s_vbz" placeholder="Speiseeis" />
-            </div>
-            <div>
-              <label>Verkehrsbezeichnung (Standard Fruchteis)</label>
-              <input id="s_vbz_fruit" placeholder="Fruchteis" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Aufbewahrung (Standard)</label>
-              <input id="s_storage" placeholder="Tiefgekühlt bei -18°C lagern." />
-            </div>
-            <div>
-              <label>Fußzeile (optional)</label>
-              <input id="s_footer" placeholder="Nach dem Auftauen nicht wieder einfrieren." />
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Kann Spuren enthalten (optional)</label>
-              <input id="s_traces" placeholder="z.B. Soja, Ei, Mandeln, Haselnüsse, Walnüsse, Pistazien" />
-            </div>
-            <div></div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Firma</label>
-              <input id="s_company" />
-            </div>
-            <div>
-              <label>Adresse</label>
-              <input id="s_addr" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>Telefon</label>
-              <input id="s_phone" />
-            </div>
-            <div>
-              <label>E-Mail</label>
-              <input id="s_email" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="hint">
-              <b>Barcode:</b> 170 g → EAN 4170000057765, 750 g → EAN 4170000057949 (automatisch).
-            </div>
-            <div style="display:flex; gap:8px; align-items:flex-end; justify-content:flex-end">
-              <button class="btnOk" id="btnSaveSettings">Speichern</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- RIGHT -->
-      <div>
-        <div class="card labelCard">
-          <h2>Etikett Vorschau (Brother QL-810W)</h2>
-
-          <div class="row">
-            <div>
-              <label>Schriftgröße</label>
-              <select id="fontScale">
-                <option value="1">Normal</option>
-                <option value="0.97">Etwas kleiner</option>
-                <option value="0.93">Klein</option>
-              </select>
-            </div>
-            <div>
-              <label>Barcode anzeigen</label>
-              <select id="showBarcode">
-                <option value="yes">Ja</option>
-                <option value="no">Nein</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="labelWrap">
-            <div class="label size38x90" id="labelPreview" aria-label="label">
-              <div class="lbl" id="labelInner"></div>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="hint" id="labelHint">
-            Druck: „Etikett drucken“ → Brother QL-810W → Skalierung 100% → Rand 0.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
+<header>
+  <div>
+    <h1>Eiscafé Sanremo – Kassen-Zählprotokoll PRO</h1>
+    <div class="sub">Fürst-Richard-Str. 1 · 57319 Bad Berleburg · Tel: 0176 72809926</div>
   </div>
+  <div class="actions noPrint">
+    <button class="btn alt" id="btnMonthly">Monatsbericht</button>
+    <button class="btn alt" id="btnLock">Sperren</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- LOCK -->
+  <section class="card" id="lockCard">
+    <h2>PIN eingeben</h2>
+    <div class="row">
+      <div>
+        <label>PIN</label>
+        <input id="pin" type="password" inputmode="numeric" placeholder="••••" maxlength="12" />
+        <div class="small">Nur du kannst speichern, drucken und Berichte öffnen.</div>
+      </div>
+      <div style="display:flex; align-items:flex-end; justify-content:flex-end;">
+        <button class="btn" id="btnUnlock">Entsperren</button>
+      </div>
+    </div>
+    <div class="small">Standard-PIN: <b>3515</b> (kannst du später ändern)</div>
+  </section>
+
+  <!-- APP -->
+  <section class="card hidden" id="appCard">
+    <h2>1) Basis</h2>
+    <div class="row">
+      <div>
+        <label>Datum</label>
+        <input id="datum" type="date" />
+        <div class="small">Beim Datum-Wechsel wird der <b>Kassenanfangsbestand automatisch</b> vom Vortag übernommen (Endbestand).</div>
+      </div>
+      <div>
+        <label>Schicht</label>
+        <select id="schicht">
+          <option value="Tag">Tag</option>
+          <option value="Abend">Abend</option>
+        </select>
+      </div>
+      <div>
+        <label>Kassenanfangsbestand (automatisch vom Vortag)</label>
+        <input id="start" type="number" step="0.01" value="0" />
+      </div>
+      <div>
+        <label>Z-Bon / Tagesumsatz</label>
+        <input id="zbon" type="number" step="0.01" value="0" />
+      </div>
+    </div>
+
+    <div class="actions noPrint" style="margin-top:10px; justify-content:flex-start">
+      <button class="btn alt" id="btnPrevDay">Vortag übernehmen</button>
+      <button class="btn alt" id="btnResetCounts">Zählfelder leeren</button>
+      <button class="btn alt" id="btnChangePin">PIN ändern</button>
+    </div>
+    <div class="small noPrint" id="prevInfo"></div>
+  </section>
+
+  <section class="card hidden" id="countCard">
+    <h2>2) Kassen-Zählung (IST) – alle Stückelungen</h2>
+    <div class="small noPrint">Tipp: Schreib die Anzahl rein und drück <b>Tab</b>. Summe wird sofort berechnet.</div>
+    <table id="tblIst" class="noPrint">
+      <thead><tr><th>Stückelung</th><th>Anzahl</th><th>Summe</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card hidden" id="bankCard">
+    <h2>3) Bankeinzahlung (detailliert nach Scheinen)</h2>
+    <div class="small noPrint">Hier trägst du ein, welche Scheine du zur Bank bringst. Das wird automatisch als <b>Entnahme</b> gerechnet.</div>
+    <table id="tblBank" class="noPrint">
+      <thead><tr><th>Schein</th><th>Anzahl</th><th>Summe</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card hidden" id="resultCard">
+    <h2>4) Ergebnis</h2>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="kIst">0,00 €</div><div class="l">IST-Bestand (gezählt)</div></div>
+      <div class="kpi"><div class="v" id="kBank">0,00 €</div><div class="l">Bankeinzahlung (Entnahme)</div></div>
+      <div class="kpi"><div class="v" id="kSoll">0,00 €</div><div class="l">SOLL (Start + Z-Bon − Bank)</div></div>
+      <div class="kpi"><div class="v" id="kDiff">0,00 €</div><div class="l">Differenz (IST − SOLL)</div></div>
+    </div>
+
+    <div class="kpis" style="margin-top:10px">
+      <div class="kpi"><div class="v" id="kEnde">0,00 €</div><div class="l">Endbestand (IST − Bank) → Start morgen</div></div>
+      <div class="kpi"><div class="v" id="kKey">—</div><div class="l">Eintrag-Schlüssel</div></div>
+      <div class="kpi"><div class="v" id="kSaved">—</div><div class="l">Letztes Speichern</div></div>
+      <div class="kpi"><div class="v" id="kStatus">Bereit</div><div class="l">Status</div></div>
+    </div>
+
+    <div class="actions noPrint" style="margin-top:10px">
+      <button class="btn alt" id="btnLoad">Laden</button>
+      <select id="history"></select>
+      <button class="btn ok" id="btnSave">Speichern</button>
+      <button class="btn" id="btnPrint">Drucken</button>
+      <button class="btn danger" id="btnDelete">Löschen</button>
+    </div>
+    <div class="small noPrint">Historie wird lokal im Browser gespeichert. Für Backup kannst du monatlich drucken.</div>
+  </section>
+
+</main>
+
+<!-- MONTHLY MODAL -->
+<div class="modalOverlay hidden" id="monthlyModal">
+  <div class="modal">
+    <div class="modalHeader">
+      <h3>Monatsbericht</h3>
+      <button class="btn alt" id="btnCloseMonthly">Schließen</button>
+    </div>
+    <div class="modalBody">
+      <div class="row">
+        <div>
+          <label>Monat</label>
+          <input type="month" id="monthPick" />
+          <div class="small">Zeigt alle gespeicherten Tage im ausgewählten Monat.</div>
+        </div>
+        <div style="display:flex; align-items:flex-end; justify-content:flex-end; gap:10px; flex-wrap:wrap">
+          <button class="btn alt" id="btnBuildMonthly">Erstellen</button>
+          <button class="btn" id="btnPrintMonthly">Bericht drucken</button>
+        </div>
+      </div>
+
+      <div id="monthlyOut" style="margin-top:12px"></div>
+    </div>
+    <div class="modalFooter">
+      <button class="btn alt" id="btnCloseMonthly2">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN CHANGE MODAL -->
+<div class="modalOverlay hidden" id="pinModal">
+  <div class="modal" style="max-width:560px">
+    <div class="modalHeader">
+      <h3>PIN ändern</h3>
+      <button class="btn alt" id="btnClosePin">Schließen</button>
+    </div>
+    <div class="modalBody">
+      <div class="row">
+        <div>
+          <label>Alter PIN</label>
+          <input id="oldPin" type="password" inputmode="numeric" />
+        </div>
+        <div>
+          <label>Neuer PIN</label>
+          <input id="newPin" type="password" inputmode="numeric" />
+        </div>
+      </div>
+      <div class="small" style="margin-top:8px">Tipp: nimm 4–6 Ziffern.</div>
+    </div>
+    <div class="modalFooter">
+      <button class="btn" id="btnSavePin">Speichern</button>
+      <button class="btn alt" id="btnClosePin2">Abbrechen</button>
+    </div>
+  </div>
+</div>
 
 <script>
-/* ===================== DATA MODEL ===================== */
-const STORAGE_KEY = "sanremo_lmiv_gelato_v5";
-const EAN_170 = "4170000057765";
-const EAN_750 = "4170000057949";
+(() => {
+  // ---------- Config / Storage ----------
+  const KEY_DATA = "sanremo_kasse_pro_v1";
+  const KEY_PIN  = "sanremo_kasse_pin_v1";
+  const DEFAULT_PIN = "3515";
 
-const DEFAULT_STATE = {
-  settings: {
-    vbz: "Speiseeis",
-    vbz_fruit: "Fruchteis",
-    storage: "Tiefgekühlt bei -18°C lagern.",
-    footer: "Nach dem Auftauen nicht wieder einfrieren.",
-    traces: "Soja, Ei, Mandeln, Haselnüsse, Walnüsse, Pistazien",
-    company: "Eiscafé Sanremo",
-    addr: "57319 Bad Berleburg, Deutschland",
-    phone: "0176 72809926",
-    email: "paulo.sanremo@web.de"
-  },
-  ingredients: [],
-  recipes: [],
-  current: {
-    editingIngId: null,
-    editingRecipeId: null,
-    recipe: {
-      name: "",
-      netto: "170",
-      netto_custom: "",
-      lot: "",
-      mhd: "",
-      qr: "",
-      items: []
-    }
+  const IST_DENOMS = [200,100,50,20,10,5,2,1,0.50,0.20,0.10,0.05,0.02,0.01];
+  const BANK_DENOMS = [200,100,50,20,10,5];
+
+  const $ = (id)=>document.getElementById(id);
+
+  // UI
+  const lockCard = $("lockCard");
+  const appCard = $("appCard");
+  const countCard = $("countCard");
+  const bankCard = $("bankCard");
+  const resultCard = $("resultCard");
+
+  const pin = $("pin");
+  const btnUnlock = $("btnUnlock");
+  const btnLock = $("btnLock");
+
+  const datum = $("datum");
+  const schicht = $("schicht");
+  const start = $("start");
+  const zbon = $("zbon");
+  const prevInfo = $("prevInfo");
+
+  const tblIstBody = $("tblIst").querySelector("tbody");
+  const tblBankBody = $("tblBank").querySelector("tbody");
+
+  const kIst = $("kIst");
+  const kBank = $("kBank");
+  const kSoll = $("kSoll");
+  const kDiff = $("kDiff");
+  const kEnde = $("kEnde");
+  const kKey = $("kKey");
+  const kSaved = $("kSaved");
+  const kStatus = $("kStatus");
+
+  const history = $("history");
+  const btnSave = $("btnSave");
+  const btnPrint = $("btnPrint");
+  const btnLoad = $("btnLoad");
+  const btnDelete = $("btnDelete");
+  const btnResetCounts = $("btnResetCounts");
+  const btnPrevDay = $("btnPrevDay");
+
+  // Monthly
+  const btnMonthly = $("btnMonthly");
+  const monthlyModal = $("monthlyModal");
+  const btnCloseMonthly = $("btnCloseMonthly");
+  const btnCloseMonthly2 = $("btnCloseMonthly2");
+  const monthPick = $("monthPick");
+  const btnBuildMonthly = $("btnBuildMonthly");
+  const btnPrintMonthly = $("btnPrintMonthly");
+  const monthlyOut = $("monthlyOut");
+
+  // PIN modal
+  const btnChangePin = $("btnChangePin");
+  const pinModal = $("pinModal");
+  const btnClosePin = $("btnClosePin");
+  const btnClosePin2 = $("btnClosePin2");
+  const btnSavePin = $("btnSavePin");
+  const oldPin = $("oldPin");
+  const newPin = $("newPin");
+
+  // Inputs references
+  const istInputs = new Map();  // denom -> input
+  const bankInputs = new Map(); // denom -> input
+
+  // ---------- Helpers ----------
+  function euro(n){
+    const v = (Math.round((n + Number.EPSILON)*100)/100).toFixed(2);
+    return v.replace(".", ",") + " €";
   }
-};
-
-function uid(prefix="id"){
-  return prefix + "_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
-}
-function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
-
-function loadState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return deepClone(DEFAULT_STATE);
-    const s = JSON.parse(raw);
-    return {
-      ...deepClone(DEFAULT_STATE),
-      ...s,
-      settings: {...deepClone(DEFAULT_STATE.settings), ...(s.settings||{})},
-      current: {...deepClone(DEFAULT_STATE.current), ...(s.current||{})}
-    };
-  }catch(e){
-    console.error(e);
-    return deepClone(DEFAULT_STATE);
+  function numVal(el){
+    const v = parseFloat(String(el.value).replace(",", "."));
+    return isFinite(v) ? v : 0;
   }
-}
-function saveState(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-let state = loadState();
+  function getPin(){ return localStorage.getItem(KEY_PIN) || DEFAULT_PIN; }
 
-/* ===================== SEED INGREDIENTS ===================== */
-function ensureSeed(){
-  if(state.ingredients && state.ingredients.length>0) return;
-
-  const seed = [
-    { id:"i_milk_uht_35", name:"H-Vollmilch 3,5% (UHT)", cat:"Milch & Sahne", allergens:"MILCH", additives:"",
-      ingredientsText:"Vollmilch (MILCH).", note:"",
-      n:{kj:256,kcal:62,fat:3.5,sat:2.2,carb:4.8,sugar:4.8,protein:3.4,salt:0.10,fiber:0}},
-    { id:"i_cream_33", name:"Schlagsahne 33% Fett", cat:"Milch & Sahne", allergens:"MILCH", additives:"",
-      ingredientsText:"Schlagsahne (MILCH).", note:"",
-      n:{kj:1330,kcal:322,fat:33,sat:22,carb:3.3,sugar:3.3,protein:2.4,salt:0.08,fiber:0}},
-    { id:"i_skim_milk_powder", name:"Magermilchpulver", cat:"Milch & Sahne", allergens:"MILCH", additives:"",
-      ingredientsText:"Magermilchpulver (MILCH).", note:"",
-      n:{kj:1510,kcal:362,fat:1,sat:0.7,carb:52,sugar:52,protein:36,salt:0.5,fiber:0}},
-    { id:"i_sugar", name:"Zucker (Saccharose)", cat:"Zucker & Süßung", allergens:"", additives:"",
-      ingredientsText:"Zucker.", note:"",
-      n:{kj:1700,kcal:400,fat:0,sat:0,carb:100,sugar:100,protein:0,salt:0,fiber:0}},
-    { id:"i_dextrose", name:"Dextrose", cat:"Zucker & Süßung", allergens:"", additives:"",
-      ingredientsText:"Dextrose.", note:"",
-      n:{kj:1700,kcal:400,fat:0,sat:0,carb:100,sugar:100,protein:0,salt:0,fiber:0}},
-    { id:"i_glucose_powder", name:"Glukosepulver", cat:"Zucker & Süßung", allergens:"", additives:"",
-      ingredientsText:"Glukosepulver.", note:"",
-      n:{kj:1580,kcal:375,fat:0,sat:0,carb:94,sugar:94,protein:0,salt:0,fiber:0}},
-    { id:"i_inulin", name:"Inulin", cat:"Pulver & Stabilisierung", allergens:"", additives:"",
-      ingredientsText:"Inulin.", note:"",
-      n:{kj:850,kcal:200,fat:0,sat:0,carb:8,sugar:8,protein:0,salt:0,fiber:90}},
-    { id:"i_supergel_mix_d", name:"SUPERGEL MIX 'D' (Stabilisator)", cat:"Pulver & Stabilisierung",
-      allergens:"SOJA", additives:"E473, E472b, E477",
-      ingredientsText:"Dextrose, Feuchthaltemittel (Sorbit), Glukosesirup, pflanzliches Fett (Kokos), Verdickungsmittel (Carboxymethylcellulose, Tarakernmehl, Guarkernmehl), Emulgatoren (E473, E472b, E477), Maltodextrin, SOJAMEHL, pflanzliche Proteine, Salz.",
-      note:"",
-      n:{kj:1345,kcal:321,fat:10,sat:9.4,carb:81,sugar:50,protein:0.7,salt:0.56,fiber:0}},
-    { id:"i_lemon_piu", name:"LEMON PIÙ (Zitronen-Sorbet Pulver)", cat:"Frucht / Püree",
-      allergens:"", additives:"E466, E410, E412, E401, E1422, E471, E477",
-      ingredientsText:"Dextrose, Zitronensaftpulver, Säuerungsmittel (Zitronensäure), getrockneter Glukosesirup, Verdickungsmittel (E466, E410, E412, E401, E1422), Reisstärke, Emulgatoren (E471, E477), pflanzliche Proteine, Salz, Aromen.",
-      note:"Kann Spuren von MILCH und SOJA enthalten.",
-      n:{kj:1324.3,kcal:312.6,fat:3.5,sat:3.4,carb:69,sugar:29,protein:1.2,salt:0.3,fiber:0}},
-    { id:"i_water", name:"Wasser", cat:"Früchte (Wasserbasis)", allergens:"", additives:"",
-      ingredientsText:"Wasser.", note:"",
-      n:{kj:0,kcal:0,fat:0,sat:0,carb:0,sugar:0,protein:0,salt:0,fiber:0}},
-    { id:"i_strawberry", name:"Erdbeeren (gefroren)", cat:"Früchte (Wasserbasis)", allergens:"", additives:"",
-      ingredientsText:"Erdbeeren.", note:"",
-      n:{kj:136,kcal:32,fat:0.3,sat:0,carb:7.7,sugar:4.9,protein:0.7,salt:0.01,fiber:2.0}},
-    { id:"i_mango", name:"Mango (gefroren)", cat:"Früchte (Wasserbasis)", allergens:"", additives:"",
-      ingredientsText:"Mango.", note:"",
-      n:{kj:250,kcal:60,fat:0.4,sat:0,carb:15,sugar:14,protein:0.8,salt:0.01,fiber:1.6}}
-  ];
-
-  state.ingredients = seed.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "de"));
-  saveState();
-}
-ensureSeed();
-
-/* ===================== HELPERS ===================== */
-const $ = (id)=>document.getElementById(id);
-function toast(msg){
-  const t = $("toast");
-  t.textContent = msg;
-  t.style.display = "block";
-  clearTimeout(toast._tm);
-  toast._tm = setTimeout(()=>t.style.display="none", 2200);
-}
-function num(x){ const v = parseFloat(x); return isFinite(v)?v:0; }
-function round(x, d=1){ const p = Math.pow(10,d); return Math.round((num(x)+Number.EPSILON)*p)/p; }
-function escapeHtml(s){ return String(s??"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])); }
-function normalizeList(str){ return (str||"").split(",").map(s=>s.trim()).filter(Boolean); }
-function uniq(arr){ return Array.from(new Set(arr.filter(Boolean))); }
-function sortByName(a,b){ return (a.name||"").localeCompare((b.name||""), "de"); }
-
-function catList(){
-  const base = ["Alle","Milch & Sahne","Zucker & Süßung","Pulver & Stabilisierung","Kakao / Schokolade","Pasten & Nüsse","Variegato / Saucen","Glasur / Dekor","Frucht / Püree","Früchte (Wasserbasis)","Sonstiges"];
-  const extra = uniq(state.ingredients.map(i=>i.cat).filter(c=>c && !base.includes(c)));
-  return base.concat(extra);
-}
-function hasAzoWarning(additivesStr){
-  const adds = normalizeList(additivesStr).map(x=>x.toUpperCase().replace(/\s/g,""));
-  const azo = ["E102","E104","E110","E122","E124","E129"];
-  return azo.some(a=>adds.includes(a));
-}
-
-/* ===================== TAB NAV ===================== */
-function setTab(tab){
-  document.querySelectorAll(".tab").forEach(el=>el.classList.toggle("active", el.dataset.tab===tab));
-  ["ingredients","recipes","settings"].forEach(t=>{ $("tab-"+t).classList.toggle("hidden", t!==tab); });
-  renderAll();
-}
-$("tabs").addEventListener("click",(e)=>{
-  const t = e.target.closest(".tab");
-  if(!t) return;
-  setTab(t.dataset.tab);
-});
-
-/* ===================== INGREDIENTS UI ===================== */
-function fillCatSelects(){
-  const cats = catList();
-  $("ingCat").innerHTML = cats.filter(c=>c!=="Alle").map(c=>`<option>${escapeHtml(c)}</option>`).join("");
-  $("ingFilterCat").innerHTML = cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
-  if(!$("ingCat").value) $("ingCat").value = "Sonstiges";
-}
-function resetIngForm(){
-  state.current.editingIngId = null;
-  $("ingName").value="";
-  $("ingCat").value="Sonstiges";
-  $("ingAll").value="";
-  $("ingAdd").value="";
-  $("ingText").value="";
-  $("ingNote").value="";
-  $("n_kj").value=0; $("n_kcal").value=0;
-  $("n_fat").value=0; $("n_sat").value=0;
-  $("n_carb").value=0; $("n_sugar").value=0;
-  $("n_protein").value=0; $("n_salt").value=0;
-  $("n_fiber").value=0;
-}
-function loadIngToForm(ing){
-  state.current.editingIngId = ing.id;
-  $("ingName").value=ing.name||"";
-  $("ingCat").value=ing.cat||"Sonstiges";
-  $("ingAll").value=ing.allergens||"";
-  $("ingAdd").value=ing.additives||"";
-  $("ingText").value=ing.ingredientsText||"";
-  $("ingNote").value=ing.note||"";
-  $("n_kj").value=num(ing.n?.kj);
-  $("n_kcal").value=num(ing.n?.kcal);
-  $("n_fat").value=num(ing.n?.fat);
-  $("n_sat").value=num(ing.n?.sat);
-  $("n_carb").value=num(ing.n?.carb);
-  $("n_sugar").value=num(ing.n?.sugar);
-  $("n_protein").value=num(ing.n?.protein);
-  $("n_salt").value=num(ing.n?.salt);
-  $("n_fiber").value=num(ing.n?.fiber);
-}
-function saveIngredient(){
-  const ing = {
-    id: state.current.editingIngId || uid("ing"),
-    name: $("ingName").value.trim(),
-    cat: $("ingCat").value.trim() || "Sonstiges",
-    allergens: $("ingAll").value.trim(),
-    additives: $("ingAdd").value.trim(),
-    ingredientsText: $("ingText").value.trim(),
-    note: $("ingNote").value.trim(),
-    n: {
-      kj: num($("n_kj").value),
-      kcal: num($("n_kcal").value),
-      fat: num($("n_fat").value),
-      sat: num($("n_sat").value),
-      carb: num($("n_carb").value),
-      sugar: num($("n_sugar").value),
-      protein: num($("n_protein").value),
-      salt: num($("n_salt").value),
-      fiber: num($("n_fiber").value)
-    }
-  };
-  if(!ing.name){ toast("Bitte Namen eingeben."); return; }
-  const idx = state.ingredients.findIndex(x=>x.id===ing.id);
-  if(idx>=0) state.ingredients[idx]=ing;
-  else state.ingredients.push(ing);
-  state.ingredients.sort(sortByName);
-  saveState();
-  fillCatSelects();
-  fillPickers();
-  renderAll();
-  toast("Gespeichert ✅");
-}
-function deleteIngredient(id){
-  if(!confirm("Zutat löschen?")) return;
-  state.ingredients = state.ingredients.filter(x=>x.id!==id);
-  state.current.recipe.items = state.current.recipe.items.filter(it=>it.ingId!==id);
-  state.recipes.forEach(r=>r.items = (r.items||[]).filter(it=>it.ingId!==id));
-  saveState();
-  fillPickers();
-  renderAll();
-  toast("Gelöscht.");
-}
-function renderIngredients(){
-  fillCatSelects();
-  const q = $("ingSearch").value.trim().toLowerCase();
-  const cat = $("ingFilterCat").value;
-  const list = $("ingList");
-  let items = [...state.ingredients];
-  if(cat && cat!=="Alle") items = items.filter(i=>(i.cat||"")==cat);
-  if(q) items = items.filter(i=>{
-    const hay = (i.name+" "+i.cat+" "+(i.allergens||"")+" "+(i.additives||"")+" "+(i.ingredientsText||"")).toLowerCase();
-    return hay.includes(q);
-  });
-  if(items.length===0){ list.innerHTML = `<div class="hint">Keine Treffer.</div>`; return; }
-  list.innerHTML = items.map(i=>{
-    const warn = hasAzoWarning(i.additives) || /kann aktivität/i.test(i.note||"");
-    return `
-      <div class="item">
-        <div class="meta">
-          <div class="name">${escapeHtml(i.name)}</div>
-          <div class="small">${escapeHtml(i.cat||"")}</div>
-          <div class="small mono">pro 100g: ${fmtNutri(i.n)}</div>
-          ${warn ? `<div class="small" style="color:#ffd2d2"><b>Warnhinweis vorhanden</b></div>` : ``}
-        </div>
-        <div class="miniBtns">
-          <button class="btnPrimary" onclick="window.__editIng('${i.id}')">Bearbeiten</button>
-          <button class="btnBad" onclick="window.__delIng('${i.id}')">Löschen</button>
-        </div>
-      </div>
-    `;
-  }).join("");
-}
-window.__editIng = (id)=>{ const ing = state.ingredients.find(x=>x.id===id); if(!ing) return; loadIngToForm(ing); toast("Zutat geladen."); };
-window.__delIng = (id)=>deleteIngredient(id);
-$("btnSaveIng").addEventListener("click", saveIngredient);
-$("btnResetIng").addEventListener("click", ()=>{ resetIngForm(); toast("Neu."); });
-$("ingSearch").addEventListener("input", renderIngredients);
-$("ingFilterCat").addEventListener("change", renderIngredients);
-
-/* ===================== RECIPES UI ===================== */
-function fillPickers(){
-  const sel = $("r_pick");
-  const list = [...state.ingredients].sort(sortByName);
-  sel.innerHTML = list.map(i=>`<option value="${i.id}">${escapeHtml(i.name)} — ${escapeHtml(i.cat||"")}</option>`).join("");
-  const rp = $("recipePicker");
-  const rList = [...state.recipes].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"de"));
-  rp.innerHTML = `<option value="">— wählen —</option>` + rList.map(r=>`<option value="${r.id}">${escapeHtml(r.name)}</option>`).join("");
-}
-function setRecipeFromCurrent(){
-  const r = state.current.recipe;
-  $("r_name").value = r.name||"";
-  $("r_netto").value = (r.netto==="custom") ? "custom" : (r.netto||"170");
-  $("r_netto_custom").value = r.netto_custom||"";
-  $("customNetRow").style.display = ($("r_netto").value==="custom") ? "flex" : "none";
-  $("r_lot").value = r.lot||"";
-  $("r_mhd").value = r.mhd||"";
-  $("r_qr").value = r.qr||"";
-}
-$("r_netto").addEventListener("change", ()=>{
-  $("customNetRow").style.display = ($("r_netto").value==="custom") ? "flex" : "none";
-  state.current.recipe.netto = $("r_netto").value;
-  saveState(); renderLabel();
-});
-function addToRecipe(){
-  const ingId = $("r_pick").value;
-  const qty = num($("r_qty").value);
-  const unit = $("r_unit").value;
-  if(!ingId || qty<=0){ toast("Zutat & Menge prüfen."); return; }
-  state.current.recipe.items.push({ ingId, qty, unit });
-  saveState(); renderRecipeTable(); renderLabel();
-}
-$("btnAddToRecipe").addEventListener("click", addToRecipe);
-function removeRecipeItem(idx){
-  state.current.recipe.items.splice(idx,1);
-  saveState(); renderRecipeTable(); renderLabel();
-}
-window.__rmItem = (idx)=>removeRecipeItem(idx);
-function compactNote(ing){
-  const adds = normalizeList(ing.additives).slice(0,6).join(", ");
-  const alls = normalizeList(ing.allergens).slice(0,6).join(", ");
-  const parts = [];
-  if(alls) parts.push("Allergene: "+alls);
-  if(adds) parts.push("Zusatz: "+adds);
-  if(ing.note) parts.push(ing.note);
-  return parts.join(" · ");
-}
-function renderRecipeTable(){
-  const tb = $("recipeTable").querySelector("tbody");
-  const items = state.current.recipe.items || [];
-  if(items.length===0){
-    tb.innerHTML = `<tr><td colspan="5" class="mut">Noch keine Zutaten im Rezept.</td></tr>`;
-    return;
+  function loadAll(){
+    try{ return JSON.parse(localStorage.getItem(KEY_DATA) || "{}"); }catch(e){ return {}; }
   }
-  tb.innerHTML = items.map((it, idx)=>{
-    const ing = state.ingredients.find(x=>x.id===it.ingId);
-    const note = (ing?.additives || ing?.note || ing?.allergens) ? compactNote(ing) : "";
-    return `
-      <tr>
-        <td><b>${escapeHtml(ing?.name||"Unbekannt")}</b><div class="mut">${escapeHtml(ing?.cat||"")}</div></td>
-        <td class="mono">${round(it.qty,1)}</td>
-        <td class="mono">${escapeHtml(it.unit)}</td>
-        <td class="mut">${escapeHtml(note)}</td>
-        <td><button class="btnBad" onclick="window.__rmItem(${idx})">X</button></td>
-      </tr>
-    `;
-  }).join("");
-}
-function newRecipe(){
-  state.current.editingRecipeId = null;
-  state.current.recipe = {name:"",netto:"170",netto_custom:"",lot:"",mhd:"",qr:"",items:[]};
-  saveState(); setRecipeFromCurrent(); renderRecipeTable(); renderLabel(); toast("Neues Rezept.");
-}
-$("btnNewRecipe").addEventListener("click", newRecipe);
-function saveRecipe(){
-  const r = state.current.recipe;
-  r.name = $("r_name").value.trim();
-  r.netto = $("r_netto").value;
-  r.netto_custom = $("r_netto_custom").value.trim();
-  r.lot = $("r_lot").value.trim();
-  r.mhd = $("r_mhd").value;
-  r.qr = $("r_qr").value.trim();
-  if(!r.name){ toast("Rezeptname fehlt."); return; }
-  if((r.items||[]).length===0){ toast("Rezept hat keine Zutaten."); return; }
-  const rec = { id: state.current.editingRecipeId || uid("rec"), ...deepClone(r) };
-  const idx = state.recipes.findIndex(x=>x.id===rec.id);
-  if(idx>=0) state.recipes[idx]=rec; else state.recipes.push(rec);
-  state.current.editingRecipeId = rec.id;
-  saveState(); fillPickers(); toast("Rezept gespeichert ✅");
-}
-$("btnSaveRecipe").addEventListener("click", saveRecipe);
-function loadRecipe(id){
-  const rec = state.recipes.find(r=>r.id===id);
-  if(!rec){ toast("Rezept nicht gefunden."); return; }
-  state.current.editingRecipeId = rec.id;
-  state.current.recipe = deepClone(rec);
-  saveState(); setRecipeFromCurrent(); renderRecipeTable(); renderLabel(); toast("Rezept geladen.");
-}
-$("btnLoadRecipe").addEventListener("click", ()=>{
-  const id = $("recipePicker").value;
-  if(!id){ toast("Bitte Rezept wählen."); return; }
-  loadRecipe(id);
-});
-["r_name","r_netto_custom","r_lot","r_mhd","r_qr"].forEach(id=>{
-  $(id).addEventListener("input", ()=>{
-    state.current.recipe.name = $("r_name").value;
-    state.current.recipe.netto_custom = $("r_netto_custom").value;
-    state.current.recipe.lot = $("r_lot").value;
-    state.current.recipe.mhd = $("r_mhd").value;
-    state.current.recipe.qr = $("r_qr").value;
-    saveState(); renderLabel();
-  });
-});
-
-/* ===================== SETTINGS ===================== */
-function loadSettings(){
-  $("s_vbz").value = state.settings.vbz || "";
-  $("s_vbz_fruit").value = state.settings.vbz_fruit || "";
-  $("s_storage").value = state.settings.storage || "";
-  $("s_footer").value = state.settings.footer || "";
-  $("s_traces").value = state.settings.traces || "";
-  $("s_company").value = state.settings.company || "";
-  $("s_addr").value = state.settings.addr || "";
-  $("s_phone").value = state.settings.phone || "";
-  $("s_email").value = state.settings.email || "";
-}
-function saveSettings(){
-  state.settings.vbz = $("s_vbz").value.trim();
-  state.settings.vbz_fruit = $("s_vbz_fruit").value.trim();
-  state.settings.storage = $("s_storage").value.trim();
-  state.settings.footer = $("s_footer").value.trim();
-  state.settings.traces = $("s_traces").value.trim();
-  state.settings.company = $("s_company").value.trim();
-  state.settings.addr = $("s_addr").value.trim();
-  state.settings.phone = $("s_phone").value.trim();
-  state.settings.email = $("s_email").value.trim();
-  saveState(); renderLabel(); toast("Gespeichert ✅");
-}
-$("btnSaveSettings").addEventListener("click", saveSettings);
-
-/* ===================== LABEL ===================== */
-$("labelSize").addEventListener("change", renderLabel);
-$("fontScale").addEventListener("change", renderLabel);
-$("showBarcode").addEventListener("change", renderLabel);
-
-function recipeTotals(){
-  const items = state.current.recipe.items || [];
-  let totalG = 0;
-  const sum = {kj:0,kcal:0,fat:0,sat:0,carb:0,sugar:0,protein:0,salt:0,fiber:0};
-  const allergens = [];
-  const additives = [];
-  let warn = false;
-  let hasMilk = false;
-
-  for(const it of items){
-    const ing = state.ingredients.find(x=>x.id===it.ingId);
-    if(!ing) continue;
-    const qtyG = it.qty;
-    totalG += qtyG;
-    const n = ing.n || {};
-    sum.kj += (num(n.kj) * qtyG / 100);
-    sum.kcal += (num(n.kcal) * qtyG / 100);
-    sum.fat += (num(n.fat) * qtyG / 100);
-    sum.sat += (num(n.sat) * qtyG / 100);
-    sum.carb += (num(n.carb) * qtyG / 100);
-    sum.sugar += (num(n.sugar) * qtyG / 100);
-    sum.protein += (num(n.protein) * qtyG / 100);
-    sum.salt += (num(n.salt) * qtyG / 100);
-    sum.fiber += (num(n.fiber) * qtyG / 100);
-
-    const aList = normalizeList(ing.allergens).map(a=>a.toUpperCase());
-    aList.forEach(a=>allergens.push(a));
-    
-    // Check for milk ingredients
-    const cat = (ing.cat || "").toLowerCase();
-    const name = (ing.name || "").toLowerCase();
-    if(aList.includes("MILCH") || 
-       cat.includes("milch") || 
-       cat.includes("sahne") ||
-       name.includes("milch") ||
-       name.includes("sahne") ||
-       name.includes("magermilch")) {
-      hasMilk = true;
-    }
-
-    normalizeList(ing.additives).forEach(a=>additives.push(a.toUpperCase()));
-    if(hasAzoWarning(ing.additives) || /kann aktivität/i.test(ing.note||"")) warn = true;
+  function saveAll(obj){
+    localStorage.setItem(KEY_DATA, JSON.stringify(obj));
   }
 
-  const per100 = (totalG>0) ? {
-    kj: sum.kj*100/totalG, kcal: sum.kcal*100/totalG, fat: sum.fat*100/totalG, sat: sum.sat*100/totalG,
-    carb: sum.carb*100/totalG, sugar: sum.sugar*100/totalG, protein: sum.protein*100/totalG, salt: sum.salt*100/totalG,
-    fiber: sum.fiber*100/totalG
-  } : {kj:0,kcal:0,fat:0,sat:0,carb:0,sugar:0,protein:0,salt:0,fiber:0};
-
-  return { totalG, per100, allergens: uniq(allergens), additives: uniq(additives), warn, hasMilk };
-}
-
-function ingredientListText(){
-  const items = [...(state.current.recipe.items||[])].sort((a,b)=>num(b.qty)-num(a.qty));
-  const parts = [];
-  for(const it of items){
-    const ing = state.ingredients.find(x=>x.id===it.ingId);
-    if(!ing) continue;
-    parts.push((ing.ingredientsText && ing.ingredientsText.trim()) ? ing.ingredientsText.trim() : ing.name);
-  }
-  return parts.join(", ").replace(/\s+,/g,",").replace(/,\s+,/g,", ").trim();
-}
-
-function computeEanForRecipe(){
-  const n = state.current.recipe.netto;
-  if(n==="170") return EAN_170;
-  if(n==="750") return EAN_750;
-  return "";
-}
-
-function renderLabel(){
-  const size = $("labelSize").value;
-  const fs = num($("fontScale").value);
-  const showB = $("showBarcode").value === "yes";
-
-  const label = $("labelPreview");
-  label.classList.toggle("size38x90", size==="38x90");
-  label.classList.toggle("size62x100", size==="62x100");
-
-  const mmToPx = 6;
-  const dims = (size==="38x90") ? {w:90,h:38} : {w:100,h:62};
-  label.style.width = Math.round(dims.w*mmToPx)+"px";
-  label.style.height = Math.round(dims.h*mmToPx)+"px";
-  label.style.transform = `scale(${fs})`;
-  label.style.transformOrigin = "center";
-
-  const r = state.current.recipe;
-  const totals = recipeTotals();
-  const vbz = totals.hasMilk ? (state.settings.vbz || "Speiseeis") : (state.settings.vbz_fruit || "Fruchteis");
-
-  const nettoText = (r.netto==="custom" && r.netto_custom.trim()) ? r.netto_custom.trim() : ((r.netto||"170")+" g");
-  const ingText = ingredientListText();
-  const alls = totals.allergens.length ? totals.allergens.join(", ") : "—";
-  const adds = totals.additives.length ? totals.additives.join(", ") : "—";
-  const traces = (state.settings.traces||"").trim();
-
-  const n = totals.per100;
-  const companyLine = `${state.settings.company||""} · ${state.settings.addr||""}`;
-  const contactLine = `${state.settings.phone||""}${state.settings.email?(" · "+state.settings.email):""}`;
-  const warnLine = totals.warn ? `Hinweis: Kann Aktivität und Aufmerksamkeit bei Kindern beeinträchtigen.` : "";
-
-  const ean = showB ? computeEanForRecipe() : "";
-  const barcodeSvg = (ean && isValidEAN13(ean)) ? makeEAN13Svg(ean) : "";
-
-  const qrLink = (r.qr||"").trim();
-  const qrSvg = qrLink ? makeQrSvg(qrLink, 29, 2) : "";
-
-  const html = `
-    <div class="labelContent">
-      ${qrSvg ? `<div class="qrBox">${qrSvg}</div>` : ``}
-
-      <h3 class="lblTitle">${escapeHtml(r.name || "Gelato")}</h3>
-
-      <div class="lblMeta">
-        <span><b>${escapeHtml(vbz)}</b></span>
-        <span>Netto: <b>${escapeHtml(nettoText)}</b></span>
-        <span>${escapeHtml(state.settings.storage||"")}</span>
-      </div>
-
-      <div class="lblLine"><b>Zutaten:</b> ${escapeHtml(ingText || "—")}</div>
-      <div class="lblLine"><b>Allergene:</b> ${escapeHtml(alls)}</div>
-      <div class="lblLine"><b>Zusatzstoffe:</b> ${escapeHtml(adds)}</div>
-      ${traces ? `<div class="lblLine"><b>Kann Spuren enthalten:</b> ${escapeHtml(traces)}</div>` : ``}
-
-      <div class="lblCols">
-        <div>
-          <div class="nvTitle">Durchschnittliche Nährwerte je 100 g:</div>
-          <table class="nv">
-            <tr><th>Energie</th><td class="mono">${round(n.kj,0)} kJ / ${round(n.kcal,0)} kcal</td></tr>
-            <tr><th>Fett</th><td class="mono">${round(n.fat,1)} g</td></tr>
-            <tr><th>davon gesättigte Fettsäuren</th><td class="mono">${round(n.sat,1)} g</td></tr>
-            <tr><th>Kohlenhydrate</th><td class="mono">${round(n.carb,1)} g</td></tr>
-            <tr><th>davon Zucker</th><td class="mono">${round(n.sugar,1)} g</td></tr>
-            <tr><th>Eiweiß</th><td class="mono">${round(n.protein,1)} g</td></tr>
-            <tr><th>Salz</th><td class="mono">${round(n.salt,2)} g</td></tr>
-          </table>
-        </div>
-
-        <div class="rightBlock">
-          <div><b>Hersteller:</b> ${escapeHtml(companyLine)}</div>
-          <div>${escapeHtml(contactLine)}</div>
-          ${state.settings.footer ? `<div style="margin-top:1mm">${escapeHtml(state.settings.footer)}</div>` : ``}
-          ${warnLine ? `<div class="warnLine">${escapeHtml(warnLine)}</div>` : ``}
-        </div>
-      </div>
-    </div>
-
-    <div class="fixedBottom">
-      <div class="barcodeBox">${barcodeSvg}</div>
-      <div class="lotBox">
-        <div><b>Charge/Lot:</b> ${escapeHtml(r.lot || "—")}</div>
-        <div><b>MHD:</b> ${escapeHtml(r.mhd || "—")}</div>
-      </div>
-    </div>
-  `;
-
-  $("labelInner").innerHTML = html;
-}
-
-function fmtNutri(n){
-  if(!n) return "—";
-  return `${round(n.kj,0)}kJ/${round(n.kcal,0)}kcal · F ${round(n.fat,1)} · KH ${round(n.carb,1)} · Z ${round(n.sugar,1)} · E ${round(n.protein,1)} · S ${round(n.salt,2)}`;
-}
-
-/* ===================== PRINT LABEL (REAL SIZE) - VERBESSERT ===================== */
-$("btnPrint").addEventListener("click", ()=>{
-  state.current.recipe.name = $("r_name").value;
-  state.current.recipe.netto = $("r_netto").value;
-  state.current.recipe.netto_custom = $("r_netto_custom").value;
-  state.current.recipe.lot = $("r_lot").value;
-  state.current.recipe.mhd = $("r_mhd").value;
-  state.current.recipe.qr = $("r_qr").value.trim();
-  saveState();
-
-  const size = $("labelSize").value;
-  const fs = num($("fontScale").value);
-  const dims = (size==="38x90") ? {w:90,h:38} : {w:100,h:62};
-
-  const totals = recipeTotals();
-  const vbz = totals.hasMilk ? (state.settings.vbz || "Speiseeis") : (state.settings.vbz_fruit || "Fruchteis");
-  const nettoText = (state.current.recipe.netto==="custom" && state.current.recipe.netto_custom.trim()) ? 
-    state.current.recipe.netto_custom.trim() : ((state.current.recipe.netto||"170")+" g");
-  const ingText = ingredientListText();
-  const alls = totals.allergens.length ? totals.allergens.join(", ") : "—";
-  const adds = totals.additives.length ? totals.additives.join(", ") : "—";
-  const traces = (state.settings.traces||"").trim();
-  const n = totals.per100;
-  const ean = $("showBarcode").value === "yes" ? computeEanForRecipe() : "";
-  const barcodeSvg = (ean && isValidEAN13(ean)) ? makeEAN13Svg(ean) : "";
-  const qrLink = (state.current.recipe.qr||"").trim();
-  const qrSvg = qrLink ? makeQrSvg(qrLink, 29, 2) : "";
-
-  const w = window.open("", "_blank");
-  if(!w){ toast("Popup blockiert? Bitte erlauben."); return; }
-
-  w.document.open();
-  w.document.write(`
-    <!doctype html>
-    <html><head><meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      <title>Etikett Druck - ${escapeHtml(state.current.recipe.name)}</title>
-      <style>
-        @page { size: ${dims.w}mm ${dims.h}mm; margin: 0; }
-        html,body{margin:0; padding:0; background:#fff; width:${dims.w}mm; height:${dims.h}mm; overflow:hidden;}
-        .label{
-          width:${dims.w}mm; height:${dims.h}mm;
-          background:#fff; color:#000;
-          position:relative;
-          font-family: Arial, Helvetica, sans-serif;
-          box-sizing:border-box;
-        }
-        
-        /* TOP CONTENT AREA */
-        .topContent {
-          position:absolute;
-          top:2.6mm;
-          left:2.6mm;
-          right:${qrSvg ? '16mm' : '2.6mm'};
-          height:${dims.h - 22}mm;
-          overflow:hidden;
-        }
-        
-        /* QR CODE */
-        .qrBox{
-          position:absolute;
-          top:2.2mm;
-          right:2.2mm;
-          width:${size==="38x90"?"11mm":"13mm"};
-          height:${size==="38x90"?"11mm":"13mm"};
-          border:0.3mm solid #000;
-          background:#fff;
-          display:${qrSvg ? 'flex' : 'none'};
-          align-items:center;
-          justify-content:center;
-          overflow:hidden;
-        }
-        .qrBox svg{width:100%; height:100%}
-        
-        /* TITLE */
-        .lblTitle{
-          font-weight:900; letter-spacing:.2px;
-          font-size: ${size==="38x90"?"12.6pt":"14.2pt"};
-          line-height:1.05;
-          margin:0 0 1mm 0;
-        }
-        
-        /* META LINE */
-        .lblMeta{
-          font-size: ${size==="38x90"?"8.0pt":"8.6pt"};
-          line-height:1.2;
-          display:flex; gap:6mm; flex-wrap:wrap;
-          align-items:baseline;
-          margin-bottom:1.5mm;
-        }
-        .lblMeta b{font-weight:900}
-        
-        /* INGREDIENT LINES */
-        .lblLine{
-          font-size: ${size==="38x90"?"7.2pt":"7.8pt"};
-          line-height:1.25;
-          margin-bottom:0.8mm;
-        }
-        .lblLine b{font-weight:900}
-        
-        /* TWO COLUMNS LAYOUT */
-        .twoCols{
-          display:flex;
-          gap:2.2mm;
-          margin-top:2mm;
-          height:${dims.h * 0.35}mm;
-        }
-        
-        /* LEFT COLUMN - NUTRITION TABLE */
-        .leftCol{
-          flex:1;
-          min-width:0;
-        }
-        .nvTitle{
-          font-size: ${size==="38x90"?"7.6pt":"8.0pt"};
-          font-weight:900;
-          margin:0 0 .8mm 0;
-        }
-        .nv{
-          width:100%;
-          border-collapse:collapse;
-          font-size: ${size==="38x90"?"6.9pt":"7.4pt"};
-        }
-        .nv th,.nv td{
-          border:0.3mm solid #000;
-          padding:0.6mm 0.8mm;
-          vertical-align:top;
-        }
-        .nv th{text-align:left; width:62%}
-        
-        /* RIGHT COLUMN - MANUFACTURER INFO */
-        .rightCol{
-          flex:1;
-          min-width:0;
-          font-size: ${size==="38x90"?"7.2pt":"7.6pt"};
-          line-height:1.25;
-        }
-        .rightCol b{font-weight:900}
-        .warnLine{
-          margin-top:1.2mm;
-          font-size: ${size==="38x90"?"7.1pt":"7.3pt"};
-          font-weight:900;
-        }
-        
-        /* BOTTOM FIXED AREA */
-        .bottomArea{
-          position:absolute;
-          left:2.6mm;
-          right:2.6mm;
-          bottom:2.2mm;
-          height:18mm;
-          display:flex;
-          gap:3mm;
-          align-items:flex-end;
-          justify-content:space-between;
-          border-top:0.3mm dotted #ccc;
-          padding-top:1mm;
-        }
-        .barcodeBox{
-          flex:1;
-          min-width:0;
-          height:${size==="38x90"?"14mm":"16mm"};
-          display:flex;
-          align-items:flex-end;
-        }
-        .barcodeBox svg{ width:100%; height:100%; }
-        .lotBox{
-          width:44%;
-          min-width:40mm;
-          font-size:${size==="38x90"?"7.1pt":"7.3pt"};
-          line-height:1.2;
-          text-align:right;
-        }
-        
-        /* MONOSPACE */
-        .mono{font-family: monospace;}
-        
-        /* SCALE */
-        body { transform: scale(${fs}); transform-origin: top left; }
-      </style>
-    </head>
-    <body>
-      <div class="label">
-        ${qrSvg ? `<div class="qrBox">${qrSvg}</div>` : ''}
-        
-        <div class="topContent">
-          <h3 class="lblTitle">${escapeHtml(state.current.recipe.name || "Gelato")}</h3>
-          
-          <div class="lblMeta">
-            <span><b>${escapeHtml(vbz)}</b></span>
-            <span>Netto: <b>${escapeHtml(nettoText)}</b></span>
-            <span>${escapeHtml(state.settings.storage||"")}</span>
-          </div>
-          
-          <div class="lblLine"><b>Zutaten:</b> ${escapeHtml(ingText || "—")}</div>
-          <div class="lblLine"><b>Allergene:</b> ${escapeHtml(alls)}</div>
-          <div class="lblLine"><b>Zusatzstoffe:</b> ${escapeHtml(adds)}</div>
-          ${traces ? `<div class="lblLine"><b>Kann Spuren enthalten:</b> ${escapeHtml(traces)}</div>` : ''}
-          
-          <div class="twoCols">
-            <div class="leftCol">
-              <div class="nvTitle">Durchschnittliche Nährwerte je 100 g:</div>
-              <table class="nv">
-                <tr><th>Energie</th><td class="mono">${round(n.kj,0)} kJ / ${round(n.kcal,0)} kcal</td></tr>
-                <tr><th>Fett</th><td class="mono">${round(n.fat,1)} g</td></tr>
-                <tr><th>davon gesättigte Fettsäuren</th><td class="mono">${round(n.sat,1)} g</td></tr>
-                <tr><th>Kohlenhydrate</th><td class="mono">${round(n.carb,1)} g</td></tr>
-                <tr><th>davon Zucker</th><td class="mono">${round(n.sugar,1)} g</td></tr>
-                <tr><th>Eiweiß</th><td class="mono">${round(n.protein,1)} g</td></tr>
-                <tr><th>Salz</th><td class="mono">${round(n.salt,2)} g</td></tr>
-              </table>
-            </div>
-            
-            <div class="rightCol">
-              <div><b>Hersteller:</b> ${escapeHtml(state.settings.company||"")} · ${escapeHtml(state.settings.addr||"")}</div>
-              <div>${escapeHtml(state.settings.phone||"")}${state.settings.email?(" · "+state.settings.email):""}</div>
-              ${state.settings.footer ? `<div style="margin-top:1mm">${escapeHtml(state.settings.footer)}</div>` : ''}
-              ${totals.warn ? `<div class="warnLine">Hinweis: Kann Aktivität und Aufmerksamkeit bei Kindern beeinträchtigen.</div>` : ''}
-            </div>
-          </div>
-        </div>
-        
-        <div class="bottomArea">
-          <div class="barcodeBox">${barcodeSvg}</div>
-          <div class="lotBox">
-            <div><b>Charge/Lot:</b> ${escapeHtml(state.current.recipe.lot || "—")}</div>
-            <div><b>MHD:</b> ${escapeHtml(state.current.recipe.mhd || "—")}</div>
-          </div>
-        </div>
-      </div>
-      <script>
-        window.onload = function() {
-          setTimeout(() => {
-            window.print();
-            setTimeout(() => window.close(), 500);
-          }, 100);
-        };
-      <\/script>
-    </body></html>
-  `);
-  w.document.close();
-});
-
-/* ===================== BACKUP IMPORT/EXPORT ===================== */
-$("btnExport").addEventListener("click", ()=>{
-  const data = JSON.stringify(state, null, 2);
-  const blob = new Blob([data], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "sanremo-lmiv-gelato-backup.json";
-  a.click();
-  setTimeout(()=>URL.revokeObjectURL(url), 500);
-  toast("Backup exportiert.");
-});
-$("btnImport").addEventListener("click", ()=> $("fileImport").click());
-$("fileImport").addEventListener("change", async (e)=>{
-  const f = e.target.files?.[0];
-  if(!f) return;
-  try{
-    const txt = await f.text();
-    const obj = JSON.parse(txt);
-    if(!obj || typeof obj!=="object") throw new Error("Invalid");
-    state = {
-      ...deepClone(DEFAULT_STATE),
-      ...obj,
-      settings: {...deepClone(DEFAULT_STATE.settings), ...(obj.settings||{})},
-      current: {...deepClone(DEFAULT_STATE.current), ...(obj.current||{})}
-    };
-    saveState();
-    fillCatSelects();
-    fillPickers();
-    loadSettings();
-    setRecipeFromCurrent();
-    renderAll();
-    toast("Backup importiert ✅");
-  }catch(err){
-    console.error(err);
-    toast("Import fehlgeschlagen.");
-  }finally{
-    $("fileImport").value = "";
-  }
-});
-
-/* ===================== EAN-13 BARCODE (SVG) ===================== */
-function isValidEAN13(code){
-  if(!/^\d{13}$/.test(code)) return false;
-  const digits = code.split("").map(d=>parseInt(d,10));
-  let sum = 0;
-  for(let i=0;i<12;i++) sum += digits[i] * (i%2===0 ? 1 : 3);
-  const check = (10 - (sum % 10)) % 10;
-  return check === digits[12];
-}
-function makeEAN13Svg(code){
-  const L = {"0":"0001101","1":"0011001","2":"0010011","3":"0111101","4":"0100011","5":"0110001","6":"0101111","7":"0111011","8":"0110111","9":"0001011"};
-  const G = {"0":"0100111","1":"0110011","2":"0011011","3":"0100001","4":"0011101","5":"0111001","6":"0000101","7":"0010001","8":"0001001","9":"0010111"};
-  const R = {"0":"1110010","1":"1100110","2":"1101100","3":"1000010","4":"1011100","5":"1001110","6":"1010000","7":"1000100","8":"1001000","9":"1110100"};
-  const parity = {"0":"LLLLLL","1":"LLGLGG","2":"LLGGLG","3":"LLGGGL","4":"LGLLGG","5":"LGGLLG","6":"LGGGLL","7":"LGLGLG","8":"LGLGGL","9":"LGGLGL"};
-
-  if(!isValidEAN13(code)) return ``;
-
-  const first = code[0];
-  const left = code.slice(1,7).split("");
-  const right = code.slice(7,13).split("");
-
-  let bits = "101";
-  const p = parity[first];
-  for(let i=0;i<6;i++){
-    const d = left[i];
-    bits += (p[i]==="L") ? L[d] : G[d];
-  }
-  bits += "01010";
-  for(let i=0;i<6;i++) bits += R[right[i]];
-  bits += "101";
-
-  const moduleW = 1;
-  const quiet = 10;
-  const barH = 36;
-  const fullH = 48;
-  const w = bits.length * moduleW + quiet*2;
-
-  const guardIdx = new Set();
-  const markRange = (a,b)=>{ for(let i=a;i<b;i++) guardIdx.add(i); };
-  markRange(0,3); markRange(45,50); markRange(bits.length-3,bits.length);
-
-  let x = quiet;
-  let rects = [];
-  for(let i=0;i<bits.length;i++){
-    if(bits[i]==="1"){
-      const h = guardIdx.has(i) ? (barH+4) : barH;
-      rects.push(`<rect x="${x}" y="0" width="${moduleW}" height="${h}" fill="#000"/>`);
-    }
-    x += moduleW;
-  }
-
-  const txtY = fullH - 2;
-  const font = 9;
-  const n = code.split("");
-  const t = `
-    <text x="0" y="${txtY}" font-size="${font}" font-family="Arial" fill="#000">${n[0]}</text>
-    <text x="${quiet+3*moduleW}" y="${txtY}" font-size="${font}" font-family="Arial" fill="#000">${n.slice(1,7).join("")}</text>
-    <text x="${quiet+(3+42+5)*moduleW}" y="${txtY}" font-size="${font}" font-family="Arial" fill="#000">${n.slice(7,13).join("")}</text>
-  `;
-
-  return `
-    <svg viewBox="0 0 ${w} ${fullH}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-label="EAN13">
-      <rect width="${w}" height="${fullH}" fill="#fff"/>
-      ${rects.join("")}
-      ${t}
-    </svg>
-  `;
-}
-
-/* ===================== QR CODE REAL (SVG) ===================== */
-class QrCode {
-  static Ecc = {LOW:1, MEDIUM:0, QUARTILE:3, HIGH:2};
-  static encodeBinary(data, ecl){ return QrCode._encodeSegments([new QrSegment(QrSegment.Mode.BYTE, data.length*8, QrSegment._makeBytes(data))], ecl); }
-
-  static _encodeSegments(segs, ecl){
-    for(let ver=1; ver<=10; ver++){
-      const dataCapacityBits = QrCode._getNumDataCodewords(ver, ecl) * 8;
-      let usedBits = 0;
-      for(const seg of segs) usedBits += 4 + seg.numChars.toString(2).length + seg.data.length;
-      if(usedBits <= dataCapacityBits){
-        return new QrCode(ver, ecl, QrCode._buildCodewords(segs, ver, ecl));
-      }
-    }
-    throw new Error("QR too long");
-  }
-
-  constructor(version, errorCorrectionLevel, dataCodewords){
-    this.version = version;
-    this.errorCorrectionLevel = errorCorrectionLevel;
-    this.size = version * 4 + 17;
-    this._modules = Array.from({length:this.size}, ()=>Array(this.size).fill(false));
-    this._isFunction = Array.from({length:this.size}, ()=>Array(this.size).fill(false));
-    this._drawFunctionPatterns();
-    const allCodewords = QrCode._addEccAndInterleave(dataCodewords, version, errorCorrectionLevel);
-    this._drawCodewords(allCodewords);
-    this._applyBestMask();
-    this._drawFormatBits();
-  }
-
-  getModule(x,y){ return this._modules[y][x]; }
-
-  _drawFunctionPatterns(){
-    const s=this.size;
-    const drawFinder=(x,y)=>{
-      for(let dy=-1; dy<=7; dy++){
-        for(let dx=-1; dx<=7; dx++){
-          const xx=x+dx, yy=y+dy;
-          if(0<=xx && xx<s && 0<=yy && yy<s){
-            const on = (0<=dx && dx<=6 && (dy===0||dy===6)) ||
-                       (0<=dy && dy<=6 && (dx===0||dx===6)) ||
-                       (2<=dx && dx<=4 && 2<=dy && dy<=4);
-            this._setFunctionModule(xx,yy,on);
-          }
-        }
-      }
-    };
-    drawFinder(0,0); drawFinder(s-7,0); drawFinder(0,s-7);
-    for(let i=0;i<s;i++){
-      this._setFunctionModule(6,i, i%2===0);
-      this._setFunctionModule(i,6, i%2===0);
-    }
-    this._setFunctionModule(8, s-8, true);
-  }
-
-  _setFunctionModule(x,y,isBlack){
-    this._modules[y][x]=isBlack;
-    this._isFunction[y][x]=true;
-  }
-
-  _drawCodewords(data){
-    let i=0;
-    const s=this.size;
-    for(let right=s-1; right>=1; right-=2){
-      if(right===6) right=5;
-      for(let vert=0; vert<s; vert++){
-        for(let j=0;j<2;j++){
-          const x=right-j;
-          const y=((right+1)&2)===0 ? s-1-vert : vert;
-          if(!this._isFunction[y][x]){
-            let bit=false;
-            if(i < data.length*8){
-              bit = ((data[i>>>3] >>> (7-(i&7))) & 1) !== 0;
-              i++;
-            }
-            this._modules[y][x]=bit;
-          }
-        }
-      }
-    }
-  }
-
-  _applyBestMask(){
-    let bestMask=0;
-    let bestPenalty=1e9;
-    for(let mask=0; mask<8; mask++){
-      this._applyMask(mask);
-      this._drawFormatBits(mask);
-      const penalty = this._getPenaltyScore();
-      if(penalty < bestPenalty){
-        bestPenalty = penalty;
-        bestMask = mask;
-      }
-      this._applyMask(mask);
-    }
-    this._applyMask(bestMask);
-    this._drawFormatBits(bestMask);
-  }
-
-  _applyMask(mask){
-    const s=this.size;
-    for(let y=0;y<s;y++){
-      for(let x=0;x<s;x++){
-        if(this._isFunction[y][x]) continue;
-        let invert=false;
-        switch(mask){
-          case 0: invert = (x+y)%2===0; break;
-          case 1: invert = y%2===0; break;
-          case 2: invert = x%3===0; break;
-          case 3: invert = (x+y)%3===0; break;
-          case 4: invert = ((Math.floor(y/2)+Math.floor(x/3))%2)===0; break;
-          case 5: invert = ((x*y)%2 + (x*y)%3)===0; break;
-          case 6: invert = (((x*y)%2 + (x*y)%3)%2)===0; break;
-          case 7: invert = (((x+y)%2 + (x*y)%3)%2)===0; break;
-        }
-        if(invert) this._modules[y][x]=!this._modules[y][x];
-      }
-    }
-  }
-
-  _drawFormatBits(mask){
-    const ecl = this.errorCorrectionLevel;
-    const data = ((ecl===QrCode.Ecc.LOW?1:ecl===QrCode.Ecc.MEDIUM?0:ecl===QrCode.Ecc.QUARTILE?3:2) << 3) | mask;
-    let rem = data;
-    for(let i=0;i<10;i++) rem = (rem<<1) ^ ((rem>>>9)&1)*0x537;
-    const bits = ((data<<10)|rem) ^ 0x5412;
-    const s=this.size;
-
-    const set = (x,y,i)=> this._setFunctionModule(x,y, ((bits>>>i)&1)!==0);
-
-    for(let i=0;i<=5;i++) set(8,i,i);
-    set(8,7,6); set(8,8,7); set(7,8,8);
-    for(let i=9;i<15;i++) set(14-i,8,i);
-
-    for(let i=0;i<8;i++) set(s-1-i,8,i);
-    for(let i=8;i<15;i++) set(8,s-15+i,i);
-    set(8,s-8,7);
-  }
-
-  _getPenaltyScore(){
-    const s=this.size;
-    let pen=0;
-    for(let y=0;y<s;y++){
-      let runColor=this._modules[y][0], runLen=1;
-      for(let x=1;x<s;x++){
-        if(this._modules[y][x]===runColor) runLen++;
-        else{ if(runLen>=5) pen += 3 + (runLen-5); runColor=this._modules[y][x]; runLen=1; }
-      }
-      if(runLen>=5) pen += 3 + (runLen-5);
-    }
-    for(let x=0;x<s;x++){
-      let runColor=this._modules[0][x], runLen=1;
-      for(let y=1;y<s;y++){
-        if(this._modules[y][x]===runColor) runLen++;
-        else{ if(runLen>=5) pen += 3 + (runLen-5); runColor=this._modules[y][x]; runLen=1; }
-      }
-      if(runLen>=5) pen += 3 + (runLen-5);
-    }
-    for(let y=0;y<s-1;y++){
-      for(let x=0;x<s-1;x++){
-        const c=this._modules[y][x];
-        if(c===this._modules[y][x+1] && c===this._modules[y+1][x] && c===this._modules[y+1][x+1]) pen += 3;
-      }
-    }
-    return pen;
-  }
-
-  static _buildCodewords(segs, ver, ecl){
-    const bb=[];
-    const appendBits=(val,len)=>{ for(let i=len-1;i>=0;i--) bb.push(((val>>>i)&1)!==0); };
-    for(const seg of segs){
-      appendBits(seg.mode,4);
-      const ccbits = 8;
-      appendBits(seg.numChars, ccbits);
-      for(const b of seg.data) bb.push(b);
-    }
-    const cap = QrCode._getNumDataCodewords(ver,ecl)*8;
-    while(bb.length < cap && bb.length%8!==0) bb.push(false);
-    const pad0 = [1,1,1,0,1,1,0,0];
-    const pad1 = [0,0,0,1,0,0,0,1];
-    let toggle=false;
-    while(bb.length+8 <= cap){
-      const pad = toggle ? pad1 : pad0;
-      for(const b of pad) bb.push(b);
-      toggle=!toggle;
-    }
-    const bytes=[];
-    for(let i=0;i<bb.length;i+=8){
-      let v=0; for(let j=0;j<8;j++) v = (v<<1) | (bb[i+j]?1:0);
-      bytes.push(v);
-    }
-    return bytes;
-  }
-
-  static _getNumDataCodewords(ver,ecl){
-    const table = {
-      1:{0:16,1:19,2:9,3:13},
-      2:{0:28,1:34,2:16,3:22},
-      3:{0:44,1:55,2:26,3:34},
-      4:{0:64,1:80,2:36,3:48},
-      5:{0:86,1:108,2:46,3:62},
-      6:{0:108,1:136,2:60,3:76},
-      7:{0:124,1:156,2:66,3:88},
-      8:{0:154,1:194,2:86,3:110},
-      9:{0:182,1:232,2:100,3:132},
-      10:{0:216,1:274,2:122,3:154},
-    };
-    const row = table[ver] || table[10];
-    return row[ecl];
-  }
-
-  static _addEccAndInterleave(data, ver, ecl){
-    const numData = QrCode._getNumDataCodewords(ver,ecl);
-    data = data.slice(0,numData);
-
-    const eccLen = QrCode._getEccLen(ver, ecl);
-    const ecc = rsComputeRemainder(data, rsGeneratorPoly(eccLen));
-    return data.concat(ecc);
-  }
-
-  static _getEccLen(ver,ecl){
-    const t = {
-      1:{0:10,1:7,2:17,3:13},
-      2:{0:16,1:10,2:28,3:22},
-      3:{0:26,1:15,2:44,3:36},
-      4:{0:36,1:20,2:64,3:52},
-      5:{0:48,1:26,2:88,3:72},
-      6:{0:64,1:36,2:112,3:96},
-      7:{0:72,1:40,2:130,3:108},
-      8:{0:88,1:48,2:156,3:132},
-      9:{0:110,1:60,2:192,3:160},
-      10:{0:130,1:72,2:224,3:192},
-    };
-    const row = t[ver] || t[10];
-    return row[ecl];
-  }
-}
-
-class QrSegment {
-  static Mode = {BYTE:0b0100};
-  constructor(mode, numChars, dataBits){ this.mode=mode; this.numChars=numChars; this.data=dataBits; }
-  static _makeBytes(data){
-    const bits=[];
-    for(const b of data){
-      for(let i=7;i>=0;i--) bits.push(((b>>>i)&1)!==0);
-    }
-    return bits;
-  }
-}
-
-const GF_EXP = (()=> {
-  const exp = new Uint8Array(512);
-  let x=1;
-  for(let i=0;i<255;i++){
-    exp[i]=x;
-    x <<= 1;
-    if(x & 0x100) x ^= 0x11D;
-  }
-  for(let i=255;i<512;i++) exp[i]=exp[i-255];
-  return exp;
-})();
-const GF_LOG = (()=> {
-  const log = new Uint8Array(256);
-  for(let i=1;i<255;i++) log[GF_EXP[i]] = i;
-  return log;
-})();
-function gfMul(a,b){
-  if(a===0||b===0) return 0;
-  return GF_EXP[GF_LOG[a]+GF_LOG[b]];
-}
-function rsGeneratorPoly(degree){
-  let poly = [1];
-  for(let i=0;i<degree;i++){
-    const term = [1, GF_EXP[i]];
-    poly = rsPolyMul(poly, term);
-  }
-  return poly;
-}
-function rsPolyMul(p,q){
-  const res = new Array(p.length+q.length-1).fill(0);
-  for(let i=0;i<p.length;i++){
-    for(let j=0;j<q.length;j++){
-      res[i+j] ^= gfMul(p[i], q[j]);
-    }
-  }
-  return res;
-}
-function rsComputeRemainder(data, gen){
-  const res = new Array(gen.length-1).fill(0);
-  for(const b of data){
-    const factor = b ^ res[0];
-    res.shift();
-    res.push(0);
-    for(let i=0;i<res.length;i++){
-      res[i] ^= gfMul(gen[i+1], factor);
-    }
-  }
-  return res;
-}
-
-function makeQrSvg(text, sizeModules=29, margin=2){
-  const data = new TextEncoder().encode(text);
-  const qr = QrCode.encodeBinary(data, QrCode.Ecc.MEDIUM);
-  const scale = 1;
-  const dim = qr.size + margin*2;
-  let rects = [];
-  for(let y=0;y<qr.size;y++){
-    for(let x=0;x<qr.size;x++){
-      if(qr.getModule(x,y)){
-        rects.push(`<rect x="${x+margin}" y="${y+margin}" width="${scale}" height="${scale}" fill="#000"/>`);
-      }
-    }
-  }
-  return `<svg viewBox="0 0 ${dim} ${dim}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-label="QR">
-    <rect width="${dim}" height="${dim}" fill="#fff"/>
-    ${rects.join("")}
-  </svg>`;
-}
-
-/* ===================== RENDER ALL ===================== */
-function renderAll(){
-  fillCatSelects();
-  fillPickers();
-  loadSettings();
-  setRecipeFromCurrent();
-  renderIngredients();
-  renderRecipeTable();
-  renderLabel();
-}
-
-(function init(){
-  fillCatSelects();
-  fillPickers();
-  loadSettings();
-  if(!state.current.recipe.mhd){
+  function todayISO(){
     const d = new Date();
-    d.setMonth(d.getMonth()+6);
-    state.current.recipe.mhd = d.toISOString().slice(0,10);
-    saveState();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    return `${yyyy}-${mm}-${dd}`;
   }
-  setRecipeFromCurrent();
-  renderAll();
-  resetIngForm();
+
+  function entryKey(dateStr, shiftStr){
+    return `${dateStr}__${shiftStr}`;
+  }
+
+  function listKeysSorted(all){
+    return Object.keys(all).sort((a,b)=> (a>b?-1:1)); // desc
+  }
+
+  function findPreviousEntry(all, dateStr){
+    // find max date < dateStr (ignore shift), use the latest shift if multiple
+    const target = dateStr;
+    const candidates = Object.values(all)
+      .filter(e => e && e.date && e.date < target)
+      .sort((a,b)=> (a.date > b.date ? -1 : 1)); // newest first
+
+    if(candidates.length === 0) return null;
+
+    // if same date appears with different shift, pick the one saved later
+    const newestDate = candidates[0].date;
+    const sameDate = candidates.filter(e => e.date === newestDate);
+    sameDate.sort((a,b)=> (a.savedAt > b.savedAt ? -1 : 1));
+    return sameDate[0];
+  }
+
+  // ---------- Build tables ----------
+  function buildTable(bodyEl, denoms, map){
+    bodyEl.innerHTML = "";
+    denoms.forEach((d,i)=>{
+      const tr = document.createElement("tr");
+
+      const td1 = document.createElement("td");
+      td1.textContent = d >= 1 ? `${d} €` : `${String(d).replace(".", ",")} €`;
+
+      const td2 = document.createElement("td");
+      const inp = document.createElement("input");
+      inp.type = "number";
+      inp.min = "0";
+      inp.step = "1";
+      inp.value = "0";
+      inp.style.width = "90px";
+      inp.addEventListener("input", recalc);
+      td2.appendChild(inp);
+
+      const td3 = document.createElement("td");
+      td3.textContent = "0,00 €";
+
+      tr.append(td1, td2, td3);
+      bodyEl.appendChild(tr);
+
+      map.set(d, {input: inp, sumCell: td3});
+    });
+  }
+
+  // ---------- Calculations ----------
+  function calcSum(map, denoms){
+    let total = 0;
+    denoms.forEach(d=>{
+      const ref = map.get(d);
+      const qty = ref ? (parseFloat(ref.input.value) || 0) : 0;
+      const sum = d * qty;
+      if(ref) ref.sumCell.textContent = euro(sum);
+      total += sum;
+    });
+    total = Math.round(total*100)/100;
+    return total;
+  }
+
+  function recalc(){
+    const ist = calcSum(istInputs, IST_DENOMS);
+    const bank = calcSum(bankInputs, BANK_DENOMS);
+
+    const startV = numVal(start);
+    const zbonV  = numVal(zbon);
+
+    const soll = Math.round((startV + zbonV - bank)*100)/100;
+    const diff = Math.round((ist - soll)*100)/100;
+    const ende = Math.round((ist - bank)*100)/100;
+
+    kIst.textContent = euro(ist);
+    kBank.textContent = euro(bank);
+    kSoll.textContent = euro(soll);
+    kDiff.textContent = euro(diff);
+    kEnde.textContent = euro(ende);
+
+    kKey.textContent = entryKey(datum.value || "—", schicht.value || "—");
+  }
+
+  // ---------- Snapshot / Apply ----------
+  function snapshot(){
+    const istCounts = {};
+    IST_DENOMS.forEach(d=>{
+      istCounts[String(d)] = parseInt(istInputs.get(d).input.value || "0", 10) || 0;
+    });
+    const bankCounts = {};
+    BANK_DENOMS.forEach(d=>{
+      bankCounts[String(d)] = parseInt(bankInputs.get(d).input.value || "0", 10) || 0;
+    });
+
+    const ist = calcSum(istInputs, IST_DENOMS);
+    const bank = calcSum(bankInputs, BANK_DENOMS);
+
+    const startV = numVal(start);
+    const zbonV  = numVal(zbon);
+    const soll = Math.round((startV + zbonV - bank)*100)/100;
+    const diff = Math.round((ist - soll)*100)/100;
+    const ende = Math.round((ist - bank)*100)/100;
+
+    return {
+      date: datum.value,
+      shift: schicht.value,
+      start: startV,
+      zbon: zbonV,
+      istCounts,
+      bankCounts,
+      ist, bank, soll, diff, ende,
+      savedAt: new Date().toISOString()
+    };
+  }
+
+  function applyEntry(e){
+    if(!e) return;
+
+    datum.value = e.date || datum.value;
+    schicht.value = e.shift || schicht.value;
+
+    start.value = (e.start ?? 0);
+    zbon.value  = (e.zbon ?? 0);
+
+    IST_DENOMS.forEach(d=>{
+      const v = e.istCounts ? (e.istCounts[String(d)] ?? 0) : 0;
+      istInputs.get(d).input.value = v;
+    });
+    BANK_DENOMS.forEach(d=>{
+      const v = e.bankCounts ? (e.bankCounts[String(d)] ?? 0) : 0;
+      bankInputs.get(d).input.value = v;
+    });
+
+    kSaved.textContent = e.savedAt ? new Date(e.savedAt).toLocaleString() : "—";
+    kStatus.textContent = "Geladen";
+    recalc();
+  }
+
+  // ---------- History UI ----------
+  function refreshHistory(){
+    const all = loadAll();
+    const keys = listKeysSorted(all);
+    history.innerHTML = "";
+    keys.forEach(k=>{
+      const e = all[k];
+      const opt = document.createElement("option");
+      opt.value = k;
+      opt.textContent = `${e.date} (${e.shift}) · IST ${euro(e.ist)} · Bank ${euro(e.bank)} · Ende ${euro(e.ende)}`;
+      history.appendChild(opt);
+    });
+  }
+
+  // ---------- Previous day carryover ----------
+  function applyPreviousDayStart(){
+    const all = loadAll();
+    const prev = findPreviousEntry(all, datum.value);
+    if(!prev){
+      prevInfo.textContent = "Kein Vortag gefunden.";
+      return;
+    }
+    start.value = prev.ende ?? 0;
+    prevInfo.innerHTML = `Vortag: <b>${prev.date}</b> · Endbestand: <b>${euro(prev.ende)}</b> → Start übernommen.`;
+    kStatus.textContent = "Vortag übernommen";
+    recalc();
+  }
+
+  function autoCarryoverIfPossible(){
+    // Only auto-fill start if user didn't change it manually (heuristic: start == 0 and there is a previous)
+    if(!datum.value) return;
+    const all = loadAll();
+    const prev = findPreviousEntry(all, datum.value);
+    if(prev){
+      // If start is empty or 0, auto
+      const startNow = numVal(start);
+      if(startNow === 0){
+        start.value = prev.ende ?? 0;
+        prevInfo.innerHTML = `Auto-Start: Vortag <b>${prev.date}</b> Endbestand <b>${euro(prev.ende)}</b> übernommen.`;
+      }else{
+        prevInfo.innerHTML = `Vortag <b>${prev.date}</b> Endbestand <b>${euro(prev.ende)}</b> (Auto-Start verfügbar).`;
+      }
+    } else {
+      prevInfo.textContent = "Kein Vortag im Speicher.";
+    }
+    recalc();
+  }
+
+  // ---------- Print (single day) ----------
+  function printEntry(e){
+    const linesIst = IST_DENOMS.map(d=>{
+      const qty = e.istCounts[String(d)] || 0;
+      if(!qty) return "";
+      const sum = d*qty;
+      const label = d>=1 ? `${d} €` : `${String(d).replace(".", ",")} €`;
+      return `<tr><td>${label}</td><td style="text-align:right">${qty}</td><td style="text-align:right">${euro(sum)}</td></tr>`;
+    }).filter(Boolean).join("");
+
+    const linesBank = BANK_DENOMS.map(d=>{
+      const qty = e.bankCounts[String(d)] || 0;
+      if(!qty) return "";
+      const sum = d*qty;
+      return `<tr><td>${d} €</td><td style="text-align:right">${qty}</td><td style="text-align:right">${euro(sum)}</td></tr>`;
+    }).filter(Boolean).join("");
+
+    const html = `
+<!doctype html><html lang="de"><head><meta charset="utf-8">
+<title>Zählprotokoll ${e.date}</title>
+<style>
+  body{font-family:Arial, sans-serif; margin:24px; color:#111}
+  h1{font-size:18px; margin:0 0 6px 0}
+  .sub{font-size:12px; color:#444; margin-bottom:14px}
+  table{width:100%; border-collapse:collapse; margin:12px 0}
+  th,td{border:1px solid #ddd; padding:8px; font-size:12px}
+  th{background:#f3f3f3; text-align:left}
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px}
+  .box{border:1px solid #ddd; padding:10px}
+  .v{font-weight:bold; font-size:14px}
+</style></head>
+<body>
+  <h1>Eiscafé Sanremo – Kassen-Zählprotokoll</h1>
+  <div class="sub">Fürst-Richard-Str. 1 · 57319 Bad Berleburg · Tel: 0176 72809926<br>
+  Datum: <b>${e.date}</b> · Schicht: <b>${e.shift}</b> · Gespeichert: ${new Date(e.savedAt).toLocaleString()}</div>
+
+  <h3 style="margin:0">Kassen-Zählung (IST)</h3>
+  <table>
+    <thead><tr><th>Stückelung</th><th style="text-align:right">Anzahl</th><th style="text-align:right">Summe</th></tr></thead>
+    <tbody>${linesIst || `<tr><td colspan="3">Keine Eingaben</td></tr>`}</tbody>
+  </table>
+
+  <h3 style="margin:0">Bankeinzahlung (detailliert)</h3>
+  <table>
+    <thead><tr><th>Schein</th><th style="text-align:right">Anzahl</th><th style="text-align:right">Summe</th></tr></thead>
+    <tbody>${linesBank || `<tr><td colspan="3">Keine Bankeinzahlung</td></tr>`}</tbody>
+  </table>
+
+  <table>
+    <tbody>
+      <tr><th>Kassenanfangsbestand</th><td style="text-align:right">${euro(e.start)}</td></tr>
+      <tr><th>Z-Bon</th><td style="text-align:right">${euro(e.zbon)}</td></tr>
+      <tr><th>Bankeinzahlung (Entnahme)</th><td style="text-align:right">${euro(e.bank)}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="kpis">
+    <div class="box"><div>IST</div><div class="v">${euro(e.ist)}</div></div>
+    <div class="box"><div>SOLL</div><div class="v">${euro(e.soll)}</div></div>
+    <div class="box"><div>Differenz</div><div class="v">${euro(e.diff)}</div></div>
+    <div class="box"><div>Endbestand</div><div class="v">${euro(e.ende)}</div></div>
+  </div>
+
+  <script>window.print()</script>
+</body></html>`;
+    const w = window.open("", "_blank");
+    w.document.open(); w.document.write(html); w.document.close();
+  }
+
+  // ---------- Monthly Report ----------
+  function buildMonthly(monthStr){
+    // monthStr format: YYYY-MM
+    const all = loadAll();
+    const items = Object.values(all).filter(e => e && e.date && e.date.startsWith(monthStr));
+    items.sort((a,b)=> (a.date > b.date ? 1 : -1));
+
+    if(items.length === 0){
+      monthlyOut.innerHTML = `<div class="small">Keine Einträge im Monat ${monthStr}.</div>`;
+      return;
+    }
+
+    let sumIst=0, sumBank=0, sumZ=0, sumDiff=0, lastEnde=null;
+
+    const rows = items.map(e=>{
+      sumIst += e.ist;
+      sumBank += e.bank;
+      sumZ += e.zbon;
+      sumDiff += e.diff;
+      lastEnde = e.ende;
+
+      return `<tr>
+        <td style="text-align:left">${e.date}</td>
+        <td style="text-align:left">${e.shift}</td>
+        <td style="text-align:right">${euro(e.start)}</td>
+        <td style="text-align:right">${euro(e.zbon)}</td>
+        <td style="text-align:right">${euro(e.ist)}</td>
+        <td style="text-align:right">${euro(e.bank)}</td>
+        <td style="text-align:right">${euro(e.diff)}</td>
+        <td style="text-align:right">${euro(e.ende)}</td>
+      </tr>`;
+    }).join("");
+
+    const totals = `
+      <tr style="font-weight:900;background:#f7f7f7">
+        <td colspan="3" style="text-align:left">Summe</td>
+        <td style="text-align:right">${euro(sumZ)}</td>
+        <td style="text-align:right">${euro(sumIst)}</td>
+        <td style="text-align:right">${euro(sumBank)}</td>
+        <td style="text-align:right">${euro(sumDiff)}</td>
+        <td style="text-align:right">${lastEnde !== null ? euro(lastEnde) : "—"}</td>
+      </tr>`;
+
+    monthlyOut.innerHTML = `
+      <div id="monthlyPrintable">
+        <div style="margin-bottom:8px">
+          <div style="font-weight:900">Eiscafé Sanremo – Monatsbericht</div>
+          <div class="small">Monat: <b>${monthStr}</b></div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Datum</th>
+              <th style="text-align:left">Schicht</th>
+              <th style="text-align:right">Start</th>
+              <th style="text-align:right">Z-Bon</th>
+              <th style="text-align:right">IST</th>
+              <th style="text-align:right">Bank</th>
+              <th style="text-align:right">Diff</th>
+              <th style="text-align:right">Ende</th>
+            </tr>
+          </thead>
+          <tbody>${rows}${totals}</tbody>
+        </table>
+        <div class="small">Hinweis: Historie ist lokal gespeichert. Monatsbericht bitte für Archiv/Steuerberater ausdrucken.</div>
+      </div>
+    `;
+  }
+
+  function printMonthly(){
+    const node = document.getElementById("monthlyPrintable");
+    if(!node){ alert("Bitte erst Bericht erstellen."); return; }
+
+    const html = `
+<!doctype html><html lang="de"><head><meta charset="utf-8">
+<title>Monatsbericht</title>
+<style>
+  body{font-family:Arial, sans-serif; margin:24px; color:#111}
+  h1{font-size:18px; margin:0 0 6px 0}
+  .sub{font-size:12px; color:#444; margin-bottom:14px}
+  table{width:100%; border-collapse:collapse; margin:12px 0}
+  th,td{border:1px solid #ddd; padding:8px; font-size:12px}
+  th{background:#f3f3f3; text-align:left}
+</style></head>
+<body>
+  <h1>Eiscafé Sanremo – Monatsbericht</h1>
+  <div class="sub">Fürst-Richard-Str. 1 · 57319 Bad Berleburg · Tel: 0176 72809926</div>
+  ${node.outerHTML}
+  <script>window.print()</script>
+</body></html>`;
+    const w = window.open("", "_blank");
+    w.document.open(); w.document.write(html); w.document.close();
+  }
+
+  // ---------- Lock/Unlock ----------
+  function showApp(){
+    lockCard.classList.add("hidden");
+    appCard.classList.remove("hidden");
+    countCard.classList.remove("hidden");
+    bankCard.classList.remove("hidden");
+    resultCard.classList.remove("hidden");
+    kStatus.textContent = "Entsperrt";
+    refreshHistory();
+    autoCarryoverIfPossible();
+  }
+
+  function showLock(){
+    lockCard.classList.remove("hidden");
+    appCard.classList.add("hidden");
+    countCard.classList.add("hidden");
+    bankCard.classList.add("hidden");
+    resultCard.classList.add("hidden");
+    kStatus.textContent = "Gesperrt";
+  }
+
+  btnUnlock.addEventListener("click", ()=>{
+    if(pin.value.trim() === getPin()){
+      pin.value = "";
+      showApp();
+    } else {
+      alert("Falscher PIN.");
+    }
+  });
+
+  btnLock.addEventListener("click", ()=>{
+    showLock();
+  });
+
+  // ---------- Actions ----------
+  btnResetCounts.addEventListener("click", ()=>{
+    IST_DENOMS.forEach(d=> istInputs.get(d).input.value = 0);
+    BANK_DENOMS.forEach(d=> bankInputs.get(d).input.value = 0);
+    kSaved.textContent = "—";
+    kStatus.textContent = "Zählfelder geleert";
+    recalc();
+  });
+
+  btnPrevDay.addEventListener("click", applyPreviousDayStart);
+
+  btnSave.addEventListener("click", ()=>{
+    if(!datum.value){ alert("Bitte Datum wählen."); return; }
+    const all = loadAll();
+    const k = entryKey(datum.value, schicht.value);
+    const e = snapshot();
+    all[k] = e;
+    saveAll(all);
+    refreshHistory();
+    kSaved.textContent = new Date(e.savedAt).toLocaleString();
+    kStatus.textContent = "Gespeichert";
+  });
+
+  btnLoad.addEventListener("click", ()=>{
+    const k = history.value;
+    if(!k) return;
+    const all = loadAll();
+    const e = all[k];
+    applyEntry(e);
+  });
+
+  btnDelete.addEventListener("click", ()=>{
+    const k = history.value;
+    if(!k) return;
+    if(!confirm("Wirklich löschen?")) return;
+    const all = loadAll();
+    delete all[k];
+    saveAll(all);
+    refreshHistory();
+    kStatus.textContent = "Gelöscht";
+  });
+
+  btnPrint.addEventListener("click", ()=>{
+    if(!datum.value){ alert("Bitte Datum wählen."); return; }
+    const all = loadAll();
+    const k = entryKey(datum.value, schicht.value);
+    let e = all[k];
+    if(!e){
+      // auto-save before print
+      e = snapshot();
+      all[k] = e;
+      saveAll(all);
+      refreshHistory();
+      kSaved.textContent = new Date(e.savedAt).toLocaleString();
+      kStatus.textContent = "Auto-gespeichert + Drucken";
+    }
+    printEntry(e);
+  });
+
+  // Auto carryover when date changes
+  datum.addEventListener("change", ()=>{
+    // if user goes to a new day, offer carryover
+    autoCarryoverIfPossible();
+  });
+  schicht.addEventListener("change", recalc);
+  start.addEventListener("input", recalc);
+  zbon.addEventListener("input", recalc);
+
+  // Monthly modal
+  btnMonthly.addEventListener("click", ()=>{
+    monthlyModal.classList.remove("hidden");
+    // default to current month
+    const d = new Date();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    monthPick.value = `${d.getFullYear()}-${m}`;
+    monthlyOut.innerHTML = `<div class="small">Wähle einen Monat und klicke „Erstellen“.</div>`;
+  });
+  btnCloseMonthly.addEventListener("click", ()=> monthlyModal.classList.add("hidden"));
+  btnCloseMonthly2.addEventListener("click", ()=> monthlyModal.classList.add("hidden"));
+  btnBuildMonthly.addEventListener("click", ()=>{
+    if(!monthPick.value){ alert("Bitte Monat wählen."); return; }
+    buildMonthly(monthPick.value);
+  });
+  btnPrintMonthly.addEventListener("click", printMonthly);
+
+  // PIN change
+  btnChangePin.addEventListener("click", ()=>{
+    pinModal.classList.remove("hidden");
+    oldPin.value = "";
+    newPin.value = "";
+  });
+  function closePin(){ pinModal.classList.add("hidden"); }
+  btnClosePin.addEventListener("click", closePin);
+  btnClosePin2.addEventListener("click", closePin);
+  btnSavePin.addEventListener("click", ()=>{
+    if(oldPin.value.trim() !== getPin()){
+      alert("Alter PIN ist falsch.");
+      return;
+    }
+    const np = newPin.value.trim();
+    if(np.length < 4){
+      alert("Neuer PIN muss mindestens 4 Ziffern haben.");
+      return;
+    }
+    localStorage.setItem(KEY_PIN, np);
+    closePin();
+    alert("PIN gespeichert.");
+  });
+
+  // ---------- Init ----------
+  buildTable(tblIstBody, IST_DENOMS, istInputs);
+  buildTable(tblBankBody, BANK_DENOMS, bankInputs);
+
+  datum.value = todayISO();
+  schicht.value = "Tag";
+  start.value = "0";
+  zbon.value = "0";
+
+  kSaved.textContent = "—";
+  recalc();
+  showLock(); // start locked
 })();
 </script>
 </body>
