@@ -164,6 +164,7 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 10px;
+      position: relative;
     }
 
     .denom-item label {
@@ -175,6 +176,18 @@
     .denom-item input {
       padding: 8px;
       font-size: 14px;
+    }
+
+    .bank-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--warning);
+      color: white;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: bold;
     }
 
     /* Summary Box */
@@ -378,7 +391,7 @@
       display: none !important;
     }
 
-    /* Bank details */
+    /* Bank section */
     .bank-section {
       background: #fef3c7;
       border-left: 4px solid var(--warning);
@@ -396,6 +409,16 @@
       font-size: 18px;
       margin-top: 10px;
     }
+
+    /* Live calculation indicator */
+    .live-badge {
+      background: var(--primary);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
@@ -404,7 +427,7 @@
 <div class="header no-print">
   <div>
     <h1>🏦 Kassen-Zählprotokoll</h1>
-    <small>Eiscafé Sanremo · Bad Berleburg · Finanzamt-konform</small>
+    <small>Eiscafé Sanremo · Bad Berleburg · Automatische Bank-Abzug</small>
   </div>
   <div>
     <div id="lockState" class="status lock">GESPERRT</div>
@@ -466,13 +489,16 @@
     <div class="card-title">💰 2. Z-Bon (Soll = Registrierte Verkäufe)</div>
     <div class="form-group">
       <label>Tagesumsatz laut Kasse (Z-Bon) in €</label>
-      <input type="number" id="zbon" step="0.01" value="0.00" placeholder="0,00">
+      <input type="number" id="zbon" step="0.01" value="0.00" placeholder="0,00" oninput="updateAllCalculations()">
     </div>
   </div>
 
   <!-- KASSENBESTAND ZÄHLEN -->
   <div class="card">
-    <div class="card-title">🧾 3. Kassenbestand zählen (Ist)</div>
+    <div class="card-title">
+      🧾 3. Kassenbestand zählen (Ist)
+      <span class="live-badge">Live-Berechnung</span>
+    </div>
     
     <!-- Scheine -->
     <div style="margin-bottom:20px;">
@@ -499,9 +525,12 @@
     </div>
   </div>
 
-  <!-- BANK EINZAHLUNG -->
+  <!-- BANK EINZAHLUNG (mit automatischem Abzug) -->
   <div class="card no-print">
-    <div class="card-title">🏦 4. Bank Einzahlung (falls vorhanden)</div>
+    <div class="card-title">
+      🏦 4. Bank Einzahlung 
+      <span class="live-badge" style="background: var(--warning);">Automatischer Abzug</span>
+    </div>
     
     <div class="bank-section">
       <div style="margin-bottom:15px;">
@@ -513,7 +542,7 @@
       </div>
 
       <div id="bankDetails" class="hidden">
-        <h3 style="color:var(--warning); margin-bottom:10px;">📋 Eingezahlte Stückelung (für Finanzamt)</h3>
+        <h3 style="color:var(--warning); margin-bottom:10px;">📋 Eingezahlte Stückelung (wird automatisch von der Kasse abgezogen)</h3>
         
         <!-- Bank Scheine -->
         <div style="margin-bottom:15px;">
@@ -534,13 +563,33 @@
         <div class="bank-total" id="bankTotal">
           Summe Einzahlung: 0,00 €
         </div>
+        
+        <div class="alert alert-warning" style="margin-top:10px;">
+          ⚡ <strong>Wichtig:</strong> Diese Noten/Münzen werden automatisch vom Kassenbestand abgezogen!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KASSENBESTAND NACH BANK-ABZUG (FÜR KONTROLLE) -->
+  <div class="card">
+    <div class="card-title">📊 5. Kassenbestand NACH Bank-Abzug</div>
+    
+    <div class="denom-grid" id="afterBankGrid">
+      <!-- Wird dynamisch befüllt -->
+    </div>
+
+    <div class="summary-box" style="background: #e6f7e6;">
+      <div class="summary-row">
+        <span class="summary-label">💰 Kasse nach Bank-Abzug:</span>
+        <span class="summary-value summary-total" id="afterBankTotal">0,00 €</span>
       </div>
     </div>
   </div>
 
   <!-- ZUSAMMENFASSUNG & KONTROLLE -->
   <div class="card">
-    <div class="card-title">✅ 5. Tagesabschluss (Kontrolle)</div>
+    <div class="card-title">✅ 6. Tagesabschluss (Kontrolle)</div>
     
     <div class="grid-2" style="margin-bottom:20px;">
       <div class="summary-box">
@@ -587,13 +636,13 @@
     <div class="btn-group no-print">
       <button class="btn btn-success" onclick="saveAll()">💾 Speichern (für Finanzamt)</button>
       <button class="btn btn-primary" onclick="printDay()">🖨️ Tagesprotokoll drucken</button>
-      <button class="btn btn-outline" onclick="recalc()">🔄 Neu berechnen</button>
+      <button class="btn btn-outline" onclick="updateAllCalculations()">🔄 Neu berechnen</button>
     </div>
   </div>
 
   <!-- PROTOKOLL HISTORIE (für Kontrolle) -->
   <div class="card no-print">
-    <div class="card-title">📋 6. Protokoll-Historie</div>
+    <div class="card-title">📋 7. Protokoll-Historie</div>
     <div id="history" style="max-height:300px; overflow-y:auto;">
       <!-- Wird per JS befüllt -->
     </div>
@@ -601,7 +650,7 @@
 
   <!-- MONATSBERICHT -->
   <div class="card no-print">
-    <div class="card-title">📊 7. Monatsbericht (für Finanzamt)</div>
+    <div class="card-title">📊 8. Monatsbericht (für Finanzamt)</div>
     <div class="grid-2">
       <div class="form-group">
         <label>Monat wählen</label>
@@ -617,7 +666,7 @@
 
   <!-- BACKUP -->
   <div class="card no-print">
-    <div class="card-title">💾 8. Backup / Export</div>
+    <div class="card-title">💾 9. Backup / Export</div>
     <div class="btn-group">
       <button class="btn btn-outline" onclick="exportData()">📤 Export (JSON)</button>
       <button class="btn btn-outline" onclick="importData()">📥 Import (JSON)</button>
@@ -685,7 +734,7 @@
     notesGrid.innerHTML = NOTES.map(n => `
       <div class="denom-item">
         <label>${n.label}</label>
-        <input type="number" id="${n.id}" min="0" value="0" step="1" oninput="calculateIst()">
+        <input type="number" id="${n.id}" min="0" value="0" step="1" oninput="updateAllCalculations()">
       </div>
     `).join('');
 
@@ -694,7 +743,7 @@
     coinsGrid.innerHTML = COINS.map(c => `
       <div class="denom-item">
         <label>${c.label}</label>
-        <input type="number" id="${c.id}" min="0" value="0" step="1" oninput="calculateIst()">
+        <input type="number" id="${c.id}" min="0" value="0" step="1" oninput="updateAllCalculations()">
       </div>
     `).join('');
 
@@ -702,8 +751,9 @@
     const bankNotesGrid = document.getElementById('bank-notes-grid');
     bankNotesGrid.innerHTML = NOTES.map(n => `
       <div class="denom-item">
+        <div class="bank-badge">Bank</div>
         <label>${n.label}</label>
-        <input type="number" id="bank_${n.id}" min="0" value="0" step="1" oninput="calculateBankTotal()">
+        <input type="number" id="bank_${n.id}" min="0" value="0" step="1" oninput="updateAllCalculations()">
       </div>
     `).join('');
 
@@ -711,8 +761,18 @@
     const bankCoinsGrid = document.getElementById('bank-coins-grid');
     bankCoinsGrid.innerHTML = COINS.map(c => `
       <div class="denom-item">
+        <div class="bank-badge">Bank</div>
         <label>${c.label}</label>
-        <input type="number" id="bank_${c.id}" min="0" value="0" step="1" oninput="calculateBankTotal()">
+        <input type="number" id="bank_${c.id}" min="0" value="0" step="1" oninput="updateAllCalculations()">
+      </div>
+    `).join('');
+
+    // After Bank Grid
+    const afterBankGrid = document.getElementById('afterBankGrid');
+    afterBankGrid.innerHTML = ALL_DENOMS.map(d => `
+      <div class="denom-item" style="background: #e6f7e6;">
+        <label>${d.label}</label>
+        <div style="font-size: 16px; font-weight: bold; text-align: center; padding: 5px;" id="after_${d.id}">0</div>
       </div>
     `).join('');
   };
@@ -728,11 +788,58 @@
         if (input) input.value = 0;
       });
     }
-    calculateBankTotal();
-    calculateIst();
+    updateAllCalculations();
   };
 
-  window.calculateBankTotal = () => {
+  const getBankQuantities = () => {
+    const bankQty = {};
+    ALL_DENOMS.forEach(d => {
+      const input = document.getElementById(`bank_${d.id}`);
+      bankQty[d.id] = input ? num(input.value) : 0;
+    });
+    return bankQty;
+  };
+
+  // ========== KASSE NACH BANK-ABZUG ==========
+  const updateAfterBankDisplay = () => {
+    let afterBankTotal = 0;
+    
+    ALL_DENOMS.forEach(d => {
+      const kasseInput = document.getElementById(d.id);
+      const bankInput = document.getElementById(`bank_${d.id}`);
+      
+      const kasseQty = kasseInput ? num(kasseInput.value) : 0;
+      const bankQty = bankInput ? num(bankInput.value) : 0;
+      
+      // Abzug: Kasse - Bank (weil Bank-Geld aus der Kasse genommen wurde)
+      const afterBankQty = Math.max(0, kasseQty - bankQty);
+      
+      // Display aktualisieren
+      const afterElement = document.getElementById(`after_${d.id}`);
+      if (afterElement) {
+        afterElement.innerHTML = afterBankQty;
+      }
+      
+      afterBankTotal += afterBankQty * d.value;
+    });
+    
+    document.getElementById('afterBankTotal').innerHTML = euro(afterBankTotal);
+    return afterBankTotal;
+  };
+
+  // ========== KASSE FUNKTIONEN ==========
+  window.calculateIst = () => {
+    let total = 0;
+    ALL_DENOMS.forEach(d => {
+      const input = document.getElementById(d.id);
+      if (input) total += num(input.value) * d.value;
+    });
+    document.getElementById('istTotal').innerHTML = euro(total);
+    document.getElementById('istValue').innerHTML = euro(total);
+    return total;
+  };
+
+  const calculateBank = () => {
     let total = 0;
     ALL_DENOMS.forEach(d => {
       const input = document.getElementById(`bank_${d.id}`);
@@ -740,8 +847,64 @@
     });
     document.getElementById('bankTotal').innerHTML = `Summe Einzahlung: ${euro(total)}`;
     document.getElementById('bankValue').innerHTML = euro(total);
-    updateDiff();
     return total;
+  };
+
+  // ========== ALLES AKTUALISIEREN ==========
+  window.updateAllCalculations = () => {
+    const ist = calculateIst();
+    const bank = calculateBank();
+    const afterBank = updateAfterBankDisplay();
+    
+    // Prüfung: afterBank sollte = ist - bank sein
+    const calculatedAfterBank = ist - bank;
+    if (Math.abs(afterBank - calculatedAfterBank) > 0.01) {
+      console.warn('Rundungsfehler?', afterBank, calculatedAfterBank);
+    }
+
+    // KPI Updates
+    const start = num(document.getElementById('startValue').innerHTML.replace('€','').replace(',','.'));
+    const zbon = num(document.getElementById('zbon').value);
+    
+    const soll = start + zbon;
+    const diff = ist - soll;
+    const ende = ist - bank;
+
+    document.getElementById('sollValue').innerHTML = euro(soll);
+    document.getElementById('zbonValue').innerHTML = euro(zbon);
+    document.getElementById('endeValue').innerHTML = euro(ende);
+    
+    const diffEl = document.getElementById('diffValue');
+    const diffMsg = document.getElementById('diffMessage');
+    const diffBox = document.getElementById('diffBox');
+    
+    diffEl.innerHTML = euro(diff);
+    
+    if (Math.abs(diff) < 0.01) {
+      diffEl.style.color = 'var(--success)';
+      diffMsg.innerHTML = '✅ PERFEKT! Ist = Soll - Keine Differenz';
+      diffBox.style.background = '#d1fae5';
+    } else {
+      diffEl.style.color = 'var(--danger)';
+      diffMsg.innerHTML = `⚠️ ACHTUNG: Es gibt eine Differenz von ${euro(diff)}! Bitte kontrollieren!`;
+      diffBox.style.background = '#fef2f2';
+    }
+  };
+
+  // ========== GET/SET FÜR SPEICHERN ==========
+  const getCounts = () => {
+    const counts = {};
+    ALL_DENOMS.forEach(d => {
+      counts[d.id] = num(document.getElementById(d.id).value);
+    });
+    return counts;
+  };
+
+  const setCounts = (counts) => {
+    ALL_DENOMS.forEach(d => {
+      const input = document.getElementById(d.id);
+      if (input) input.value = counts?.[d.id] || 0;
+    });
   };
 
   const getBankDetails = () => {
@@ -782,68 +945,6 @@
     } else {
       document.getElementById('hasBankDeposit').value = 'no';
       document.getElementById('bankDetails').classList.add('hidden');
-    }
-    calculateBankTotal();
-  };
-
-  // ========== KASSE FUNKTIONEN ==========
-  window.calculateIst = () => {
-    let total = 0;
-    ALL_DENOMS.forEach(d => {
-      const input = document.getElementById(d.id);
-      if (input) total += num(input.value) * d.value;
-    });
-    document.getElementById('istTotal').innerHTML = euro(total);
-    document.getElementById('istValue').innerHTML = euro(total);
-    updateDiff();
-    return total;
-  };
-
-  const getCounts = () => {
-    const counts = {};
-    ALL_DENOMS.forEach(d => {
-      counts[d.id] = num(document.getElementById(d.id).value);
-    });
-    return counts;
-  };
-
-  const setCounts = (counts) => {
-    ALL_DENOMS.forEach(d => {
-      const input = document.getElementById(d.id);
-      if (input) input.value = counts?.[d.id] || 0;
-    });
-    calculateIst();
-  };
-
-  // ========== DIFFERENZ BERECHNEN ==========
-  const updateDiff = () => {
-    const start = num(document.getElementById('startValue').innerHTML.replace('€','').replace(',','.'));
-    const zbon = num(document.getElementById('zbon').value);
-    const ist = num(document.getElementById('istValue').innerHTML.replace('€','').replace(',','.'));
-    const bank = num(document.getElementById('bankValue').innerHTML.replace('€','').replace(',','.'));
-    
-    const soll = start + zbon;
-    const diff = ist - soll;
-    const ende = ist - bank;
-
-    document.getElementById('sollValue').innerHTML = euro(soll);
-    document.getElementById('zbonValue').innerHTML = euro(zbon);
-    document.getElementById('endeValue').innerHTML = euro(ende);
-    
-    const diffEl = document.getElementById('diffValue');
-    const diffMsg = document.getElementById('diffMessage');
-    const diffBox = document.getElementById('diffBox');
-    
-    diffEl.innerHTML = euro(diff);
-    
-    if (Math.abs(diff) < 0.01) {
-      diffEl.style.color = 'var(--success)';
-      diffMsg.innerHTML = '✅ PERFEKT! Ist = Soll - Keine Differenz';
-      diffBox.style.background = '#d1fae5';
-    } else {
-      diffEl.style.color = 'var(--danger)';
-      diffMsg.innerHTML = `⚠️ ACHTUNG: Es gibt eine Differenz von ${euro(diff)}! Bitte kontrollieren!`;
-      diffBox.style.background = '#fef2f2';
     }
   };
 
@@ -905,7 +1006,7 @@
     setCounts(entry.counts);
     setBankDetails(entry.bankDetails);
     
-    updateDiff();
+    updateAllCalculations();
     showHistory();
     alert('Tag geladen: ' + date);
   };
@@ -931,7 +1032,7 @@
     const start = num(document.getElementById('startValue').innerHTML.replace('€','').replace(',','.'));
     const zbon = num(document.getElementById('zbon').value);
     const ist = calculateIst();
-    const bank = num(document.getElementById('bankValue').innerHTML.replace('€','').replace(',','.'));
+    const bank = calculateBank();
     const bankDetails = getBankDetails();
     
     const soll = start + zbon;
@@ -955,12 +1056,6 @@
     } else {
       alert('⚠️ Gespeichert aber ACHTUNG: Differenz von ' + euro(diff));
     }
-  };
-
-  window.recalc = () => {
-    calculateIst();
-    calculateBankTotal();
-    updateDiff();
   };
 
   window.deleteDay = () => {
@@ -1017,7 +1112,7 @@
     document.getElementById('zbon').value = euroDot(e.zbon);
     setCounts(e.counts);
     setBankDetails(e.bankDetails);
-    updateDiff();
+    updateAllCalculations();
     window.scrollTo({top:0, behavior:'smooth'});
   };
 
@@ -1042,7 +1137,13 @@
     const counts = e.counts || {};
     const bankDetails = e.bankDetails || [];
     const diff = e.diff || 0;
-    const diffClass = Math.abs(diff) < 0.01 ? '' : (diff < 0 ? 'Minderbetrag' : 'Überschuss');
+
+    // Berechne Kasse nach Bank-Abzug für den Druck
+    const afterBankCounts = {};
+    ALL_DENOMS.forEach(d => {
+      const bankQty = bankDetails.find(b => Math.abs(b.denom - d.value) < 0.001)?.quantity || 0;
+      afterBankCounts[d.id] = Math.max(0, (counts[d.id] || 0) - bankQty);
+    });
 
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
@@ -1061,8 +1162,7 @@
           .center { text-align: center; }
           .bold { font-weight: bold; }
           .footer { margin-top: 20px; display: flex; justify-content: space-between; }
-          .diff-positive { color: #059669; }
-          .diff-negative { color: #dc2626; }
+          .bank-row { background: #fef3c7; }
         </style>
       </head>
       <body>
@@ -1072,13 +1172,7 @@
         <h2>1. Übersicht</h2>
         <table>
           <tr>
-            <th>Start (Übertrag)</th>
-            <th>+ Z-Bon</th>
-            <th>= Soll</th>
-            <th>Ist</th>
-            <th>Differenz</th>
-            <th>- Bank</th>
-            <th>= Ende</th>
+            <th>Start</th><th>+ Z-Bon</th><th>= Soll</th><th>Ist</th><th>Differenz</th><th>- Bank</th><th>= Ende</th>
           </tr>
           <tr>
             <td class="right">${euro(e.start)}</td>
@@ -1091,7 +1185,7 @@
           </tr>
         </table>
 
-        <h2>2. Kassenbestand (Ist)</h2>
+        <h2>2. Kassenbestand (gezählt)</h2>
         <table>
           <tr><th>Stückelung</th><th>Anzahl</th><th>Betrag</th></tr>
           ${ALL_DENOMS.map(d => {
@@ -1105,17 +1199,30 @@
         </table>
 
         ${bankDetails.length > 0 ? `
-        <h2>3. Bank Einzahlung</h2>
+        <h2>3. Bank Einzahlung (aus Kasse entnommen)</h2>
         <table>
           <tr><th>Stückelung</th><th>Anzahl</th><th>Betrag</th></tr>
           ${bankDetails.map(d => `
-            <tr><td>${d.denom.toFixed(2).replace('.',',')} €</td><td class="center">${d.quantity}</td><td class="right">${euro(d.total)}</td></tr>
+            <tr class="bank-row"><td>${d.denom.toFixed(2).replace('.',',')} €</td><td class="center">${d.quantity}</td><td class="right">${euro(d.total)}</td></tr>
           `).join('')}
           <tr><td colspan="2" class="right bold">Summe Bank:</td><td class="right bold">${euro(e.bank)}</td></tr>
         </table>
+
+        <h2>4. Kassenbestand NACH Bank-Abzug</h2>
+        <table>
+          <tr><th>Stückelung</th><th>Anzahl</th><th>Betrag</th></tr>
+          ${ALL_DENOMS.map(d => {
+            const qty = afterBankCounts[d.id] || 0;
+            if (qty > 0) {
+              return `<tr><td>${d.label}</td><td class="center">${qty}</td><td class="right">${euro(qty * d.value)}</td></tr>`;
+            }
+            return '';
+          }).join('')}
+          <tr><td colspan="2" class="right bold">Summe nach Bank:</td><td class="right bold">${euro(e.ende)}</td></tr>
+        </table>
         ` : '<p>Keine Bank-Einzahlung an diesem Tag</p>'}
 
-        <h2>4. Übertrag für nächsten Tag</h2>
+        <h2>5. Übertrag für nächsten Tag</h2>
         <p><strong>Endbestand:</strong> ${euro(e.ende)} (wird morgen als Start übernommen)</p>
         
         <div class="footer">
@@ -1155,23 +1262,23 @@
       
       rows += `<tr>
         <td>${e.date}</td>
-        <td class="right">${euro(e.start)}</td>
-        <td class="right">${euro(e.zbon)}</td>
-        <td class="right">${euro(e.ist)}</td>
-        <td class="right">${euro(e.bank)}</td>
-        <td class="right">${euro(e.ende)}</td>
-        <td class="right ${Math.abs(e.diff)<0.01 ? '' : (e.diff<0 ? 'diff-negative' : 'diff-positive')}">${euro(e.diff)}</td>
+        <td class="text-right">${euro(e.start)}</td>
+        <td class="text-right">${euro(e.zbon)}</td>
+        <td class="text-right">${euro(e.ist)}</td>
+        <td class="text-right">${euro(e.bank)}</td>
+        <td class="text-right">${euro(e.ende)}</td>
+        <td class="text-right ${Math.abs(e.diff)<0.01 ? '' : (e.diff<0 ? 'diff-negative' : 'diff-positive')}">${euro(e.diff)}</td>
       </tr>`;
     });
     
     rows += `<tr style="background:#f0f0f0; font-weight:bold;">
       <td>SUMME</td>
-      <td class="right">${euro(sumStart)}</td>
-      <td class="right">${euro(sumZbon)}</td>
-      <td class="right">${euro(sumIst)}</td>
-      <td class="right">${euro(sumBank)}</td>
-      <td class="right">${euro(sumEnde)}</td>
-      <td class="right">-</td>
+      <td class="text-right">${euro(sumStart)}</td>
+      <td class="text-right">${euro(sumZbon)}</td>
+      <td class="text-right">${euro(sumIst)}</td>
+      <td class="text-right">${euro(sumBank)}</td>
+      <td class="text-right">${euro(sumEnde)}</td>
+      <td class="text-right">-</td>
     </tr></table>`;
 
     document.getElementById('monthlyOut').innerHTML = rows;
@@ -1289,9 +1396,7 @@
     
     setLocked(true);
     showHistory();
-    calculateIst();
-    calculateBankTotal();
-    updateDiff();
+    updateAllCalculations();
   };
 
   init();
