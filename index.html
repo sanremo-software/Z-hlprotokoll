@@ -96,6 +96,12 @@
     }
     .btn-primary:hover { background: #1f5e7a; }
 
+    .btn-success {
+      background: #2b9348;
+      color: white;
+    }
+    .btn-success:hover { background: #1f7237; }
+
     .btn-danger {
       background: #d00000;
       color: white;
@@ -107,6 +113,69 @@
       border: 1px solid #cbd5e1;
     }
     .btn-outline:hover { background: #f8fafc; }
+
+    /* Grid compacto para denominações */
+    .compact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .denom-item {
+      background: #f9fafb;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+
+    .denom-item label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: none;
+      margin-bottom: 4px;
+      color: #0f3b5c;
+    }
+
+    .denom-item input {
+      width: 100%;
+      text-align: center;
+      padding: 6px;
+      font-size: 0.85rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    .bank-badge {
+      background: #e67e22;
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .summary-box {
+      background: #f0f9ff;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 12px 0;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    .summary-row:last-child { border-bottom: none; }
+
+    .summary-value {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
 
     .history-table {
       width: 100%;
@@ -133,9 +202,9 @@
     }
 
     .text-right { text-align: right; }
-    .text-center { text-align: center; }
     .hidden { display: none; }
     .mt-2 { margin-top: 8px; }
+    .mb-2 { margin-bottom: 8px; }
 
     /* Druck */
     @media print {
@@ -143,6 +212,10 @@
       .no-print { display: none !important; }
       .print-card { display: block !important; background: white; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A5; margin: 1.2cm; }
+      .compact-grid { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+      .denom-item { padding: 4px; }
+      .denom-item input { display: none; }
+      .denom-item .print-value { display: block; font-weight: bold; }
     }
   </style>
 </head>
@@ -173,9 +246,9 @@
 
   <!-- HAUPTBEREICH (nach Login) -->
   <div id="app" class="hidden">
-    <!-- Tag auswählen (nur zum Anzeigen, kein Bearbeiten) -->
+    <!-- Tag-Auswahl -->
     <div class="card no-print">
-      <div class="card-title">📅 Tag anzeigen / löschen</div>
+      <div class="card-title">📅 Tag auswählen / neu anlegen</div>
       <div class="form-group">
         <label>Datum</label>
         <input type="date" id="datum">
@@ -189,15 +262,100 @@
         </select>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" onclick="loadDay()">📂 Laden</button>
+        <button class="btn btn-primary" onclick="loadOrCreateDay()">📂 Laden / Neu</button>
+        <button class="btn btn-success" onclick="saveCurrentDay()">💾 Speichern</button>
         <button class="btn btn-danger" onclick="deleteCurrentDay()">🗑️ Tag löschen</button>
-        <button class="btn btn-outline" onclick="printCurrentDay()">🖨️ Drucken</button>
         <button class="btn btn-outline" onclick="lockApp()">🔒 Sperren</button>
       </div>
-      <div id="dayDetails" class="mt-2" style="background:#f8fafc; padding:12px; border-radius:12px; margin-top:12px;"></div>
     </div>
 
-    <!-- Historie (alle gespeicherten Tage) -->
+    <!-- Z-Bon -->
+    <div class="card no-print">
+      <div class="card-title">💰 Z-Bon (laut Kasse)</div>
+      <div class="form-group">
+        <label>Tagesumsatz in €</label>
+        <input type="number" id="zbon" step="0.01" value="0.00" oninput="recalculate()">
+      </div>
+    </div>
+
+    <!-- Kassenbestand zählen (Ist) - compact grid -->
+    <div class="card no-print">
+      <div class="card-title">🧾 Kasse zählen (Ist-Bestand)</div>
+      <div id="istGrid" class="compact-grid"></div>
+      <div class="summary-box">
+        <div class="summary-row">
+          <span>💰 Summe Ist:</span>
+          <span class="summary-value" id="istSum">0,00 €</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bankeinzahlung (optional) - compact grid -->
+    <div class="card no-print">
+      <div class="card-title">🏦 Bankeinzahlung</div>
+      <div class="form-group">
+        <label>Wurde Geld zur Bank gebracht?</label>
+        <select id="hasBank" onchange="toggleBankPanel()">
+          <option value="no">Nein</option>
+          <option value="yes">Ja</option>
+        </select>
+      </div>
+      <div id="bankPanel" class="hidden">
+        <div id="bankGrid" class="compact-grid"></div>
+        <div class="summary-box" style="background:#fff7e5;">
+          <div class="summary-row">
+            <span>🏦 Summe Einzahlung:</span>
+            <span class="summary-value" id="bankSum">0,00 €</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zusammenfassung und Kontrolle -->
+    <div class="card no-print">
+      <div class="card-title">✅ Kassenabschluss (Kontrolle)</div>
+      <div class="summary-box">
+        <div class="summary-row">
+          <span>📅 Übertrag von gestern (Start):</span>
+          <span class="summary-value" id="startDisplay">0,00 €</span>
+        </div>
+        <div class="summary-row">
+          <span>➕ Z-Bon (Umsatz):</span>
+          <span class="summary-value" id="zbonDisplay">0,00 €</span>
+        </div>
+        <div class="summary-row" style="font-weight:700;">
+          <span>💡 Soll-Bestand (Start + Umsatz):</span>
+          <span class="summary-value" id="sollDisplay">0,00 €</span>
+        </div>
+        <div class="summary-row">
+          <span>💶 Ist-Bestand (gezählt):</span>
+          <span class="summary-value" id="istDisplay">0,00 €</span>
+        </div>
+        <div class="summary-row">
+          <span>🏦 Abzüglich Bankeinzahlung:</span>
+          <span class="summary-value" id="bankAbzugDisplay">0,00 €</span>
+        </div>
+        <div class="summary-row" style="font-weight:700;">
+          <span>📌 Endbestand (für nächsten Tag):</span>
+          <span class="summary-value" id="endeDisplay">0,00 €</span>
+        </div>
+        <div class="summary-row" id="diffRow">
+          <span>🔍 Differenz (Ist − Soll):</span>
+          <span class="summary-value" id="diffDisplay">0,00 €</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Druckoptionen -->
+    <div class="card no-print">
+      <div class="card-title">🖨️ Drucken</div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="printDay()">🖨️ Tagesprotokoll drucken</button>
+        <button class="btn btn-outline" onclick="printPreview()">👁️ Vorschau</button>
+      </div>
+    </div>
+
+    <!-- Historie -->
     <div class="card no-print">
       <div class="card-title">📋 Protokoll-Historie</div>
       <div id="historyList" style="overflow-x: auto;"></div>
@@ -226,39 +384,208 @@
       </div>
     </div>
 
-    <!-- Bereich für Druckvorschau (versteckt) -->
     <div id="printArea" style="display: none;"></div>
   </div>
 </div>
 
 <script>
-  const STORAGE_KEY = "sanremo_simple";
+  // ==================== DENOMINATIONEN ====================
+  const DENOMS = [
+    { id: "500e", value: 500, label: "500 €" }, { id: "200e", value: 200, label: "200 €" },
+    { id: "100e", value: 100, label: "100 €" }, { id: "50e", value: 50, label: "50 €" },
+    { id: "20e", value: 20, label: "20 €" }, { id: "10e", value: 10, label: "10 €" },
+    { id: "5e", value: 5, label: "5 €" }, { id: "2e", value: 2, label: "2 €" },
+    { id: "1e", value: 1, label: "1 €" }, { id: "50c", value: 0.5, label: "0,50 €" },
+    { id: "20c", value: 0.2, label: "0,20 €" }, { id: "10c", value: 0.1, label: "0,10 €" },
+    { id: "5c", value: 0.05, label: "0,05 €" }, { id: "2c", value: 0.02, label: "0,02 €" },
+    { id: "1c", value: 0.01, label: "0,01 €" }
+  ];
+
+  const STORAGE_KEY = "sanremo_complete";
   const DEFAULT_PIN = "3515";
 
-  let allEntries = [];     // alle gespeicherten Einträge
-  let currentEntry = null; // aktuell geladener Tag (für Details / Druck)
+  let allEntries = [];
+  let currentEntry = null;
 
   // Hilfsfunktionen
   const parseNum = (v) => { let n = parseFloat(String(v).replace(',','.')); return isNaN(n) ? 0 : n; };
   const formatEuro = (v) => v.toFixed(2).replace('.',',') + ' €';
   const todayISO = () => new Date().toISOString().slice(0,10);
 
-  function loadAll() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    try {
-      allEntries = raw ? JSON.parse(raw) : [];
-      if (!Array.isArray(allEntries)) allEntries = [];
-    } catch(e) { allEntries = []; }
-    return allEntries;
+  // Grids generieren
+  function buildDenomGrid(containerId, prefix, onInputFunc) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = "";
+    DENOMS.forEach(d => {
+      const div = document.createElement("div");
+      div.className = "denom-item";
+      div.innerHTML = `
+        <label>${d.label}</label>
+        <input type="number" id="${prefix}${d.id}" min="0" value="0" step="1" oninput="${onInputFunc}">
+      `;
+      container.appendChild(div);
+    });
   }
 
-  function saveAll() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allEntries));
+  function getCounts(prefix) {
+    const counts = {};
+    DENOMS.forEach(d => {
+      const inp = document.getElementById(prefix + d.id);
+      counts[d.id] = inp ? parseNum(inp.value) : 0;
+    });
+    return counts;
+  }
+
+  function setCounts(counts, prefix) {
+    DENOMS.forEach(d => {
+      const inp = document.getElementById(prefix + d.id);
+      if (inp) inp.value = counts[d.id] || 0;
+    });
+  }
+
+  // Berechnungen
+  function calculateIst() {
+    let total = 0;
+    DENOMS.forEach(d => {
+      const qty = parseNum(document.getElementById(d.id)?.value);
+      total += qty * d.value;
+    });
+    return total;
+  }
+
+  function calculateBank() {
+    let total = 0;
+    DENOMS.forEach(d => {
+      const qty = parseNum(document.getElementById(`bank_${d.id}`)?.value);
+      total += qty * d.value;
+    });
+    return total;
+  }
+
+  function recalculate() {
+    if (!currentEntry) return;
+    const ist = calculateIst();
+    const bank = calculateBank();
+    const start = parseNum(currentEntry.start);
+    const zbon = parseNum(document.getElementById("zbon").value);
+    const soll = start + zbon;
+    const ende = ist - bank;
+    const diff = ist - soll;
+
+    // Anzeigen
+    document.getElementById("istSum").innerText = formatEuro(ist);
+    document.getElementById("bankSum").innerText = formatEuro(bank);
+    document.getElementById("startDisplay").innerText = formatEuro(start);
+    document.getElementById("zbonDisplay").innerText = formatEuro(zbon);
+    document.getElementById("sollDisplay").innerText = formatEuro(soll);
+    document.getElementById("istDisplay").innerText = formatEuro(ist);
+    document.getElementById("bankAbzugDisplay").innerText = formatEuro(bank);
+    document.getElementById("endeDisplay").innerText = formatEuro(ende);
+    const diffSpan = document.getElementById("diffDisplay");
+    diffSpan.innerText = formatEuro(diff);
+    if (Math.abs(diff) < 0.01) {
+      diffSpan.style.color = "#15803d";
+      document.getElementById("diffRow").style.background = "#e6f7e6";
+    } else {
+      diffSpan.style.color = "#b91c1c";
+      document.getElementById("diffRow").style.background = "#fff0f0";
+    }
+
+    // In currentEntry aktualisieren
+    currentEntry.zbon = zbon;
+    currentEntry.ist = ist;
+    currentEntry.bank = bank;
+    currentEntry.ende = ende;
+    currentEntry.diff = diff;
+    currentEntry.counts = getCounts("");
+    currentEntry.bankDetails = getCounts("bank_");
+  }
+
+  function toggleBankPanel() {
+    const has = document.getElementById("hasBank").value === "yes";
+    document.getElementById("bankPanel").classList.toggle("hidden", !has);
+    if (!has) {
+      DENOMS.forEach(d => {
+        const inp = document.getElementById(`bank_${d.id}`);
+        if (inp) inp.value = 0;
+      });
+      recalculate();
+    }
+  }
+
+  // Letzten Endbestand vor einem Datum ermitteln
+  function getLastEndeBefore(dateStr) {
+    const target = new Date(dateStr + 'T00:00:00').getTime();
+    const sorted = [...allEntries].sort((a,b) => a.ts - b.ts);
+    let last = null;
+    for (let e of sorted) {
+      if (e.ts < target) last = e;
+    }
+    return last ? parseNum(last.ende) : 0;
   }
 
   function makeKey(date, schicht) { return `${date}_${schicht}`; }
 
-  // Historie anzeigen
+  // Laden oder Erstellen
+  function loadOrCreateDay() {
+    const date = document.getElementById("datum").value;
+    const schicht = document.getElementById("schicht").value;
+    if (!date) { alert("Bitte Datum wählen"); return; }
+    loadAll();
+    const key = makeKey(date, schicht);
+    let entry = allEntries.find(e => e.key === key);
+    if (!entry) {
+      const start = getLastEndeBefore(date);
+      entry = {
+        key: key, date: date, schicht: schicht, ts: new Date(date).getTime(),
+        start: start, zbon: 0, ist: 0, bank: 0, ende: start, diff: 0,
+        counts: {}, bankDetails: {}
+      };
+      allEntries.push(entry);
+      saveAll();
+    }
+    currentEntry = entry;
+    document.getElementById("zbon").value = entry.zbon.toFixed(2);
+    setCounts(entry.counts || {}, "");
+    setCounts(entry.bankDetails || {}, "bank_");
+    const hasBank = entry.bank > 0 || Object.values(entry.bankDetails || {}).some(v => v > 0);
+    document.getElementById("hasBank").value = hasBank ? "yes" : "no";
+    toggleBankPanel();
+    recalculate();
+    renderHistory();
+    alert(`Geladen: ${date} · ${schicht}`);
+  }
+
+  function saveCurrentDay() {
+    if (!currentEntry) { alert("Kein Tag geladen"); return; }
+    recalculate(); // aktualisiert currentEntry
+    const idx = allEntries.findIndex(e => e.key === currentEntry.key);
+    if (idx !== -1) allEntries[idx] = currentEntry;
+    else allEntries.push(currentEntry);
+    saveAll();
+    renderHistory();
+    alert("Gespeichert!");
+  }
+
+  function deleteCurrentDay() {
+    if (!currentEntry) return;
+    if (!confirm(`Tag ${currentEntry.date} (${currentEntry.schicht}) endgültig löschen?`)) return;
+    allEntries = allEntries.filter(e => e.key !== currentEntry.key);
+    saveAll();
+    currentEntry = null;
+    // Felder zurücksetzen
+    document.getElementById("zbon").value = "0";
+    setCounts({}, "");
+    setCounts({}, "bank_");
+    document.getElementById("hasBank").value = "no";
+    toggleBankPanel();
+    recalculate();
+    renderHistory();
+    alert("Gelöscht");
+  }
+
+  // Historie
   function renderHistory() {
     const container = document.getElementById("historyList");
     if (!container) return;
@@ -268,7 +595,7 @@
       container.innerHTML = "<p>Keine Einträge vorhanden.</p>";
       return;
     }
-    let html = `<table class="history-table"><thead><tr><th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Ende</th><th>Diff</th></tr></thead><tbody>`;
+    let html = `<table class="history-table"><thead>运转<th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Ende</th><th>Diff</th></thead><tbody>`;
     sorted.forEach(e => {
       const diffClass = Math.abs(e.diff) < 0.01 ? "" : (e.diff < 0 ? "diff-negative" : "diff-positive");
       html += `<tr class="history-item" onclick="loadFromHistory('${e.key}')">
@@ -281,72 +608,43 @@
         <td class="text-right ${diffClass}">${formatEuro(e.diff)}</td>
       </tr>`;
     });
-    html += "</tbody></table>";
+    html += "</tbody>表";
     container.innerHTML = html;
   }
 
-  // Tag laden (nur anzeigen, keine Bearbeitung)
-  function loadDay() {
-    const date = document.getElementById("datum").value;
-    const schicht = document.getElementById("schicht").value;
-    if (!date) { alert("Bitte Datum wählen"); return; }
-    loadAll();
-    const key = makeKey(date, schicht);
-    const entry = allEntries.find(e => e.key === key);
-    if (!entry) {
-      document.getElementById("dayDetails").innerHTML = "<p>❌ Kein Eintrag für diesen Tag gefunden.</p>";
-      currentEntry = null;
-      return;
-    }
-    currentEntry = entry;
-    // Details anzeigen
-    document.getElementById("dayDetails").innerHTML = `
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <div><strong>📅 Start:</strong> ${formatEuro(entry.start)}</div>
-        <div><strong>➕ Z-Bon:</strong> ${formatEuro(entry.zbon)}</div>
-        <div><strong>💶 Ist:</strong> ${formatEuro(entry.ist)}</div>
-        <div><strong>🏦 Bank:</strong> ${formatEuro(entry.bank)}</div>
-        <div><strong>📌 Ende (Übertrag):</strong> ${formatEuro(entry.ende)}</div>
-        <div><strong>🔍 Differenz:</strong> ${formatEuro(entry.diff)}</div>
-      </div>
-    `;
-  }
-
-  // Tag löschen
-  function deleteCurrentDay() {
-    const date = document.getElementById("datum").value;
-    const schicht = document.getElementById("schicht").value;
-    if (!date) return;
-    const key = makeKey(date, schicht);
-    const exists = allEntries.some(e => e.key === key);
-    if (!exists) { alert("Tag nicht vorhanden."); return; }
-    if (!confirm(`Tag ${date} (${schicht}) endgültig löschen?`)) return;
-    allEntries = allEntries.filter(e => e.key !== key);
-    saveAll();
-    renderHistory();
-    document.getElementById("dayDetails").innerHTML = "";
-    currentEntry = null;
-    alert("Gelöscht.");
-  }
-
-  // Aus Historie laden
   function loadFromHistory(key) {
     const entry = allEntries.find(e => e.key === key);
     if (entry) {
       document.getElementById("datum").value = entry.date;
       document.getElementById("schicht").value = entry.schicht;
-      loadDay();  // ruft loadDay auf, der currentEntry setzt und Details zeigt
+      loadOrCreateDay(); // lädt direkt
     }
   }
 
-  // Druck des aktuell geladenen Tages
-  function printCurrentDay() {
-    if (!currentEntry) {
-      alert("Bitte zuerst einen Tag laden.");
-      return;
-    }
+  // Drucken
+  function generatePrintHTML() {
+    if (!currentEntry) return null;
     const e = currentEntry;
-    const html = `
+    const counts = e.counts || {};
+    const bankDetails = e.bankDetails || {};
+
+    function printGrid(countsObj) {
+      if (!countsObj) return '';
+      const filtered = DENOMS.filter(d => (countsObj[d.id] || 0) > 0);
+      if (filtered.length === 0) return '<p>Keine Stückelung erfasst</p>';
+      let html = '<div style="display:grid; grid-template-columns:repeat(5,1fr); gap:5px; margin:8px 0;">';
+      filtered.forEach(d => {
+        const qty = countsObj[d.id] || 0;
+        html += `<div style="border:1px solid #aaa; padding:4px; text-align:center;">
+                  <div style="font-size:8pt;">${d.label}</div>
+                  <div style="font-weight:bold;">${qty}</div>
+                </div>`;
+      });
+      html += '</div>';
+      return html;
+    }
+
+    return `
       <!DOCTYPE html>
       <html><head><meta charset="UTF-8"><title>Kassenprotokoll ${e.date} ${e.schicht}</title>
       <style>
@@ -375,23 +673,11 @@
         </tr>
       </table>
       <h2>💰 Gezählter Kassenbestand (Ist)</h2>
-      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-bottom:8px;">
-        ${Object.entries(e.counts || {}).map(([id, qty]) => {
-          const denom = DENOMS.find(d => d.id === id);
-          if (!denom || qty === 0) return '';
-          return `<div style="border:1px solid #ccc;padding:3px;text-align:center;">${denom.label}<br><strong>${qty}</strong></div>`;
-        }).join('')}
-      </div>
+      ${printGrid(counts)}
       <p><strong>Summe Ist: ${formatEuro(e.ist)}</strong></p>
       ${e.bank > 0 ? `
         <h2>🏦 Bankeinzahlung</h2>
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin:8px 0;">
-          ${Object.entries(e.bankDetails || {}).map(([id, qty]) => {
-            const denom = DENOMS.find(d => d.id === id);
-            if (!denom || qty === 0) return '';
-            return `<div style="border:1px solid #aaa;padding:3px;text-align:center;">${denom.label}<br><strong>${qty}</strong></div>`;
-          }).join('')}
-        </div>
+        ${printGrid(bankDetails)}
         <p><strong>Summe Bank: ${formatEuro(e.bank)}</strong></p>
       ` : ''}
       <div class="footer">
@@ -400,10 +686,23 @@
       </div>
       </body></html>
     `;
+  }
+
+  function printDay() {
+    const html = generatePrintHTML();
+    if (!html) { alert("Bitte zuerst einen Tag laden/speichern."); return; }
     const win = window.open('', '_blank');
     win.document.write(html);
     win.document.close();
     win.print();
+  }
+
+  function printPreview() {
+    const html = generatePrintHTML();
+    if (!html) return;
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
   }
 
   // Monatsbericht
@@ -417,7 +716,7 @@
       return;
     }
     let sumStart = 0, sumZbon = 0, sumIst = 0, sumBank = 0, sumEnde = 0;
-    let rows = `<table class="history-table" style="width:100%"><thead><tr><th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Ende</th><th>Diff</th></tr></thead><tbody>`;
+    let rows = `<table class="history-table" style="width:100%"><thead>运转<th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Ende</th><th>Diff</th></thead><tbody>`;
     filtered.forEach(e => {
       sumStart += e.start; sumZbon += e.zbon; sumIst += e.ist; sumBank += e.bank; sumEnde += e.ende;
       rows += `<tr>
@@ -438,7 +737,7 @@
       <td class="text-right">${formatEuro(sumEnde)}</td>
       <td></td>
     </tr>`;
-    rows += `</tbody></table>`;
+    rows += `</tbody>表`;
     document.getElementById("monthlyReport").innerHTML = rows;
   }
 
@@ -457,6 +756,19 @@
   }
 
   // Backup / Export
+  function loadAll() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    try {
+      allEntries = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(allEntries)) allEntries = [];
+    } catch(e) { allEntries = []; }
+    return allEntries;
+  }
+
+  function saveAll() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allEntries));
+  }
+
   function exportData() {
     const data = localStorage.getItem(STORAGE_KEY) || "[]";
     const blob = new Blob([data], {type:"application/json"});
@@ -501,8 +813,11 @@
       // Initialisierung
       document.getElementById("datum").value = todayISO();
       document.getElementById("monthPick").value = todayISO().slice(0,7);
+      buildDenomGrid("istGrid", "", "recalculate()");
+      buildDenomGrid("bankGrid", "bank_", "recalculate()");
       loadAll();
       renderHistory();
+      // Leeren Tag erzeugen oder laden? Der Nutzer muss "Laden / Neu" klicken.
     } else {
       alert("Falscher PIN");
     }
@@ -537,9 +852,13 @@
   window.showPinChange = showPinChange;
   window.hidePinChange = hidePinChange;
   window.savePin = savePin;
-  window.loadDay = loadDay;
+  window.loadOrCreateDay = loadOrCreateDay;
+  window.saveCurrentDay = saveCurrentDay;
   window.deleteCurrentDay = deleteCurrentDay;
-  window.printCurrentDay = printCurrentDay;
+  window.recalculate = recalculate;
+  window.toggleBankPanel = toggleBankPanel;
+  window.printDay = printDay;
+  window.printPreview = printPreview;
   window.showMonthly = showMonthly;
   window.printMonthly = printMonthly;
   window.exportData = exportData;
