@@ -108,7 +108,6 @@
     }
     .btn-outline:hover { background: #f8fafc; }
 
-    /* Histórico */
     .history-table {
       width: 100%;
       border-collapse: collapse;
@@ -133,39 +132,10 @@
       background: #fef9e3;
     }
 
-    /* Grid compacto para denominações */
-    .compact-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-      gap: 6px;
-      margin: 10px 0;
-      font-size: 0.75rem;
-    }
-
-    .compact-item {
-      background: #f9fafb;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 6px 4px;
-      text-align: center;
-    }
-
-    .compact-item .label {
-      font-weight: 600;
-      color: #0f3b5c;
-      margin-bottom: 2px;
-    }
-
-    .compact-item .qty {
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
     .text-right { text-align: right; }
     .text-center { text-align: center; }
     .hidden { display: none; }
     .mt-2 { margin-top: 8px; }
-    .mb-2 { margin-bottom: 8px; }
 
     /* Druck */
     @media print {
@@ -173,9 +143,6 @@
       .no-print { display: none !important; }
       .print-card { display: block !important; background: white; padding: 0; margin: 0; box-shadow: none; }
       @page { size: A5; margin: 1.2cm; }
-      .compact-grid { grid-template-columns: repeat(5, 1fr); }
-      .compact-item { padding: 3px; }
-      .compact-item .qty { font-size: 0.85rem; }
     }
   </style>
 </head>
@@ -265,23 +232,11 @@
 </div>
 
 <script>
-  // ==================== DENOMINATIONEN ====================
-  const DENOMS = [
-    { id: "500e", value: 500, label: "500 €" }, { id: "200e", value: 200, label: "200 €" },
-    { id: "100e", value: 100, label: "100 €" }, { id: "50e", value: 50, label: "50 €" },
-    { id: "20e", value: 20, label: "20 €" }, { id: "10e", value: 10, label: "10 €" },
-    { id: "5e", value: 5, label: "5 €" }, { id: "2e", value: 2, label: "2 €" },
-    { id: "1e", value: 1, label: "1 €" }, { id: "50c", value: 0.5, label: "0,50 €" },
-    { id: "20c", value: 0.2, label: "0,20 €" }, { id: "10c", value: 0.1, label: "0,10 €" },
-    { id: "5c", value: 0.05, label: "0,05 €" }, { id: "2c", value: 0.02, label: "0,02 €" },
-    { id: "1c", value: 0.01, label: "0,01 €" }
-  ];
-
   const STORAGE_KEY = "sanremo_simple";
   const DEFAULT_PIN = "3515";
 
-  let allEntries = [];
-  let currentEntry = null;
+  let allEntries = [];     // alle gespeicherten Einträge
+  let currentEntry = null; // aktuell geladener Tag (für Details / Druck)
 
   // Hilfsfunktionen
   const parseNum = (v) => { let n = parseFloat(String(v).replace(',','.')); return isNaN(n) ? 0 : n; };
@@ -303,26 +258,34 @@
 
   function makeKey(date, schicht) { return `${date}_${schicht}`; }
 
-  // Hilfsfunktion: kompakte Grid-Anzeige für eine Zählung (counts-Objekt)
-  function renderCompactGrid(counts, title) {
-    if (!counts || Object.keys(counts).length === 0) return `<p>Keine Daten</p>`;
-    const filtered = DENOMS.filter(d => (counts[d.id] || 0) > 0);
-    if (filtered.length === 0) return `<p>Keine Stückelung erfasst</p>`;
-    let html = `<div class="compact-grid">`;
-    filtered.forEach(d => {
-      const qty = counts[d.id] || 0;
-      html += `
-        <div class="compact-item">
-          <div class="label">${d.label}</div>
-          <div class="qty">${qty}</div>
-        </div>
-      `;
+  // Historie anzeigen
+  function renderHistory() {
+    const container = document.getElementById("historyList");
+    if (!container) return;
+    loadAll();
+    const sorted = [...allEntries].sort((a,b) => b.ts - a.ts);
+    if (sorted.length === 0) {
+      container.innerHTML = "<p>Keine Einträge vorhanden.</p>";
+      return;
+    }
+    let html = `<table class="history-table"><thead><tr><th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Ende</th><th>Diff</th></tr></thead><tbody>`;
+    sorted.forEach(e => {
+      const diffClass = Math.abs(e.diff) < 0.01 ? "" : (e.diff < 0 ? "diff-negative" : "diff-positive");
+      html += `<tr class="history-item" onclick="loadFromHistory('${e.key}')">
+        <td>${e.date}</td><td>${e.schicht}</td>
+        <td class="text-right">${formatEuro(e.start)}</td>
+        <td class="text-right">${formatEuro(e.zbon)}</td>
+        <td class="text-right">${formatEuro(e.ist)}</td>
+        <td class="text-right">${formatEuro(e.bank)}</td>
+        <td class="text-right"><strong>${formatEuro(e.ende)}</strong></td>
+        <td class="text-right ${diffClass}">${formatEuro(e.diff)}</td>
+      </tr>`;
     });
-    html += `</div>`;
-    return html;
+    html += "</tbody></table>";
+    container.innerHTML = html;
   }
 
-  // Tag laden (nur anzeigen, keine Bearbeitung) – jetzt mit kompakten Geldfenstern
+  // Tag laden (nur anzeigen, keine Bearbeitung)
   function loadDay() {
     const date = document.getElementById("datum").value;
     const schicht = document.getElementById("schicht").value;
@@ -336,12 +299,9 @@
       return;
     }
     currentEntry = entry;
-    // Details mit kompakten Denominationen
-    const istHTML = renderCompactGrid(entry.counts, "Ist-Bestand");
-    const bankHTML = entry.bankDetails ? renderCompactGrid(entry.bankDetails, "Bank-Einzahlung") : "<p>Keine Einzahlung</p>";
-    
+    // Details anzeigen
     document.getElementById("dayDetails").innerHTML = `
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div><strong>📅 Start:</strong> ${formatEuro(entry.start)}</div>
         <div><strong>➕ Z-Bon:</strong> ${formatEuro(entry.zbon)}</div>
         <div><strong>💶 Ist:</strong> ${formatEuro(entry.ist)}</div>
@@ -349,15 +309,6 @@
         <div><strong>📌 Ende (Übertrag):</strong> ${formatEuro(entry.ende)}</div>
         <div><strong>🔍 Differenz:</strong> ${formatEuro(entry.diff)}</div>
       </div>
-      <div style="margin-top:12px;">
-        <div><strong>🧾 Gezählte Stückelung (Ist):</strong></div>
-        ${istHTML}
-      </div>
-      ${entry.bank > 0 ? `
-      <div style="margin-top:12px;">
-        <div><strong>🏦 Bankeinzahlung (abgezogen):</strong></div>
-        ${bankHTML}
-      </div>` : ''}
     `;
   }
 
@@ -384,62 +335,17 @@
     if (entry) {
       document.getElementById("datum").value = entry.date;
       document.getElementById("schicht").value = entry.schicht;
-      loadDay();
+      loadDay();  // ruft loadDay auf, der currentEntry setzt und Details zeigt
     }
   }
 
-  // Historie anzeigen
-  function renderHistory() {
-    const container = document.getElementById("historyList");
-    if (!container) return;
-    loadAll();
-    const sorted = [...allEntries].sort((a,b) => b.ts - a.ts);
-    if (sorted.length === 0) {
-      container.innerHTML = "<p>Keine Einträge vorhanden.</p>";
-      return;
-    }
-    let html = `<table class="history-table"><thead>践<th>Datum</th><th>Schicht</th><th>Start</th><th>Z-Bon</th><th>Ist</th><th>Bank</th><th>Ende</th><th>Diff</th></thead><tbody>`;
-    sorted.forEach(e => {
-      const diffClass = Math.abs(e.diff) < 0.01 ? "" : (e.diff < 0 ? "diff-negative" : "diff-positive");
-      html += `<tr class="history-item" onclick="loadFromHistory('${e.key}')">
-        <td>${e.date}</td>
-        <td>${e.schicht}</td>
-        <td class="text-right">${formatEuro(e.start)}</td>
-        <td class="text-right">${formatEuro(e.zbon)}</td>
-        <td class="text-right">${formatEuro(e.ist)}</td>
-        <td class="text-right">${formatEuro(e.bank)}</td>
-        <td class="text-right"><strong>${formatEuro(e.ende)}</strong></td>
-        <td class="text-right ${diffClass}">${formatEuro(e.diff)}</td>
-       </tr>`;
-    });
-    html += "</tbody></table>";
-    container.innerHTML = html;
-  }
-
-  // Druck des aktuell geladenen Tages (mit kompakten Geldfenstern)
+  // Druck des aktuell geladenen Tages
   function printCurrentDay() {
     if (!currentEntry) {
       alert("Bitte zuerst einen Tag laden.");
       return;
     }
     const e = currentEntry;
-    // Funktion für kompakte Druckdarstellung (nur nicht-leere Denominationen)
-    function compactPrint(counts) {
-      if (!counts) return '';
-      const filtered = DENOMS.filter(d => (counts[d.id] || 0) > 0);
-      if (filtered.length === 0) return '<p>Keine Daten</p>';
-      let html = '<div style="display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin:8px 0;">';
-      filtered.forEach(d => {
-        const qty = counts[d.id] || 0;
-        html += `<div style="border:1px solid #aaa; padding:3px; text-align:center;">
-                  <div style="font-size:8pt;">${d.label}</div>
-                  <div style="font-weight:bold;">${qty}</div>
-                </div>`;
-      });
-      html += '</div>';
-      return html;
-    }
-
     const html = `
       <!DOCTYPE html>
       <html><head><meta charset="UTF-8"><title>Kassenprotokoll ${e.date} ${e.schicht}</title>
@@ -452,8 +358,6 @@
         td, th { border:1px solid #000; padding:4px; }
         .text-right { text-align:right; }
         .footer { margin-top:20px; display:flex; justify-content:space-between; }
-        .compact-grid-print { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; margin:8px 0; }
-        .print-item { border:1px solid #aaa; padding:3px; text-align:center; }
       </style>
       </head><body>
       <h1>Kassen-Zählprotokoll · Sanremo</h1>
@@ -468,14 +372,26 @@
           <td class="text-right">${formatEuro(e.ist)}</td>
           <td class="text-right">${formatEuro(e.bank)}</td>
           <td class="text-right"><strong>${formatEuro(e.ende)}</strong></td>
-         </tr>
+        </tr>
       </table>
       <h2>💰 Gezählter Kassenbestand (Ist)</h2>
-      ${compactPrint(e.counts)}
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-bottom:8px;">
+        ${Object.entries(e.counts || {}).map(([id, qty]) => {
+          const denom = DENOMS.find(d => d.id === id);
+          if (!denom || qty === 0) return '';
+          return `<div style="border:1px solid #ccc;padding:3px;text-align:center;">${denom.label}<br><strong>${qty}</strong></div>`;
+        }).join('')}
+      </div>
       <p><strong>Summe Ist: ${formatEuro(e.ist)}</strong></p>
       ${e.bank > 0 ? `
         <h2>🏦 Bankeinzahlung</h2>
-        ${compactPrint(e.bankDetails)}
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin:8px 0;">
+          ${Object.entries(e.bankDetails || {}).map(([id, qty]) => {
+            const denom = DENOMS.find(d => d.id === id);
+            if (!denom || qty === 0) return '';
+            return `<div style="border:1px solid #aaa;padding:3px;text-align:center;">${denom.label}<br><strong>${qty}</strong></div>`;
+          }).join('')}
+        </div>
         <p><strong>Summe Bank: ${formatEuro(e.bank)}</strong></p>
       ` : ''}
       <div class="footer">
@@ -505,8 +421,7 @@
     filtered.forEach(e => {
       sumStart += e.start; sumZbon += e.zbon; sumIst += e.ist; sumBank += e.bank; sumEnde += e.ende;
       rows += `<tr>
-        <td>${e.date}</td>
-        <td>${e.schicht}</td>
+        <td>${e.date}</td><td>${e.schicht}</td>
         <td class="text-right">${formatEuro(e.start)}</td>
         <td class="text-right">${formatEuro(e.zbon)}</td>
         <td class="text-right">${formatEuro(e.ist)}</td>
@@ -583,6 +498,7 @@
     if (pin === storedPin) {
       document.getElementById("loginCard").classList.add("hidden");
       document.getElementById("app").classList.remove("hidden");
+      // Initialisierung
       document.getElementById("datum").value = todayISO();
       document.getElementById("monthPick").value = todayISO().slice(0,7);
       loadAll();
