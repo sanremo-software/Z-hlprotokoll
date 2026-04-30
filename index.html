@@ -2,270 +2,342 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanremo · einfach · Kasse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sanremo · Kasse detailliert (Noten & Münzen)</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-      background: #eef2f5;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4f8;
       padding: 20px;
+      color: #1e293b;
     }
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    .card {
-      background: white;
-      border-radius: 28px;
-      padding: 1.6rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      border: 1px solid #dce5ec;
-    }
-    .title {
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: #1e4a76;
-      margin-bottom: 0.2rem;
-    }
-    .sub {
-      color: #4a627a;
-      margin-bottom: 1.5rem;
-      font-size: 0.85rem;
-    }
-    .field {
-      margin-bottom: 1.2rem;
-    }
-    label {
-      font-weight: 600;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      color: #2c3e66;
-      display: block;
-      margin-bottom: 0.3rem;
-    }
-    input {
-      width: 100%;
-      padding: 14px 16px;
-      font-size: 1.2rem;
-      border: 2px solid #dce3ec;
-      border-radius: 24px;
-      background: white;
-      font-weight: 500;
-      transition: 0.2s;
-    }
-    input:focus {
-      outline: none;
-      border-color: #1e4a76;
-    }
-    .readonly-input {
-      background: #f0f4f9;
-      color: #1e2f3e;
-      font-weight: 600;
-    }
-    .info-row {
+    .container { max-width: 1300px; margin: 0 auto; }
+    .header {
       display: flex;
       justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px dashed #cbdde6;
-      font-size: 1.1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      background: white;
+      padding: 16px 24px;
+      border-radius: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border: 1px solid #dce4ec;
     }
-    .info-row:last-child { border: none; }
-    .info-label { font-weight: 500; }
-    .info-value { font-weight: 700; font-size: 1.2rem; }
-    .big-diff {
-      font-size: 1.6rem;
-      font-weight: 800;
-    }
-    .diff-ok { color: #0f7b3a; }
-    .diff-error { color: #c52828; }
-    .btn {
-      background: #1e4a76;
-      color: white;
-      border: none;
-      padding: 12px 20px;
+    .header h1 { font-size: 1.6rem; color: #1e4a76; }
+    .status {
+      padding: 6px 18px;
       border-radius: 40px;
       font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: 0.2s;
-      margin-right: 12px;
-      margin-top: 8px;
+      font-size: 0.8rem;
     }
-    .btn-secondary {
-      background: #5a6e8a;
-    }
-    .btn-outline {
+    .status.lock { background: #ffe2e2; color: #b91c1c; }
+    .status.open { background: #dff9e6; color: #0f7b3a; }
+    .card {
       background: white;
-      color: #1e4a76;
-      border: 2px solid #1e4a76;
+      border-radius: 24px;
+      border: 1px solid #e2e8f0;
+      padding: 1.5rem;
+      margin-bottom: 1.8rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
-    .alert {
-      background: #fef5e7;
-      border-left: 5px solid #f1c40f;
-      padding: 12px;
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.2rem;
+      border-left: 5px solid #1e4a76;
+      padding-left: 15px;
+    }
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 800px) { .two-cols { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 1rem; }
+    label {
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #4a5b6e;
+      display: block;
+      margin-bottom: 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 1.5px solid #dce3ec;
+      border-radius: 18px;
+      background: white;
+    }
+    input:focus, select:focus { outline: none; border-color: #1e4a76; }
+    .denom-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 12px;
+      margin: 15px 0;
+    }
+    .denom-item {
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 8px 8px;
+      text-align: center;
+      border: 1px solid #dce5ec;
+    }
+    .denom-item label { font-size: 0.7rem; text-transform: none; font-weight: 700; color: #1e4a76; }
+    .denom-item input { text-align: center; padding: 8px; font-weight: 600; border-radius: 30px; }
+    .bank-badge {
+      background: #d97706;
+      color: white;
+      font-size: 9px;
+      font-weight: bold;
+      border-radius: 40px;
+      padding: 2px 8px;
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+    .summary-box {
+      background: #f0f9ff;
+      padding: 16px;
       border-radius: 20px;
-      font-size: 0.85rem;
-      margin-top: 1rem;
+      margin: 15px 0;
     }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed #bdd3e8;
+    }
+    .summary-row:last-child { border: none; }
+    .summary-label { font-weight: 500; }
+    .summary-value { font-weight: 800; font-size: 1.2rem; }
+    .diff-positive { color: #0f7b3a; }
+    .diff-negative { color: #c52828; }
+    .diff-zero { color: #1e4a76; }
+    .btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+    .btn {
+      padding: 10px 20px;
+      font-weight: 600;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      background: #1e4a76;
+      color: white;
+    }
+    .btn-success { background: #0f7b3a; }
+    .btn-outline { background: white; border: 2px solid #1e4a76; color: #1e4a76; }
+    .btn-warning { background: #d97706; }
+    .alert { background: #fef9e3; padding: 12px; border-radius: 18px; margin-top: 12px; font-size: 0.85rem; border-left: 4px solid #f1c40f; }
     .hidden { display: none; }
     @media print {
-      .no-print { display: none; }
-      body { background: white; }
+      .no-print, .btn-group, .header .status, #loginCard { display: none !important; }
+      body { background: white; padding: 0; }
       .card { border: 1px solid #ccc; box-shadow: none; }
+      @page { size: A5 portrait; margin: 1.2cm; }
     }
-    footer { text-align: center; margin-top: 20px; font-size: 12px; color: #6c7a8a; }
+    footer { text-align: center; margin-top: 20px; font-size: 11px; color: #6c7a8a; }
   </style>
 </head>
 <body>
 <div class="container">
-  <!-- Kopf -->
-  <div style="text-align: center; margin-bottom: 20px;">
-    <div class="title">🍦 Eiscafé Sanremo</div>
-    <div class="sub">Bad Berleburg · Kassenprotokoll (einfach)</div>
+  <div class="header no-print">
+    <div><h1>🍦 Eiscafé Sanremo</h1><div style="font-size:0.8rem;">Bad Berleburg · Kassenprotokoll detailliert</div></div>
+    <div id="lockState" class="status lock">GESPERRT</div>
   </div>
 
-  <!-- LOGIN (PIN) -->
+  <!-- LOGIN -->
   <div id="loginCard" class="card no-print">
-    <div style="font-weight: 600; margin-bottom: 12px;">🔐 PIN</div>
-    <input type="password" id="pinInput" placeholder="3515" style="margin-bottom: 12px;">
-    <button id="unlockBtn" class="btn">Entsperren</button>
-    <button id="changePinBtn" class="btn btn-outline">PIN ändern</button>
+    <div class="card-title">🔐 PIN Eingabe</div>
+    <input type="password" id="pinInput" placeholder="3515" style="margin-bottom:12px;">
+    <div class="btn-group">
+      <button id="unlockBtn" class="btn">Entsperren</button>
+      <button id="changePinBtn" class="btn btn-outline">PIN ändern</button>
+    </div>
     <div id="pinChangeBox" class="hidden" style="margin-top:15px;">
-      <input type="password" id="newPinInput" placeholder="Neuer PIN (min. 4 Ziffern)">
-      <button id="savePinBtn" class="btn btn-secondary" style="margin-top:8px;">Speichern</button>
-      <button id="cancelPinBtn" class="btn btn-outline">Abbrechen</button>
+      <input type="password" id="newPinInput" placeholder="Neuer PIN (4+ Ziffern)">
+      <div class="btn-group"><button id="savePinBtn" class="btn-success">Speichern</button><button id="cancelPinBtn" class="btn-outline">Abbrechen</button></div>
     </div>
   </div>
 
-  <!-- HAUPT-APP (nach PIN) -->
+  <!-- MAIN APP -->
   <div id="app" class="hidden">
-    <!-- Datum & Laden -->
+    <!-- DATUM & LADEN -->
     <div class="card no-print">
-      <div class="field">
-        <label>📅 Datum</label>
-        <input type="date" id="currentDate">
+      <div class="card-title">📅 1. Tag auswählen</div>
+      <div class="two-cols">
+        <div class="form-group"><label>Datum</label><input type="date" id="currentDate"></div>
+        <div class="btn-group" style="align-items: flex-end;"><button id="loadDayBtn" class="btn">📂 Laden / Neu</button><button id="lockAppBtn" class="btn-outline">🔒 Sperren</button></div>
       </div>
-      <button id="loadDayBtn" class="btn">📂 Tag öffnen / neu</button>
-      <button id="lockAppBtn" class="btn btn-outline">🔒 Sperren</button>
-      <div id="infoMsg" class="alert" style="margin-top: 12px;">👉 Datum wählen und auf "Tag öffnen" klicken</div>
+      <div id="infoMsg" class="alert">👉 Datum wählen und auf "Laden" klicken. Vortag wird automatisch übernommen.</div>
     </div>
 
-    <!-- EINFACHE EINGABEN -->
+    <!-- Z-BON & VORTAG -->
+    <div class="two-cols">
+      <div class="card">
+        <div class="card-title">📊 2. Umsatz & Vortag</div>
+        <div class="form-group"><label>📌 Vortag (Rest von gestern)</label><input type="text" id="vortagField" readonly class="readonly-field" style="background:#f1f5f9;"></div>
+        <div class="form-group"><label>💰 Tagesumsatz (Z-Bon / Kassenlaut)</label><input type="number" id="zbonInput" step="0.01" value="0.00"></div>
+        <div class="summary-box"><div class="summary-row"><span class="summary-label">🎯 SOLL (erwartet)</span><span class="summary-value" id="sollDisplay">0,00 €</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏦 3. Bank-Einzahlung (optional)</div>
+        <select id="hasBankSelect"><option value="no">❌ Keine Einzahlung</option><option value="yes">✅ Ja, Geld zur Bank</option></select>
+        <div id="bankPanel" class="hidden" style="margin-top:15px;">
+          <div><span class="bank-badge">Bank Scheine</span></div>
+          <div class="denom-grid" id="bankNotesGrid"></div>
+          <div><span class="bank-badge">Bank Münzen</span></div>
+          <div class="denom-grid" id="bankCoinsGrid"></div>
+          <div class="summary-box"><div class="summary-row"><span class="summary-label">Summe Einzahlung</span><span class="summary-value" id="bankTotalSpan">0,00 €</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KASSENBESTAND ZÄHLEN (DETAILIERT) -->
     <div class="card">
-      <div class="field">
-        <label>📌 Vortag (Rest von gestern)</label>
-        <input type="text" id="vortagField" class="readonly-input" readonly value="0,00 €">
-      </div>
-      <div class="field">
-        <label>💰 Tagesumsatz (Z-Bon / Kassenlaut)</label>
-        <input type="number" id="zbonInput" step="0.01" value="0.00" placeholder="0,00">
-      </div>
-      <div class="field">
-        <label>🧾 Gezählter Kassenbestand (Ist)</label>
-        <input type="number" id="istInput" step="0.01" value="0.00" placeholder="0,00">
-      </div>
-      <div class="field">
-        <label>🏦 Bank-Einzahlung (wird abgezogen)</label>
-        <input type="number" id="bankInput" step="0.01" value="0.00" placeholder="0,00">
-      </div>
+      <div class="card-title">🧾 4. Kassenbestand zählen (IST) – Noten & Münzen</div>
+      <div><span class="bank-badge" style="background:#1e4a76;">Scheine</span></div>
+      <div class="denom-grid" id="notesGrid"></div>
+      <div><span class="bank-badge" style="background:#1e4a76;">Münzen</span></div>
+      <div class="denom-grid" id="coinsGrid"></div>
+      <div class="summary-box"><div class="summary-row"><span class="summary-label">💰 Gezählte Ist-Kasse</span><span class="summary-value" id="istTotalSpan">0,00 €</span></div></div>
     </div>
 
-    <!-- ERGEBNISSE (live) -->
+    <!-- ZUSAMMENFASSUNG & KONTROLLE -->
     <div class="card">
-      <div class="info-row">
-        <span class="info-label">➕ Vortag + Umsatz = SOLL</span>
-        <span class="info-value" id="sollDisplay">0,00 €</span>
+      <div class="card-title">✅ 5. Tagesabschluss & Kontrolle</div>
+      <div class="two-cols">
+        <div class="summary-box">
+          <div class="summary-row"><span>Vortag</span><span id="startSummary">0,00 €</span></div>
+          <div class="summary-row"><span>+ Z-Bon</span><span id="zbonSummary">0,00 €</span></div>
+          <div class="summary-row"><span><strong>= SOLL</strong></span><span id="sollSummary"><strong>0,00 €</strong></span></div>
+          <div class="summary-row"><span>Ist gezählt</span><span id="istSummary">0,00 €</span></div>
+          <div class="summary-row"><span>- Bank Einzahlung</span><span id="bankSummary">0,00 €</span></div>
+          <div class="summary-row"><span><strong>🏁 Endbestand (für morgen)</strong></span><span id="endeSummary" style="font-size:1.3rem;">0,00 €</span></div>
+        </div>
+        <div class="summary-box" id="diffBox">
+          <div class="summary-row"><span>🔍 Differenz (Ist − Soll)</span><span id="diffValue" style="font-size:1.5rem; font-weight:800;">0,00 €</span></div>
+          <div id="diffMessage" style="margin-top:8px; font-weight:500;"></div>
+        </div>
       </div>
-      <div class="info-row">
-        <span class="info-label">🔍 Differenz (Ist − Soll)</span>
-        <span class="info-value" id="diffDisplay">0,00 €</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">🏁 Endbestand (für morgen) = Ist − Bank</span>
-        <span class="info-value" id="endeDisplay" style="font-size:1.4rem;">0,00 €</span>
-      </div>
-      <div id="diffMessage" style="margin-top: 12px; font-weight: 500;"></div>
-    </div>
-
-    <!-- AKTIONEN -->
-    <div class="card no-print">
-      <button id="saveBtn" class="btn">💾 Speichern</button>
-      <button id="printBtn" class="btn btn-secondary">🖨️ Drucken (inkl. Bank)</button>
-      <div class="alert" style="margin-top: 12px; background:#e3f5ec;">
-        ✅ Perfekt: Die Differenz MUSS 0,00 € sein. Wenn nicht, kontrollieren Sie die Zählung oder den Z-Bon.
-        <br>Der Endbestand wird automatisch der Vortag für den nächsten Tag.
+      <div class="btn-group">
+        <button id="saveBtn" class="btn-success">💾 Speichern</button>
+        <button id="printBtn" class="btn">🖨️ Drucken (mit Bank-Details)</button>
       </div>
     </div>
 
-    <!-- Backup (minimal) -->
+    <!-- EINFACHE HISTORIE (nur Übersicht, optional) -->
     <div class="card no-print">
-      <button id="exportBtn" class="btn btn-outline">📎 Backup exportieren</button>
-      <button id="importBtn" class="btn btn-outline">📂 Backup importieren</button>
+      <div class="card-title">📋 Letzte Einträge (zum Nachladen)</div>
+      <div id="historyList" style="max-height:200px; overflow-y:auto;"></div>
     </div>
-    <footer class="no-print">Einfach & praktisch – Bank wird automatisch abgezogen</footer>
+
+    <!-- BACKUP -->
+    <div class="card no-print">
+      <div class="btn-group"><button id="exportBtn" class="btn-outline">📎 Export (JSON)</button><button id="importBtn" class="btn-outline">📂 Import (Backup)</button></div>
+    </div>
+    <footer class="no-print">Detaillierte Stückelung – Bank wird abgezogen – Differenz muss 0,00 € sein</footer>
   </div>
 </div>
 
 <script>
-  // ---------- Einfache Speicherung ----------
-  const STORAGE_KEY = "sanremo_simple_protokoll";
+  // ---------- KONFIGURATION ----------
+  const STORAGE_KEY = "sanremo_detailed_protokoll";
   const DEFAULT_PIN = "3515";
 
-  let currentDate = "";
-  let previousEnd = 0;    // Vortag (wird aus Historie geladen)
+  const NOTES = [
+    { id: 'n500', val: 500, label: '500 €' }, { id: 'n200', val: 200, label: '200 €' },
+    { id: 'n100', val: 100, label: '100 €' }, { id: 'n50', val: 50, label: '50 €' },
+    { id: 'n20', val: 20, label: '20 €' }, { id: 'n10', val: 10, label: '10 €' },
+    { id: 'n5', val: 5, label: '5 €' }
+  ];
+  const COINS = [
+    { id: 'c2', val: 2, label: '2 €' }, { id: 'c1', val: 1, label: '1 €' },
+    { id: 'c050', val: 0.5, label: '0,50 €' }, { id: 'c020', val: 0.2, label: '0,20 €' },
+    { id: 'c010', val: 0.1, label: '0,10 €' }, { id: 'c005', val: 0.05, label: '0,05 €' },
+    { id: 'c002', val: 0.02, label: '0,02 €' }, { id: 'c001', val: 0.01, label: '0,01 €' }
+  ];
+  const ALL_DENOMS = [...NOTES, ...COINS];
 
-  // Hilfsfunktionen
+  let currentDate = "";
+  let previousEnd = 0;
+
+  // Helper
   const euro = (n) => (Number(n) || 0).toFixed(2).replace('.', ',') + " €";
   const num = (v) => Number(v) || 0;
 
-  // Alle gespeicherten Tage laden
-  function loadAllEntries() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
-  }
-  function saveAllEntries(entries) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  }
-
-  // Vortag aus letzten gespeicherten Tagen berechnen (vor dem aktuellen Datum)
+  function loadAllEntries() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; } }
+  function saveAllEntries(entries) { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
   function getPreviousEndFromHistory(dateISO, entries) {
     const earlier = entries.filter(e => e.date < dateISO).sort((a,b) => a.date.localeCompare(b.date));
     if (earlier.length === 0) return 0;
     return Number(earlier[earlier.length-1].ende) || 0;
   }
 
-  // Aktualisiert alle Anzeigen live aus den Eingabefeldern
-  function refreshUI() {
+  // Live Berechnung
+  function refreshCalculations() {
     if (!currentDate) return;
-    const vortag = previousEnd;
+    // Ist aus den Stückelungen
+    let istTotal = 0;
+    ALL_DENOMS.forEach(d => {
+      const inp = document.getElementById(`count_${d.id}`);
+      if (inp) istTotal += num(inp.value) * d.val;
+    });
+    document.getElementById("istTotalSpan").innerHTML = euro(istTotal);
+    document.getElementById("istSummary").innerHTML = euro(istTotal);
+    
+    // Bank
+    let bankTotal = 0;
+    const hasBank = document.getElementById("hasBankSelect").value === "yes";
+    if (hasBank) {
+      ALL_DENOMS.forEach(d => {
+        const inp = document.getElementById(`bank_${d.id}`);
+        if (inp) bankTotal += num(inp.value) * d.val;
+      });
+    }
+    document.getElementById("bankTotalSpan").innerHTML = euro(bankTotal);
+    document.getElementById("bankSummary").innerHTML = euro(bankTotal);
+    
+    // Vortag & Z-Bon
+    const start = previousEnd;
+    document.getElementById("vortagField").value = euro(start);
+    document.getElementById("startSummary").innerHTML = euro(start);
     const zbon = num(document.getElementById("zbonInput").value);
-    const ist = num(document.getElementById("istInput").value);
-    const bank = num(document.getElementById("bankInput").value);
-    
-    const soll = vortag + zbon;
-    const diff = ist - soll;
-    const ende = ist - bank;
-    
-    document.getElementById("vortagField").value = euro(vortag);
+    document.getElementById("zbonSummary").innerHTML = euro(zbon);
+    const soll = start + zbon;
     document.getElementById("sollDisplay").innerHTML = euro(soll);
-    document.getElementById("diffDisplay").innerHTML = euro(diff);
-    document.getElementById("endeDisplay").innerHTML = euro(ende);
+    document.getElementById("sollSummary").innerHTML = euro(soll);
+    const ende = istTotal - bankTotal;
+    document.getElementById("endeSummary").innerHTML = euro(ende);
     
-    const diffSpan = document.getElementById("diffDisplay");
-    const msgDiv = document.getElementById("diffMessage");
+    const diff = istTotal - soll;
+    const diffSpan = document.getElementById("diffValue");
+    diffSpan.innerHTML = euro(diff);
+    const diffBox = document.getElementById("diffBox");
+    const diffMsg = document.getElementById("diffMessage");
     if (Math.abs(diff) < 0.009) {
-      diffSpan.style.color = "#0f7b3a";
-      msgDiv.innerHTML = "✅ Keine Differenz – Kasse stimmt perfekt.";
-      msgDiv.style.color = "#0f7b3a";
+      diffSpan.className = "diff-zero";
+      diffMsg.innerHTML = "✅ Perfekt! Keine Differenz.";
+      diffBox.style.background = "#e3f7ec";
     } else {
-      diffSpan.style.color = "#c52828";
-      msgDiv.innerHTML = `⚠️ Achtung: Differenz ${euro(diff)} – bitte Zählung oder Z-Bon prüfen!`;
-      msgDiv.style.color = "#c52828";
+      diffSpan.className = diff > 0 ? "diff-positive" : "diff-negative";
+      diffMsg.innerHTML = `⚠️ Differenz ${euro(diff)} – kontrollieren!`;
+      diffBox.style.background = "#fff0f0";
     }
   }
 
-  // Tag laden (neu oder vorhanden)
+  function toggleBankPanel(show) {
+    const panel = document.getElementById("bankPanel");
+    if (show) panel.classList.remove("hidden");
+    else panel.classList.add("hidden");
+  }
+
+  // Lade Tag (neu oder vorhanden)
   function loadDay(date) {
     if (!date) return;
     currentDate = date;
@@ -273,97 +345,145 @@
     previousEnd = getPreviousEndFromHistory(date, entries);
     const existing = entries.find(e => e.date === date);
     
-    // Felder zurücksetzen
+    // Reset alle Felder
+    ALL_DENOMS.forEach(d => {
+      const inp = document.getElementById(`count_${d.id}`);
+      if (inp) inp.value = 0;
+      const bankInp = document.getElementById(`bank_${d.id}`);
+      if (bankInp) bankInp.value = 0;
+    });
     document.getElementById("zbonInput").value = "0";
-    document.getElementById("istInput").value = "0";
-    document.getElementById("bankInput").value = "0";
+    document.getElementById("hasBankSelect").value = "no";
+    toggleBankPanel(false);
     
     if (existing) {
+      if (existing.counts) {
+        ALL_DENOMS.forEach(d => { if (existing.counts[d.id]) document.getElementById(`count_${d.id}`).value = existing.counts[d.id]; });
+      }
       document.getElementById("zbonInput").value = (existing.zbon || 0).toFixed(2);
-      document.getElementById("istInput").value = (existing.ist || 0).toFixed(2);
-      document.getElementById("bankInput").value = (existing.bank || 0).toFixed(2);
-      document.getElementById("infoMsg").innerHTML = `📅 Geladen: ${date} (gespeicherter Tag) – Vortag: ${euro(previousEnd)}`;
+      const hasBankSaved = (existing.bankDetails && existing.bankDetails.length > 0);
+      document.getElementById("hasBankSelect").value = hasBankSaved ? "yes" : "no";
+      toggleBankPanel(hasBankSaved);
+      if (hasBankSaved && existing.bankDetails) {
+        existing.bankDetails.forEach(det => {
+          const denomItem = ALL_DENOMS.find(d => Math.abs(d.val - det.denom) < 0.001);
+          if (denomItem) document.getElementById(`bank_${denomItem.id}`).value = det.quantity;
+        });
+      }
+      document.getElementById("infoMsg").innerHTML = `📅 Geladen: ${date} (gespeichert) – Vortag: ${euro(previousEnd)}`;
     } else {
       document.getElementById("infoMsg").innerHTML = `✨ Neuer Tag: ${date} – Vortag aus Vorgänger: ${euro(previousEnd)}`;
     }
-    refreshUI();
+    refreshCalculations();
+    updateHistoryList();
   }
 
   // Speichern
-  function saveCurrent() {
-    if (!currentDate) { alert("Bitte zuerst ein Datum laden."); return; }
+  function saveCurrentDay() {
+    if (!currentDate) { alert("Bitte Datum laden."); return; }
     const entries = loadAllEntries();
+    let istTotal = 0;
+    const counts = {};
+    ALL_DENOMS.forEach(d => {
+      const qty = num(document.getElementById(`count_${d.id}`).value);
+      counts[d.id] = qty;
+      istTotal += qty * d.val;
+    });
     const zbon = num(document.getElementById("zbonInput").value);
-    const ist = num(document.getElementById("istInput").value);
-    const bank = num(document.getElementById("bankInput").value);
-    const vortag = previousEnd;
-    const soll = vortag + zbon;
-    const diff = ist - soll;
-    const ende = ist - bank;
-    
-    if (Math.abs(diff) > 0.01) {
-      if (!confirm(`Warnung: Differenz von ${euro(diff)}. Trotzdem speichern?`)) return;
+    const start = previousEnd;
+    let bankTotal = 0;
+    const bankDetails = [];
+    const hasBank = document.getElementById("hasBankSelect").value === "yes";
+    if (hasBank) {
+      ALL_DENOMS.forEach(d => {
+        const qty = num(document.getElementById(`bank_${d.id}`).value);
+        if (qty > 0) {
+          bankTotal += qty * d.val;
+          bankDetails.push({ denom: d.val, quantity: qty, total: d.val * qty });
+        }
+      });
     }
-    
+    const soll = start + zbon;
+    const diff = istTotal - soll;
+    const ende = istTotal - bankTotal;
     const entry = {
-      date: currentDate,
-      start: vortag,
-      zbon: zbon,
-      ist: ist,
-      bank: bank,
-      ende: ende,
-      diff: diff,
-      timestamp: Date.now()
+      date: currentDate, start: start, zbon, ist: istTotal, bank: bankTotal,
+      bankDetails, ende, diff, counts, timestamp: Date.now()
     };
     const index = entries.findIndex(e => e.date === currentDate);
     if (index !== -1) entries[index] = entry;
     else entries.push(entry);
     saveAllEntries(entries);
-    alert(`Gespeichert! Endbestand für morgen: ${euro(ende)}`);
-    // Vortag für den aktuellen Tag neu laden (falls später bearbeitet)
-    loadDay(currentDate);
+    alert(`✅ Gespeichert! Endbestand: ${euro(ende)} | Differenz: ${euro(diff)}`);
+    loadDay(currentDate); // reload to update previousEnd for next days
   }
 
-  // Drucken (zeigt alle Werte + Bankabzug)
-  function printReport() {
-    if (!currentDate) { alert("Kein Tag geladen"); return; }
-    const vortag = previousEnd;
-    const zbon = num(document.getElementById("zbonInput").value);
-    const ist = num(document.getElementById("istInput").value);
-    const bank = num(document.getElementById("bankInput").value);
-    const soll = vortag + zbon;
-    const diff = ist - soll;
-    const ende = ist - bank;
+  // Drucken mit allen Details
+  function printDetailed() {
+    if (!currentDate) { alert("Kein Datum geladen."); return; }
+    const entries = loadAllEntries();
+    const entry = entries.find(e => e.date === currentDate) || (() => {
+      // live Daten erzeugen
+      let istTotal = 0;
+      const countsLive = {};
+      ALL_DENOMS.forEach(d => {
+        const qty = num(document.getElementById(`count_${d.id}`).value);
+        countsLive[d.id] = qty;
+        istTotal += qty * d.val;
+      });
+      const zbon = num(document.getElementById("zbonInput").value);
+      const start = previousEnd;
+      let bankTotal = 0;
+      const bankDetailsLive = [];
+      const hasBank = document.getElementById("hasBankSelect").value === "yes";
+      if (hasBank) {
+        ALL_DENOMS.forEach(d => {
+          const qty = num(document.getElementById(`bank_${d.id}`).value);
+          if (qty > 0) {
+            bankTotal += qty * d.val;
+            bankDetailsLive.push({ denom: d.val, quantity: qty, total: d.val * qty, label: d.label });
+          }
+        });
+      }
+      return { start, zbon, ist: istTotal, bank: bankTotal, bankDetails: bankDetailsLive, counts: countsLive, ende: istTotal - bankTotal, diff: istTotal - (start+zbon) };
+    })();
+
+    const denomRows = ALL_DENOMS.map(d => `<tr><td>${d.label}</td><td class="text-center">${entry.counts[d.id] || 0}</td><td class="text-right">${euro((entry.counts[d.id]||0) * d.val)}</td>`).join('');
+    const bankRows = (entry.bankDetails || []).map(b => `<tr><td>${b.label || (b.denom.toFixed(2).replace('.',',')+' €')}</td><td class="text-center">${b.quantity}</td><td class="text-right">${euro(b.total)}</td>`).join('');
     
     const printHtml = `
-      <!DOCTYPE html>
       <html>
       <head><meta charset="UTF-8"><title>Kassenprotokoll ${currentDate}</title>
       <style>
-        body { font-family: system-ui; padding: 1.5cm; max-width: 700px; margin: 0 auto; }
+        body { font-family: system-ui; padding: 1.2cm; font-size: 9pt; }
         h1 { color: #1e4a76; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        td, th { border: 1px solid #aaa; padding: 8px; text-align: left; }
-        .right { text-align: right; }
-        .footer { margin-top: 30px; display: flex; justify-content: space-between; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #aaa; padding: 5px; text-align: left; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .footer { margin-top: 20px; display: flex; justify-content: space-between; }
         @page { size: A5 portrait; margin: 1.2cm; }
       </style>
       </head>
       <body>
-      <h1>🍦 Eiscafé Sanremo</h1>
-      <p><strong>Datum:</strong> ${currentDate} · Bad Berleburg</p>
+      <h1>Eiscafé Sanremo · Bad Berleburg</h1>
+      <p><strong>Datum:</strong> ${currentDate}</p>
+      <h2>💰 Kassenbestand (Ist) detailliert</h2>
+      <table><thead><tr><th>Stückelung</th><th>Anzahl</th><th>Wert</th></tr></thead><tbody>${denomRows}</tbody>
+      <tfoot><tr><td colspan="2"><strong>Summe IST</strong></td><td class="text-right"><strong>${euro(entry.ist)}</strong></td></tr></tfoot></table>
+      ${entry.bankDetails && entry.bankDetails.length ? `<h2>🏦 Bank-Einzahlung</h2><table><thead><tr><th>Stückelung</th><th>Anzahl</th><th>Betrag</th></tr></thead><tbody>${bankRows}</tbody><tfoot><tr><td colspan="2"><strong>Summe Bank</strong></td><td class="text-right"><strong>${euro(entry.bank)}</strong></td></tr></tfoot></table>` : '<p><em>Keine Bank-Einzahlung</em></p>'}
+      <h2>📊 Abschluss</h2>
       <table>
-        <tr><th>Position</th><th>Betrag</th></tr>
-        <tr><td>Vortag (Rest von gestern)</td><td class="right">${euro(vortag)}</td></tr>
-        <tr><td>+ Tagesumsatz (Z-Bon)</td><td class="right">${euro(zbon)}</td></tr>
-        <tr><td><strong>= Soll (erwartet)</strong></td><td class="right"><strong>${euro(soll)}</strong></td></tr>
-        <tr><td>- Gezählte Ist-Kasse</td><td class="right">${euro(ist)}</td></tr>
-        <tr style="background:#fff0e0;"><td>🔍 Differenz (Ist – Soll)</td><td class="right">${euro(diff)}</td></tr>
-        <tr><td>- Bank-Einzahlung (abgezogen)</td><td class="right">${euro(bank)}</td></tr>
-        <tr style="background:#e0f0e8;"><td><strong>🏁 Endbestand (Übertrag für morgen)</strong></td><td class="right"><strong>${euro(ende)}</strong></td></tr>
-       </table>
-       <div class="footer"><div>Unterschrift: ______________</div><div>${currentDate}</div></div>
-       <p>✅ Die Differenz muss 0,00 € sein. Bei Abweichung bitte Kasse nachzählen.</p>
+        <tr><td>Vortag (Rest von gestern)</td><td class="text-right">${euro(entry.start)}</td></tr>
+        <tr><td>+ Tagesumsatz (Z-Bon)</td><td class="text-right">${euro(entry.zbon)}</td></tr>
+        <tr><td><strong>= Soll (erwartet)</strong></td><td class="text-right"><strong>${euro(entry.start + entry.zbon)}</strong></td></tr>
+        <tr><td>− gezählte Ist-Kasse</td><td class="text-right">${euro(entry.ist)}</td></tr>
+        <tr style="background:#fff0e0;"><td>🔍 Differenz (Ist − Soll)</td><td class="text-right"><strong>${euro(entry.diff)}</strong></td></tr>
+        <tr><td>− Bank-Einzahlung</td><td class="text-right">${euro(entry.bank)}</td></tr>
+        <tr style="background:#e0f0e8;"><td><strong>🏁 Endbestand (Übertrag für morgen)</strong></td><td class="text-right"><strong>${euro(entry.ende)}</strong></td></tr>
+      </table>
+      <div class="footer"><div>Unterschrift: _______________</div><div>${currentDate}</div></div>
+      <p>Die Differenz muss 0,00 € betragen. Bei Abweichung bitte Kasse nachzählen.</p>
       </body>
       </html>
     `;
@@ -373,80 +493,55 @@
     win.print();
   }
 
-  // Backup
-  function exportData() {
-    const data = localStorage.getItem(STORAGE_KEY) || '[]';
-    const blob = new Blob([data], {type: 'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `sanremo_kasse_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-  }
-  function importData() {
-    const inp = document.createElement('input');
-    inp.type = 'file';
-    inp.accept = 'application/json';
-    inp.onchange = (e) => {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          const parsed = JSON.parse(ev.target.result);
-          if (Array.isArray(parsed)) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-            alert("Import erfolgreich. Bitte Tag neu laden.");
-            if (currentDate) loadDay(currentDate);
-          } else throw new Error();
-        } catch { alert("Ungültiges Backup"); }
-      };
-      reader.readAsText(file);
-    };
-    inp.click();
+  // Einfache Historie (letzte 10 Tage)
+  function updateHistoryList() {
+    const entries = loadAllEntries().sort((a,b) => b.date.localeCompare(a.date)).slice(0,10);
+    const container = document.getElementById("historyList");
+    if (entries.length === 0) { container.innerHTML = "<p>Keine Einträge</p>"; return; }
+    let html = '<div style="display:flex; flex-direction:column; gap:5px;">';
+    entries.forEach(e => {
+      html += `<button class="btn-outline" style="padding:6px; text-align:left; background:#f8fafc;" onclick="loadDay('${e.date}')">📅 ${e.date} · Ende: ${euro(e.ende)}</button>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
   }
 
-  // PIN & Sperre
+  // Export/Import
+  function exportData() { const data = localStorage.getItem(STORAGE_KEY); const blob = new Blob([data || '[]'], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `sanremo_detailed_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+  function importData() { const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange=e=>{ const file=e.target.files[0]; const reader=new FileReader(); reader.onload=ev=>{ try{ const parsed=JSON.parse(ev.target.result); if(Array.isArray(parsed)){ localStorage.setItem(STORAGE_KEY,JSON.stringify(parsed)); alert("Import erfolgreich. Bitte Tag neu laden."); if(currentDate) loadDay(currentDate); } else throw new Error(); } catch{ alert("Ungültiges Backup"); } }; reader.readAsText(file); }; inp.click(); }
+
+  // PIN & LOCK
   let locked = true;
-  function setLock(lock) {
-    locked = lock;
-    document.getElementById("app").classList.toggle("hidden", lock);
-    document.getElementById("loginCard").classList.toggle("hidden", !lock);
-  }
-  function checkPin() {
-    const pin = document.getElementById("pinInput").value;
-    const stored = localStorage.getItem("sanremo_pin") || DEFAULT_PIN;
-    if (pin === stored) { setLock(false); document.getElementById("pinInput").value = ""; }
-    else alert("Falscher PIN");
-  }
-  function changePin() {
-    const newPin = document.getElementById("newPinInput").value;
-    if (/^\d{4,}$/.test(newPin)) {
-      localStorage.setItem("sanremo_pin", newPin);
-      alert("PIN geändert");
-      document.getElementById("pinChangeBox").classList.add("hidden");
-    } else alert("Mindestens 4 Ziffern");
-  }
+  function setLock(lock) { locked=lock; document.getElementById("app").classList.toggle("hidden",lock); document.getElementById("loginCard").classList.toggle("hidden",!lock); document.getElementById("lockState").innerHTML=lock?"GESPERRT":"ENTSPERRT"; document.getElementById("lockState").className=lock?"status lock":"status open"; }
+  function checkPin() { const pin=document.getElementById("pinInput").value; const stored=localStorage.getItem("sanremo_pin")||DEFAULT_PIN; if(pin===stored){ setLock(false); document.getElementById("pinInput").value=""; } else alert("Falscher PIN"); }
+  function changePin(){ const newPin=document.getElementById("newPinInput").value; if(/^\d{4,}$/.test(newPin)){ localStorage.setItem("sanremo_pin",newPin); alert("PIN geändert"); document.getElementById("pinChangeBox").classList.add("hidden"); } else alert("Mindestens 4 Ziffern"); }
 
-  // Event binding
-  function bindEvents() {
+  // INIT
+  function init() {
+    // Grids generieren
+    document.getElementById("notesGrid").innerHTML = NOTES.map(n => `<div class="denom-item"><label>${n.label}</label><input type="number" id="count_${n.id}" min="0" value="0" step="1"></div>`).join('');
+    document.getElementById("coinsGrid").innerHTML = COINS.map(c => `<div class="denom-item"><label>${c.label}</label><input type="number" id="count_${c.id}" min="0" value="0" step="1"></div>`).join('');
+    document.getElementById("bankNotesGrid").innerHTML = NOTES.map(n => `<div class="denom-item"><span class="bank-badge">Bank</span><label>${n.label}</label><input type="number" id="bank_${n.id}" min="0" value="0" step="1"></div>`).join('');
+    document.getElementById("bankCoinsGrid").innerHTML = COINS.map(c => `<div class="denom-item"><span class="bank-badge">Bank</span><label>${c.label}</label><input type="number" id="bank_${c.id}" min="0" value="0" step="1"></div>`).join('');
+    
+    // Event listener
+    document.getElementById("hasBankSelect").addEventListener("change", (e) => toggleBankPanel(e.target.value === "yes"));
+    document.getElementById("loadDayBtn").addEventListener("click", () => loadDay(document.getElementById("currentDate").value));
+    document.getElementById("saveBtn").addEventListener("click", saveCurrentDay);
+    document.getElementById("printBtn").addEventListener("click", printDetailed);
+    document.getElementById("exportBtn").addEventListener("click", exportData);
+    document.getElementById("importBtn").addEventListener("click", importData);
     document.getElementById("unlockBtn").addEventListener("click", checkPin);
     document.getElementById("changePinBtn").addEventListener("click", () => document.getElementById("pinChangeBox").classList.toggle("hidden"));
     document.getElementById("savePinBtn").addEventListener("click", changePin);
     document.getElementById("cancelPinBtn").addEventListener("click", () => document.getElementById("pinChangeBox").classList.add("hidden"));
-    document.getElementById("loadDayBtn").addEventListener("click", () => loadDay(document.getElementById("currentDate").value));
     document.getElementById("lockAppBtn").addEventListener("click", () => setLock(true));
-    document.getElementById("saveBtn").addEventListener("click", saveCurrent);
-    document.getElementById("printBtn").addEventListener("click", printReport);
-    document.getElementById("exportBtn").addEventListener("click", exportData);
-    document.getElementById("importBtn").addEventListener("click", importData);
-    document.getElementById("zbonInput").addEventListener("input", refreshUI);
-    document.getElementById("istInput").addEventListener("input", refreshUI);
-    document.getElementById("bankInput").addEventListener("input", refreshUI);
-  }
-
-  // Initialisierung
-  function init() {
-    bindEvents();
     document.getElementById("currentDate").value = new Date().toISOString().slice(0,10);
+    
+    // Live updates
+    const allInputs = () => { document.querySelectorAll('input[type="number"]').forEach(inp => inp.addEventListener("input", refreshCalculations)); };
+    allInputs();
+    document.getElementById("zbonInput").addEventListener("input", refreshCalculations);
     setLock(true);
   }
   init();
