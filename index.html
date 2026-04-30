@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Sanremo · Kasse (keine Differenz, keine Historie)</title>
+  <title>Sanremo · Kasse (korrekte Berechnung)</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -117,6 +117,14 @@
     .summary-row:last-child { border: none; }
     .summary-label { font-weight: 500; }
     .summary-value { font-weight: 800; font-size: 1.1rem; }
+    .warning-box {
+      background: #fff0e0;
+      border-left: 4px solid #d97706;
+      padding: 10px;
+      border-radius: 16px;
+      margin-top: 10px;
+      font-size: 0.8rem;
+    }
     .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
     .btn {
       padding: 8px 18px;
@@ -142,7 +150,6 @@
       .denom-item input { border: none; text-align: center; font-weight: bold; background: transparent; }
       @page { size: A4 portrait; margin: 1.2cm; }
       h1 { font-size: 16pt; }
-      .summary-value { font-size: 10pt; }
     }
     footer { text-align: center; margin-top: 20px; font-size: 11px; color: #6c7a8a; }
   </style>
@@ -150,7 +157,7 @@
 <body>
 <div class="container">
   <div class="header no-print">
-    <div><h1>🍦 Eiscafé Sanremo</h1><div style="font-size:0.75rem;">Bad Berleburg · Kassenprotokoll (detailliert)</div></div>
+    <div><h1>🍦 Eiscafé Sanremo</h1><div style="font-size:0.75rem;">Bad Berleburg · Kassenprotokoll</div></div>
     <div id="lockState" class="status lock">GESPERRT</div>
   </div>
 
@@ -183,7 +190,7 @@
         <div class="card-title">📊 2. Vortag & Umsatz</div>
         <div class="form-group"><label>📌 Vortag (Rest von gestern)</label><input type="text" id="vortagField" class="readonly-field" readonly></div>
         <div class="form-group"><label>💰 Tagesumsatz (Z-Bon)</label><input type="number" id="zbonInput" step="0.01" value="0.00"></div>
-        <div class="summary-box"><div class="summary-row"><span class="summary-label">🎯 SOLL (erwartet)</span><span class="summary-value" id="sollDisplay">0,00 €</span></div></div>
+        <div class="summary-box"><div class="summary-row"><span class="summary-label">📈 Soll (erwartet ohne Bank)</span><span class="summary-value" id="sollDisplay">0,00 €</span></div></div>
       </div>
       <div class="card">
         <div class="card-title">🏦 3. Bank-Einzahlung</div>
@@ -205,20 +212,21 @@
       <div class="denom-grid" id="notesGrid"></div>
       <div><span class="bank-badge" style="background:#1e4a76;">Münzen</span></div>
       <div class="denom-grid" id="coinsGrid"></div>
-      <div class="summary-box"><div class="summary-row"><span class="summary-label">💰 Gezählte Ist-Kasse</span><span class="summary-value" id="istTotalSpan">0,00 €</span></div></div>
+      <div class="summary-box"><div class="summary-row"><span class="summary-label">💰 Gezählte Ist-Kasse (vor Bankabzug)</span><span class="summary-value" id="istTotalSpan">0,00 €</span></div></div>
     </div>
 
-    <!-- Zusammenfassung (nur SOLL, IST, Bank, Endbestand – KEINE Differenz) -->
+    <!-- Zusammenfassung (korrekte Berechnung) -->
     <div class="card">
       <div class="card-title">✅ 5. Tagesabschluss</div>
       <div class="summary-box">
         <div class="summary-row"><span>📌 Vortag</span><span id="startSummary">0,00 €</span></div>
         <div class="summary-row"><span>➕ Z-Bon (Umsatz)</span><span id="zbonSummary">0,00 €</span></div>
-        <div class="summary-row"><span><strong>= SOLL (erwartet)</strong></span><span id="sollSummary">0,00 €</span></div>
-        <div class="summary-row"><span>🧾 Ist gezählt</span><span id="istSummary">0,00 €</span></div>
-        <div class="summary-row"><span>🏦 − Bank Einzahlung</span><span id="bankSummary">0,00 €</span></div>
-        <div class="summary-row"><span><strong>🔁 Endbestand (für morgen)</strong></span><span id="endeSummary" style="font-size:1.3rem;">0,00 €</span></div>
+        <div class="summary-row"><span><strong>= Soll (ohne Bank)</strong></span><span id="sollSummary">0,00 €</span></div>
+        <div class="summary-row"><span>🧾 Ist gezählt (Kasse vor Bankabzug)</span><span id="istSummary">0,00 €</span></div>
+        <div class="summary-row"><span>🏦 − Bank-Einzahlung</span><span id="bankSummary">0,00 €</span></div>
+        <div class="summary-row"><span><strong>🔁 Endbestand (für morgen) = Ist − Bank</strong></span><span id="endeSummary" style="font-size:1.3rem;">0,00 €</span></div>
       </div>
+      <div id="consistencyWarning" class="warning-box hidden"></div>
       <div class="btn-group">
         <button id="saveBtn" class="btn-success">💾 Speichern</button>
         <button id="printBtn" class="btn">🖨️ Drucken (A4, alles)</button>
@@ -226,12 +234,12 @@
       </div>
     </div>
 
-    <!-- Backup (nur Export/Import) -->
+    <!-- Backup -->
     <div class="card no-print">
       <div class="card-title">💾 Backup</div>
       <div class="btn-group"><button id="exportBtn" class="btn-outline">📎 Export (JSON)</button><button id="importBtn" class="btn-outline">📂 Import (Backup)</button></div>
     </div>
-    <footer class="no-print">Bank wird automatisch abgezogen. Druckt alle Details auf einer A4-Seite.</footer>
+    <footer class="no-print">Endbestand = Ist − Bank. Soll (Vortag+Umsatz) sollte gleich Ist+Bank sein – bei Abweichung erscheint ein Hinweis.</footer>
   </div>
 </div>
 
@@ -251,13 +259,12 @@
   ];
   const ALL_DENOMS = [...NOTES, ...COINS];
 
-  const STORAGE_KEY = "sanremo_no_diff_no_history";
+  const STORAGE_KEY = "sanremo_correct_v2";
   const DEFAULT_PIN = "3515";
 
   let currentDate = "";
   let previousEnd = 0;
 
-  // Hilfen
   const euro = (n) => (Number(n) || 0).toFixed(2).replace('.', ',') + " €";
   const num = (v) => Number(v) || 0;
 
@@ -269,7 +276,7 @@
     return Number(earlier[earlier.length-1].ende) || 0;
   }
 
-  // Live-Berechnung (ohne Differenz)
+  // Live-Berechnung (korrekte Formeln)
   function refreshUI() {
     if (!currentDate) return;
     // Ist aus Grids
@@ -303,6 +310,20 @@
     document.getElementById("sollSummary").innerHTML = euro(soll);
     const ende = istTotal - bankTotal;
     document.getElementById("endeSummary").innerHTML = euro(ende);
+
+    // Konsistenzprüfung: Soll sollte gleich Ist + Bank sein
+    const istPlusBank = istTotal + bankTotal;
+    const warningDiv = document.getElementById("consistencyWarning");
+    if (Math.abs(soll - istPlusBank) > 0.009) {
+      warningDiv.classList.remove("hidden");
+      warningDiv.innerHTML = `⚠️ Achtung: Die Zahlen sind nicht stimmig!<br>
+        Soll (Vortag+Umsatz) = ${euro(soll)}<br>
+        Ist + Bank = ${euro(istPlusBank)}<br>
+        Bitte prüfen Sie die Zählung oder den Z-Bon. Der Endbestand (${euro(ende)}) wird trotzdem berechnet.`;
+    } else {
+      warningDiv.classList.add("hidden");
+      warningDiv.innerHTML = "";
+    }
   }
 
   function toggleBankPanel(show) {
@@ -311,7 +332,6 @@
     else panel.classList.add("hidden");
   }
 
-  // Alle Felder des aktuellen Tages löschen
   function clearCurrentDay() {
     if (!currentDate) { alert("Kein Tag geladen."); return; }
     if (confirm("Wirklich alle Eingaben für heute löschen? (nur die Felder, nicht gespeichert)")) {
@@ -329,7 +349,6 @@
     }
   }
 
-  // Tag laden
   function loadDay(date) {
     if (!date) return;
     currentDate = date;
@@ -337,7 +356,6 @@
     previousEnd = getPreviousEndFromHistory(date, entries);
     const existing = entries.find(e => e.date === date);
 
-    // Reset
     ALL_DENOMS.forEach(d => {
       const inp = document.getElementById(`count_${d.id}`);
       if (inp) inp.value = 0;
@@ -369,7 +387,6 @@
     refreshUI();
   }
 
-  // Speichern (ohne Differenz-Anzeige, aber intern wird sie trotzdem gespeichert für Konsistenz)
   function saveCurrent() {
     if (!currentDate) { alert("Bitte Datum laden."); return; }
     const entries = loadAllEntries();
@@ -394,22 +411,19 @@
         }
       });
     }
-    const soll = start + zbon;
-    const diff = istTotal - soll;   // nur intern
     const ende = istTotal - bankTotal;
     const entry = {
       date: currentDate, start, zbon, ist: istTotal, bank: bankTotal,
-      bankDetails, ende, diff, counts, timestamp: Date.now()
+      bankDetails, ende, counts, timestamp: Date.now()
     };
     const idx = entries.findIndex(e => e.date === currentDate);
     if (idx !== -1) entries[idx] = entry;
     else entries.push(entry);
     saveAllEntries(entries);
-    alert(`✅ Gespeichert! Endbestand: ${euro(ende)}`);
-    loadDay(currentDate); // Vortag für Folgetage aktualisieren
+    alert(`✅ Gespeichert! Endbestand für morgen: ${euro(ende)}`);
+    loadDay(currentDate);
   }
 
-  // Drucken (A4, ohne Differenz-Zeile)
   function printA4() {
     if (!currentDate) { alert("Kein Datum geladen."); return; }
     const entries = loadAllEntries();
@@ -418,7 +432,6 @@
     if (existing) {
       entry = existing;
     } else {
-      // Live-Daten nehmen
       let istTotal = 0;
       const countsLive = {};
       ALL_DENOMS.forEach(d => {
@@ -446,6 +459,12 @@
     const denomRows = ALL_DENOMS.map(d => `<tr><td style="border:1px solid #aaa; padding:4px;">${d.label}</td><td style="border:1px solid #aaa; text-align:center;">${entry.counts[d.id] || 0}</td><td style="border:1px solid #aaa; text-align:right;">${euro((entry.counts[d.id]||0) * d.val)}</td>`).join('');
     const bankRows = (entry.bankDetails || []).map(b => `<tr><td style="border:1px solid #aaa; padding:4px;">${b.label || (b.denom.toFixed(2).replace('.',',')+' €')}</td><td style="border:1px solid #aaa; text-align:center;">${b.quantity}</td><td style="border:1px solid #aaa; text-align:right;">${euro(b.total)}</td>`).join('');
 
+    const soll = entry.start + entry.zbon;
+    const istPlusBank = entry.ist + entry.bank;
+    const consistencyNote = Math.abs(soll - istPlusBank) > 0.009 
+      ? `<div style="background:#ffe0b3; padding:6px; margin-top:10px; border-radius:8px;"><strong>⚠️ Hinweis:</strong> Die Zahlen sind nicht stimmig (Soll = ${euro(soll)}, Ist+Bank = ${euro(istPlusBank)}). Bitte Kontrolle!</div>`
+      : '';
+
     const html = `<!DOCTYPE html>
     <html>
     <head><meta charset="UTF-8"><title>Kassenprotokoll ${currentDate}</title>
@@ -466,16 +485,17 @@
     <p><strong>Datum:</strong> ${currentDate}</p>
     <h2>💰 Kassenbestand (gezählt – IST)</h2>
     <table><thead><tr><th>Stückelung</th><th>Anzahl</th><th>Wert</th></tr></thead><tbody>${denomRows}</tbody><tfoot><tr><td colspan="2"><strong>Summe IST</strong></td><td class="text-right"><strong>${euro(entry.ist)}</strong></td></tr></tfoot></table>
-    ${entry.bankDetails && entry.bankDetails.length ? `<h2>🏦 Bank-Einzahlung</h2><table><thead><tr><th>Stückelung</th><th>Anzahl</th><th>Betrag</th></tr></thead><tbody>${bankRows}</tbody><tfoot><tr><td colspan="2"><strong>Summe Bank</strong></td><td class="text-right"><strong>${euro(entry.bank)}</strong></td></tr></tfoot></table>` : '<p><em>Keine Bank-Einzahlung an diesem Tag.</em></p>'}
+    ${entry.bankDetails && entry.bankDetails.length ? `<h2>🏦 Bank-Einzahlung</h2><tr><thead><tr><th>Stückelung</th><th>Anzahl</th><th>Betrag</th></tr></thead><tbody>${bankRows}</tbody><tfoot><tr><td colspan="2"><strong>Summe Bank</strong></td><td class="text-right"><strong>${euro(entry.bank)}</strong></td></table></tfoot></table>` : '<p><em>Keine Bank-Einzahlung an diesem Tag.</em></p>'}
     <h2>📊 Abschluss</h2>
     <table>
       <tr><td>Vortag (Rest von gestern)</td><td class="text-right">${euro(entry.start)}</td></tr>
       <tr><td>+ Tagesumsatz (Z-Bon)</td><td class="text-right">${euro(entry.zbon)}</td></tr>
-      <tr><td><strong>= SOLL (erwartet)</strong></td><td class="text-right"><strong>${euro(entry.start + entry.zbon)}</strong></td></tr>
-      <tr><td>− gezählte Ist-Kasse</td><td class="text-right">${euro(entry.ist)}</td></tr>
-      <tr><table>− Bank-Einzahlung</td><td class="text-right">${euro(entry.bank)}</td></tr>
-      <tr style="background:#e0f0e8;"><td><strong>🏁 Endbestand (Übertrag für morgen)</strong></td><td class="text-right"><strong>${euro(entry.ende)}</strong></td></tr>
+      <tr><td><strong>= Soll (erwartet ohne Bank)</strong></td><td class="text-right"><strong>${euro(soll)}</strong></td></tr>
+      <tr><td>🧾 Ist gezählt (Kasse vor Bankabzug)</td><td class="text-right">${euro(entry.ist)}</td></tr>
+      <tr><td>🏦 − Bank-Einzahlung</td><td class="text-right">${euro(entry.bank)}</td></tr>
+      <tr style="background:#e0f0e8;"><td><strong>🔁 Endbestand (Übertrag für morgen) = Ist − Bank</strong></td><td class="text-right"><strong>${euro(entry.ende)}</strong></td></tr>
     </table>
+    ${consistencyNote}
     <div class="footer"><div>Unterschrift: ______________________</div><div>${currentDate}</div></div>
     <p style="margin-top:12px; font-size:8pt;">Der Endbestand wird automatisch als Vortag für den nächsten Tag übernommen.</p>
     </body></html>`;
@@ -485,17 +505,14 @@
     win.print();
   }
 
-  // Backup
   function exportData() { const data = localStorage.getItem(STORAGE_KEY) || '[]'; const blob = new Blob([data], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `sanremo_backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
   function importData() { const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange=e=>{ const file=e.target.files[0]; const reader=new FileReader(); reader.onload=ev=>{ try{ const parsed=JSON.parse(ev.target.result); if(Array.isArray(parsed)){ localStorage.setItem(STORAGE_KEY,JSON.stringify(parsed)); alert("Import erfolgreich. Bitte Tag neu laden."); if(currentDate) loadDay(currentDate); } else throw new Error(); } catch{ alert("Ungültiges Backup"); } }; reader.readAsText(file); }; inp.click(); }
 
-  // PIN & Sperre
   let locked = true;
   function setLock(lock) { locked=lock; document.getElementById("app").classList.toggle("hidden",lock); document.getElementById("loginCard").classList.toggle("hidden",!lock); document.getElementById("lockState").innerHTML=lock?"GESPERRT":"ENTSPERRT"; document.getElementById("lockState").className=lock?"status lock":"status open"; }
   function checkPin() { const pin=document.getElementById("pinInput").value; const stored=localStorage.getItem("sanremo_pin")||DEFAULT_PIN; if(pin===stored){ setLock(false); document.getElementById("pinInput").value=""; } else alert("Falscher PIN"); }
   function changePin(){ const newPin=document.getElementById("newPinInput").value; if(/^\d{4,}$/.test(newPin)){ localStorage.setItem("sanremo_pin",newPin); alert("PIN geändert"); document.getElementById("pinChangeBox").classList.add("hidden"); } else alert("Mindestens 4 Ziffern"); }
 
-  // Initialisierung
   function init() {
     document.getElementById("notesGrid").innerHTML = NOTES.map(n => `<div class="denom-item"><label>${n.label}</label><input type="number" id="count_${n.id}" min="0" value="0" step="1"></div>`).join('');
     document.getElementById("coinsGrid").innerHTML = COINS.map(c => `<div class="denom-item"><label>${c.label}</label><input type="number" id="count_${c.id}" min="0" value="0" step="1"></div>`).join('');
