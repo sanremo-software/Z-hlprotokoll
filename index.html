@@ -2,410 +2,607 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kassenbericht · Originalformat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sanremo · Kassen-Zählprotokoll + Original Kassenbericht</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 30px;
-      font-family: 'Courier New', 'Segoe UI', monospace;
+      background: #eef2f5;
+      font-family: 'Segoe UI', 'Courier New', monospace, system-ui;
+      padding: 20px;
     }
-    /* A4-ähnliches Papier */
-    .bericht {
-      max-width: 900px;
-      width: 100%;
-      background: white;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      padding: 25px 30px 35px 30px;
-      border: 1px solid #aaa;
-    }
-    /* Kopfzeile */
-    .kopf {
+    .container { max-width: 1300px; margin: 0 auto; }
+    .header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       flex-wrap: wrap;
-      border-bottom: 2px solid black;
-      padding-bottom: 12px;
+      background: white;
+      padding: 15px 25px;
+      border-radius: 28px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .header h1 { font-size: 1.6rem; color: #1e4a76; }
+    .status {
+      padding: 6px 18px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+    .status.lock { background: #ffe2e2; color: #b91c1c; }
+    .status.open { background: #dff9e6; color: #0f7b3a; }
+    .tabs {
+      display: flex;
+      gap: 12px;
       margin-bottom: 20px;
-    }
-    .kopf h1 {
-      font-size: 1.8rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-    .nr-datum {
-      display: flex;
-      gap: 30px;
-    }
-    .nr-datum div {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
-    .nr-datum input {
-      border: none;
-      border-bottom: 1px solid black;
-      width: 140px;
-      font-family: inherit;
-      font-size: 1rem;
-      padding: 4px;
-    }
-    /* Feld Kassenbestand */
-    .bestand-schluss {
-      margin: 20px 0;
-      display: flex;
-      align-items: baseline;
-      gap: 15px;
+      border-bottom: 2px solid #cbd5e1;
       flex-wrap: wrap;
     }
-    .bestand-schluss label {
-      font-weight: bold;
-      font-size: 1.1rem;
-    }
-    .bestand-schluss input {
+    .tab-btn {
+      background: #f1f5f9;
       border: none;
-      border-bottom: 1px solid black;
-      width: 150px;
-      font-family: inherit;
-      font-size: 1.1rem;
-      padding: 5px;
+      padding: 10px 24px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 30px 30px 0 0;
+      cursor: pointer;
     }
-    /* Tabelle (genau wie Foto) */
-    .ausgaben-table {
+    .tab-btn.active {
+      background: white;
+      color: #1e4a76;
+      border-bottom: 3px solid #1e4a76;
+    }
+    .tab-content { display: none; animation: fade 0.2s; }
+    .tab-content.active { display: block; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    .card {
+      background: white;
+      border-radius: 24px;
+      border: 1px solid #e2e8f0;
+      padding: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-left: 5px solid #1e4a76;
+      padding-left: 14px;
+      margin-bottom: 1.2rem;
+    }
+    .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    @media (max-width: 800px) { .two-cols { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 1rem; }
+    label {
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #2c3e66;
+      display: block;
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      border: 2px solid #dce3ec;
+      border-radius: 18px;
+    }
+    .readonly-field { background: #f1f5f9; font-weight: 600; }
+    .denom-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .denom-item {
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 6px;
+      text-align: center;
+      border: 1px solid #dce5ec;
+    }
+    .denom-item input { text-align: center; padding: 6px; font-weight: 600; border-radius: 30px; }
+    .bank-badge {
+      background: #d97706;
+      color: white;
+      font-size: 8px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .summary-box {
+      background: #f0f9ff;
+      padding: 14px;
+      border-radius: 20px;
+      margin: 12px 0;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px dashed #bdd3e8;
+    }
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+    .btn {
+      padding: 8px 18px;
+      font-weight: 700;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      background: #1e4a76;
+      color: white;
+    }
+    .btn-success { background: #0f7b3a; }
+    .btn-outline { background: white; border: 2px solid #1e4a76; color: #1e4a76; }
+    .btn-danger { background: #b91c1c; }
+    .alert { background: #fef9e3; padding: 10px; border-radius: 18px; margin-top: 10px; font-size: 0.8rem; border-left: 4px solid #f1c40f; }
+    .hidden { display: none; }
+    /* Estilos específicos para o Kassenbericht (fiel à foto) */
+    .bericht-form {
+      max-width: 100%;
+    }
+    .bericht-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 20px 0;
+      margin: 15px 0;
+      font-size: 0.9rem;
     }
-    .ausgaben-table th, .ausgaben-table td {
-      border: 1px solid black;
-      padding: 8px 6px;
+    .bericht-table th, .bericht-table td {
+      border: 1px solid #999;
+      padding: 8px 10px;
       vertical-align: top;
     }
-    .ausgaben-table th {
-      background: #f9f9f9;
-      font-weight: bold;
+    .bericht-table th {
+      background: #f0f4f9;
+      font-weight: 700;
       text-align: left;
     }
-    .ausgaben-table input {
+    .bericht-table input {
       width: 100%;
       border: none;
       background: transparent;
-      font-family: inherit;
-      font-size: 0.95rem;
-      padding: 4px;
+      padding: 5px;
     }
-    .ausgaben-table input:focus {
-      outline: none;
-      background: #fffde7;
-    }
-    /* Leere Zeile (wie im Foto) */
-    .leerzeile td {
-      padding: 8px;
-    }
-    /* Untere Bereiche */
-    .vorsteuer-netto {
+    .bericht-table input:focus { outline: none; background: #fff9e0; }
+    .bericht-kasten {
+      border: 1px solid #aaa;
+      padding: 12px;
       margin: 15px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 20px;
-      border-top: 1px dashed #aaa;
-      padding-top: 15px;
-    }
-    .vorsteuer-netto div {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
+      background: #fefce8;
     }
     .zeile {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      margin: 12px 0;
-      gap: 15px;
+      padding: 8px 0;
+      border-bottom: 1px dotted #ccc;
     }
-    .zeile label {
-      font-weight: bold;
-      min-width: 220px;
-    }
-    .zeile input {
-      border: none;
-      border-bottom: 1px solid black;
-      width: 180px;
-      font-family: inherit;
-      font-size: 1rem;
-      padding: 5px;
-    }
-    .kasseneingang {
-      background: #f0f7f0;
-      padding: 12px;
-      margin: 20px 0;
-      font-size: 1.2rem;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-    }
-    .steuer-prozente {
-      display: flex;
-      gap: 30px;
-      margin-top: 15px;
-    }
-    .btn-group {
-      margin-top: 30px;
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-    }
-    button {
-      background: #1e4a76;
-      color: white;
-      border: none;
-      padding: 8px 20px;
-      font-family: inherit;
-      font-size: 0.9rem;
-      cursor: pointer;
-      border-radius: 30px;
-    }
-    button:hover {
-      background: #0f3a5a;
-    }
+    .zeile:last-child { border: none; }
+    .rechts { text-align: right; font-weight: 700; }
     @media print {
+      .no-print, .tabs, .btn-group, .header .status, #loginCard, .tab-btn { display: none !important; }
       body { background: white; padding: 0; margin: 0; }
-      .bericht { box-shadow: none; padding: 0; }
-      .btn-group { display: none; }
-      input { border-bottom: 1px solid black !important; }
+      .card { border: 1px solid #ccc; margin-bottom: 10px; page-break-inside: avoid; }
+      @page { size: A4; margin: 1.8cm; }
     }
+    footer { text-align: center; margin-top: 20px; font-size: 11px; color: #4a627a; }
   </style>
 </head>
 <body>
-<div class="bericht">
-  <!-- Kopf -->
-  <div class="kopf">
-    <h1>Kassenbericht Nr.</h1>
-    <div class="nr-datum">
-      <div><span style="font-weight:bold;">Nr.</span> <input type="text" id="nr" placeholder="_____"></div>
-      <div><span style="font-weight:bold;">Datum</span> <input type="date" id="datum" value="2026-05-01"></div>
+<div class="container">
+  <div class="header no-print">
+    <div><h1>🍦 Eiscafé Sanremo</h1><div>Bad Berleburg · Zählprotokoll + amtlicher Kassenbericht (Original-Format)</div></div>
+    <div id="lockState" class="status lock">GESPERRT</div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="loginCard" class="card no-print">
+    <div class="card-title">🔐 PIN</div>
+    <input type="password" id="pinInput" placeholder="3515" style="margin-bottom:12px;">
+    <div class="btn-group"><button id="unlockBtn" class="btn">Entsperren</button><button id="changePinBtn" class="btn btn-outline">PIN ändern</button></div>
+    <div id="pinChangeBox" class="hidden" style="margin-top:12px;">
+      <input type="password" id="newPinInput" placeholder="Neuer PIN (4+ Ziffern)">
+      <div class="btn-group"><button id="savePinBtn" class="btn-success">Speichern</button><button id="cancelPinBtn" class="btn-outline">Abbrechen</button></div>
     </div>
   </div>
 
-  <!-- Kassenbestand bei Geschäftsschluß -->
-  <div class="bestand-schluss">
-    <label>Kassenbestand bei Geschäftsschluß</label>
-    <input type="number" id="bestandSchluss" step="0.01" placeholder="0,00 €" value="0">
-  </div>
+  <div id="app" class="hidden">
+    <div class="tabs no-print">
+      <button class="tab-btn active" data-tab="tab1">🧾 Kassen-Zählprotokoll (detailliert)</button>
+      <button class="tab-btn" data-tab="tab2">📑 Amtlicher Kassenbericht (Original Foto)</button>
+    </div>
 
-  <!-- Buchungsvermerke / Tabelle -->
-  <h3 style="margin: 10px 0 5px 0;">Buchungsvermerke</h3>
-  <table class="ausgaben-table" id="ausgabenTabelle">
-    <thead>
-      <tr>
-        <th>Ausgaben im Laufe des Tages</th>
-        <th>Vorsteuer</th>
-        <th>Netto-/Brutto-Betrag</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td><input type="text" id="ausgabe1" value="Wareneinkäufe und Warennebenkosten"></td><td><input type="number" id="vor1" step="0.01" value="0"></td><td><input type="number" id="betrag1" step="0.01" value="0"></td></tr>
-      <tr><td><input type="text" id="ausgabe2" value="Geschäftsausgaben"></td><td><input type="number" id="vor2" step="0.01" value="0"></td><td><input type="number" id="betrag2" step="0.01" value="0"></td></tr>
-      <tr><td><input type="text" id="ausgabe3" value="Privatentnahmen"></td><td><input type="number" id="vor3" step="0.01" value="0"></td><td><input type="number" id="betrag3" step="0.01" value="0"></td></tr>
-      <tr><td><input type="text" id="ausgabe4" value="Sonstige Ausgaben"></td><td><input type="number" id="vor4" step="0.01" value="0"></td><td><input type="number" id="betrag4" step="0.01" value="0"></td></tr>
-      <tr class="leerzeile"><td><input type="text" id="ausgabe5" placeholder="_________________"></td><td><input type="number" id="vor5" step="0.01" value="0"></td><td><input type="number" id="betrag5" step="0.01" value="0"></td></tr>
-    </tbody>
-  </table>
+    <!-- ========= TAB 1: Zählprotokoll (código já estável) ========= -->
+    <div id="tab1" class="tab-content active">
+      <div class="card no-print">
+        <div class="card-title">📅 1. Tag wählen</div>
+        <div class="two-cols">
+          <div class="form-group"><label>Datum</label><input type="date" id="currentDateProto"></div>
+          <div class="btn-group"><button id="loadDayProto" class="btn">📂 Laden / Neu</button><button id="lockAppBtn" class="btn-outline">🔒 Sperren</button></div>
+        </div>
+        <div id="infoMsgProto" class="alert">👉 Datum wählen, dann laden. Vortag wird automatisch übernommen.</div>
+      </div>
+      <div class="two-cols">
+        <div class="card">
+          <div class="card-title">📊 Vortag & Umsatz</div>
+          <div class="form-group"><label>📌 Vortag (Rest von gestern)</label><input type="text" id="vortagFieldProto" class="readonly-field" readonly></div>
+          <div class="form-group"><label>💰 Tagesumsatz (Z-Bon)</label><input type="number" id="zbonProto" step="0.01" value="0.00"></div>
+          <div class="summary-box"><div class="summary-row"><span>Soll (Vortag + Umsatz)</span><span id="sollDisplayProto">0,00 €</span></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏦 Bank-Einzahlung</div>
+          <select id="hasBankSelectProto"><option value="no">❌ Keine Einzahlung</option><option value="yes">✅ Ja, Geld zur Bank</option></select>
+          <div id="bankPanelProto" class="hidden" style="margin-top:12px;">
+            <div><span class="bank-badge">Scheine</span></div>
+            <div class="denom-grid" id="bankNotesGridProto"></div>
+            <div><span class="bank-badge">Münzen</span></div>
+            <div class="denom-grid" id="bankCoinsGridProto"></div>
+            <div class="summary-box"><div class="summary-row"><span>Summe Einzahlung</span><span id="bankTotalProto">0,00 €</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🧾 Kassenbestand zählen (IST) – Noten & Münzen</div>
+        <div><span class="bank-badge" style="background:#1e4a76;">Scheine</span></div>
+        <div class="denom-grid" id="notesGridProto"></div>
+        <div><span class="bank-badge" style="background:#1e4a76;">Münzen</span></div>
+        <div class="denom-grid" id="coinsGridProto"></div>
+        <div class="summary-box"><div class="summary-row"><span>💰 Gezählte Ist-Kasse</span><span id="istTotalProto">0,00 €</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">✅ Tagesabschluss</div>
+        <div class="summary-box">
+          <div class="summary-row"><span>Vortag</span><span id="startSummaryProto">0,00 €</span></div>
+          <div class="summary-row"><span>+ Z-Bon</span><span id="zbonSummaryProto">0,00 €</span></div>
+          <div class="summary-row"><span>Ist gezählt</span><span id="istSummaryProto">0,00 €</span></div>
+          <div class="summary-row"><span>− Bank-Einzahlung</span><span id="bankSummaryProto">0,00 €</span></div>
+          <div class="summary-row"><span><strong>🔁 Endbestand (für morgen) = Ist − Bank</strong></span><span id="endeSummaryProto" style="font-size:1.3rem;">0,00 €</span></div>
+        </div>
+        <div class="btn-group">
+          <button id="saveProto" class="btn-success">💾 Speichern</button>
+          <button id="printProto" class="btn">🖨️ Drucken (Zählprotokoll)</button>
+          <button id="clearProto" class="btn-danger">🗑️ Felder löschen (heute)</button>
+        </div>
+      </div>
+    </div>
 
-  <!-- Vorsteuer bei Nettobetrag (Zeile) -->
-  <div class="vorsteuer-netto">
-    <div><strong>Vorsteuer bei Nettobetrag</strong> <input type="text" id="vorsteuerGesamt" readonly style="background:#f1f1f1; width:120px;"></div>
-    <div><strong>Summe abzüglich Kassenbestand des Vortages</strong> <input type="text" id="summeAbzgl" readonly style="background:#f1f1f1; width:140px;"></div>
-  </div>
+    <!-- ========= TAB 2: KASSENBERICHT – EXAKT WIE AUF FOTO ========= -->
+    <div id="tab2" class="tab-content">
+      <div class="card bericht-form">
+        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 15px;">
+          <div style="font-weight: bold; font-size: 1.2rem;">Kassenbericht Nr. <input type="text" id="berichtNr" style="width: 100px; display: inline-block;" placeholder="___"></div>
+          <div>Datum <input type="date" id="berichtDatum" style="width: 140px;"></div>
+        </div>
 
-  <!-- Abzüglich sonstige Einnahmen -->
-  <div class="zeile">
-    <label>Abzüglich sonstige Einnahmen</label>
-    <input type="number" id="sonstigeEinnahmen" step="0.01" value="0">
-  </div>
+        <div class="form-group"><label>Kassenbestand bei Geschäftsschluß (€)</label><input type="number" id="bestandSchluss" step="0.01" placeholder="0,00"></div>
 
-  <!-- Kasseneingang (Ergebnis) -->
-  <div class="kasseneingang">
-    <span>Kasseneingang</span>
-    <span id="kasseneingang">0,00 €</span>
-  </div>
+        <div style="font-weight: bold; margin: 15px 0 5px 0;">Buchungsvermerke</div>
+        <table class="bericht-table">
+          <thead><tr><th>Ausgaben im Laufe des Tages</th><th>Vorsteuer (€)</th><th>Netto-/Brutto-Betrag (€)</th></tr></thead>
+          <tbody>
+            <tr><td>Wareneinkäufe und Warennebenkosten</td><td><input type="number" id="vorsteuer1" step="0.01" value="0"></td><td><input type="number" id="betrag1" step="0.01" value="0"></td></tr>
+            <tr><td>Geschäftsausgaben</td><td><input type="number" id="vorsteuer2" step="0.01" value="0"></td><td><input type="number" id="betrag2" step="0.01" value="0"></td></tr>
+            <tr><td>Privatentnahmen</td><td><input type="number" id="vorsteuer3" step="0.01" value="0"></td><td><input type="number" id="betrag3" step="0.01" value="0"></td></tr>
+            <tr><td>Sonstige Ausgaben</td><td><input type="number" id="vorsteuer4" step="0.01" value="0"></td><td><input type="number" id="betrag4" step="0.01" value="0"></td></tr>
+          </tbody>
+        </table>
 
-  <!-- 19% / 7% (Umsatzsteueranteile) -->
-  <div class="steuer-prozente">
-    <div><label>19%</label> <input type="number" id="steuer19" step="0.01" value="0" style="width:100px;"></div>
-    <div><label>7%</label> <input type="number" id="steuer7" step="0.01" value="0" style="width:100px;"></div>
-  </div>
+        <div class="bericht-kasten">
+          <div class="zeile"><span>Vorsteuer bei Nettobetrag:</span><span class="rechts" id="vorsteuerGesamt">0,00 €</span></div>
+          <div class="zeile"><span>Summe abzüglich Kassenbestand des Vortages:</span><span class="rechts" id="summeAbzglVortag">0,00 €</span></div>
+          <div class="zeile"><span>Abzüglich sonstige Einnahmen (€):</span><span class="rechts"><input type="number" id="sonstigeEinnahmen" step="0.01" value="0" style="width: 100px; text-align: right;"></span></div>
+          <div class="zeile" style="border-top: 2px solid #aaa; margin-top: 5px;"><span><strong>Kasseneingang (brutto):</strong></span><span class="rechts" id="kasseneingang" style="font-size: 1.3rem;">0,00 €</span></div>
+        </div>
 
-  <div class="btn-group">
-    <button onclick="berechnen()">Aktualisieren</button>
-    <button onclick="window.print()">🖨️ Drucken</button>
-    <button onclick="alleFelderLeeren()">🗑️ Alle Felder löschen</button>
+        <div style="display: flex; gap: 20px; margin: 15px 0;">
+          <div><label>davon 19% Umsatzsteuer (€)</label> <input type="number" id="steuer19" step="0.01" value="0" style="width: 120px;"></div>
+          <div><label>davon 7% Umsatzsteuer (€)</label> <input type="number" id="steuer7" step="0.01" value="0" style="width: 120px;"></div>
+        </div>
+
+        <div class="btn-group">
+          <button id="saveBerichtBtn" class="btn-success">💾 Kassenbericht speichern</button>
+          <button id="printBerichtBtn" class="btn">🖨️ Drucken (Original-Format)</button>
+          <button id="clearBerichtBtn" class="btn-danger">🗑️ Felder löschen</button>
+        </div>
+        <div class="alert" style="margin-top: 15px; font-size: 0.8rem;">💡 Hinweis: Bitte den Kassenbestand des Vortages manuell eintragen (unten). Die Formel: (Kassenbestand Schluss + Ausgaben Brutto) − (Vortag + sonstige Einnahmen) = Kasseneingang.</div>
+        <div class="form-group" style="margin-top: 10px;"><label>Kassenbestand des Vortages (€)</label><input type="number" id="bestandVortag" step="0.01" value="0"></div>
+      </div>
+    </div>
+    <footer class="no-print">✅ Zählprotokoll: Endbestand = Ist − Bank. Kassenbericht: Original-Format (Foto).</footer>
   </div>
 </div>
 
 <script>
-  // Hilfsfunktion: Euro-Format
-  function euro(n) {
-    return (Number(n) || 0).toFixed(2).replace('.', ',') + ' €';
+  // ---------- PIN / LOCK (gemeinsam) ----------
+  const DEFAULT_PIN = "3515";
+  let locked = true;
+  function setLock(lock) {
+    locked = lock;
+    document.getElementById("app").classList.toggle("hidden", lock);
+    document.getElementById("loginCard").classList.toggle("hidden", !lock);
+    const state = document.getElementById("lockState");
+    if (lock) { state.innerHTML = "GESPERRT"; state.className = "status lock"; }
+    else { state.innerHTML = "ENTSPERRT"; state.className = "status open"; }
   }
-
-  function berechnen() {
-    // 1. Summe der Ausgaben (Brutto) aus den Beträgen 1-5
-    let betrag1 = parseFloat(document.getElementById('betrag1').value) || 0;
-    let betrag2 = parseFloat(document.getElementById('betrag2').value) || 0;
-    let betrag3 = parseFloat(document.getElementById('betrag3').value) || 0;
-    let betrag4 = parseFloat(document.getElementById('betrag4').value) || 0;
-    let betrag5 = parseFloat(document.getElementById('betrag5').value) || 0;
-    let summeAusgabenBrutto = betrag1 + betrag2 + betrag3 + betrag4 + betrag5;
-
-    // 2. Summe Vorsteuer
-    let vor1 = parseFloat(document.getElementById('vor1').value) || 0;
-    let vor2 = parseFloat(document.getElementById('vor2').value) || 0;
-    let vor3 = parseFloat(document.getElementById('vor3').value) || 0;
-    let vor4 = parseFloat(document.getElementById('vor4').value) || 0;
-    let vor5 = parseFloat(document.getElementById('vor5').value) || 0;
-    let vorsteuerSumme = vor1 + vor2 + vor3 + vor4 + vor5;
-    document.getElementById('vorsteuerGesamt').value = euro(vorsteuerSumme);
-
-    // 3. Kassenbestand Schluss
-    let bestandSchluss = parseFloat(document.getElementById('bestandSchluss').value) || 0;
-
-    // 4. Kassenbestand Vortag (muss der Benutzer manuell eintragen – wie im Foto)
-    // Laut Foto: "Summe abzüglich Kassenbestand des Vortages" = (Bestand Schluss + Ausgaben) - Vortag
-    // Also brauchen wir einen Eingabefeld für den Vortag. Im Original ist das eine Zeile zum Eintragen.
-    // Ich füge ein verstecktes / sichtbares Feld hinzu, da es auf dem Foto vorhanden ist.
-    // VORSICHT: Im Screenshot gibt es ein Feld "Summe abzüglich Kassenbestand des Vortages" – das ist bereits ein Ergebnis.
-    // Aber der "Kassenbestand des Vortages" muss eingegeben werden. Ich lege ein separates Feld an.
-    let vortag = parseFloat(document.getElementById('vortagFeld')?.value) || 0;
-    
-    // Falls das Feld nicht existiert, lege ich es dynamisch an?
-    // Besser: Ein neues input Feld für "Kassenbestand des Vortages" einfügen, wie in der echten Vorlage.
-    // Aber der Benutzer möchte exakt das Foto. Im Foto gibt es eine Zeile "Summe abzüglich Kassenbestand des Vortages" (Ergebnis)
-    // und davor muss der Vortag eingetragen werden. Ich werde daher ein zusätzliches Feld "Kassenbestand des Vortages" oberhalb einfügen.
-    // Da der Benutzer nichts Neues möchte, muss ich es genau wie im Foto platzieren.
-    // Ich füge es oberhalb der "Summe abzüglich..." ein.
+  function checkPin() {
+    const pin = document.getElementById("pinInput").value;
+    const stored = localStorage.getItem("sanremo_pin") || DEFAULT_PIN;
+    if (pin === stored) { setLock(false); document.getElementById("pinInput").value = ""; }
+    else alert("Falscher PIN");
   }
-
-  // Um das Layout exakt zu halten, füge ich nun die fehlende Eingabezeile "Kassenbestand des Vortages" hinzu.
-  // Das ist im Foto vorhanden (siehe "Summe abzüglich Kassenbestand des Vortages" – das setzt einen eingegebenen Wert voraus).
-  // Ich ergänze die Zeile direkt nach der Tabelle.
-</script>
-
-<!-- Erweiterung: Eingabefeld für Vortag und automatische Berechnung aller Werte -->
-<script>
-  // Funktion zum Einfügen des fehlenden Feldes "Kassenbestand des Vortages" (exakt wie im Formular)
-  function fuegeVortagFeldEin() {
-    const container = document.querySelector('.vorsteuer-netto');
-    if (!container) return;
-    const neueZeile = document.createElement('div');
-    neueZeile.style.display = 'flex';
-    neueZeile.style.justifyContent = 'space-between';
-    neueZeile.style.alignItems = 'baseline';
-    neueZeile.style.margin = '10px 0';
-    neueZeile.style.flexWrap = 'wrap';
-    neueZeile.innerHTML = `
-      <div><strong>Kassenbestand des Vortages</strong> <input type="number" id="vortag" step="0.01" value="0" style="width:140px; border:none; border-bottom:1px solid black;"></div>
-      <div style="visibility:hidden;"> </div>
-    `;
-    container.insertBefore(neueZeile, container.firstChild);
+  function changePin(){
+    const newPin = document.getElementById("newPinInput").value;
+    if (/^\d{4,}$/.test(newPin)) { localStorage.setItem("sanremo_pin", newPin); alert("PIN geändert"); document.getElementById("pinChangeBox").classList.add("hidden"); }
+    else alert("Mindestens 4 Ziffern");
   }
+  document.getElementById("unlockBtn").onclick = checkPin;
+  document.getElementById("changePinBtn").onclick = () => document.getElementById("pinChangeBox").classList.toggle("hidden");
+  document.getElementById("savePinBtn").onclick = changePin;
+  document.getElementById("cancelPinBtn").onclick = () => document.getElementById("pinChangeBox").classList.add("hidden");
 
-  // Vollständige Berechnung (nachdem alle Felder da sind)
-  function vollBerechnen() {
-    let betrag1 = parseFloat(document.getElementById('betrag1').value) || 0;
-    let betrag2 = parseFloat(document.getElementById('betrag2').value) || 0;
-    let betrag3 = parseFloat(document.getElementById('betrag3').value) || 0;
-    let betrag4 = parseFloat(document.getElementById('betrag4').value) || 0;
-    let betrag5 = parseFloat(document.getElementById('betrag5').value) || 0;
-    let summeAusgaben = betrag1 + betrag2 + betrag3 + betrag4 + betrag5;
+  // TABS
+  const tabs = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.dataset.tab;
+      tabs.forEach(b => b.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
 
-    let vor1 = parseFloat(document.getElementById('vor1').value) || 0;
-    let vor2 = parseFloat(document.getElementById('vor2').value) || 0;
-    let vor3 = parseFloat(document.getElementById('vor3').value) || 0;
-    let vor4 = parseFloat(document.getElementById('vor4').value) || 0;
-    let vor5 = parseFloat(document.getElementById('vor5').value) || 0;
-    let vorsteuer = vor1+vor2+vor3+vor4+vor5;
-    document.getElementById('vorsteuerGesamt').value = euro(vorsteuer);
+  // ======================== MODUL 1: Zählprotokoll (código estável) ========================
+  const NOTES = [
+    { id: 'n500', val: 500, label: '500 €' }, { id: 'n200', val: 200, label: '200 €' },
+    { id: 'n100', val: 100, label: '100 €' }, { id: 'n50', val: 50, label: '50 €' },
+    { id: 'n20', val: 20, label: '20 €' }, { id: 'n10', val: 10, label: '10 €' },
+    { id: 'n5', val: 5, label: '5 €' }
+  ];
+  const COINS = [
+    { id: 'c2', val: 2, label: '2 €' }, { id: 'c1', val: 1, label: '1 €' },
+    { id: 'c050', val: 0.5, label: '0,50 €' }, { id: 'c020', val: 0.2, label: '0,20 €' },
+    { id: 'c010', val: 0.1, label: '0,10 €' }, { id: 'c005', val: 0.05, label: '0,05 €' },
+    { id: 'c002', val: 0.02, label: '0,02 €' }, { id: 'c001', val: 0.01, label: '0,01 €' }
+  ];
+  const ALL_DENOMS = [...NOTES, ...COINS];
+  const PROTO_STORAGE = "sanremo_protokoll_final2";
+  let currentDateProto = "", previousEndProto = 0;
+  const euro = (n) => (Number(n) || 0).toFixed(2).replace('.', ',') + " €";
+  const num = v => Number(v) || 0;
 
-    let bestandSchluss = parseFloat(document.getElementById('bestandSchluss').value) || 0;
-    let vortag = parseFloat(document.getElementById('vortag').value) || 0;
-    let sonstige = parseFloat(document.getElementById('sonstigeEinnahmen').value) || 0;
-
-    let zwischen = bestandSchluss + summeAusgaben;
-    let abzug = zwischen - vortag;
-    let kasseneingang = abzug - sonstige;
-
-    document.getElementById('summeAbzgl').value = euro(abzug);
-    document.getElementById('kasseneingang').innerHTML = euro(kasseneingang);
-
-    // Optional: Steuer 19/7 bleiben zur manuellen Eingabe
+  function loadAllProto() { try { return JSON.parse(localStorage.getItem(PROTO_STORAGE) || '[]'); } catch { return []; } }
+  function saveAllProto(e) { localStorage.setItem(PROTO_STORAGE, JSON.stringify(e)); }
+  function getPrevProto(date, entries) {
+    const earlier = entries.filter(e => e.date < date).sort((a,b)=>a.date.localeCompare(b.date));
+    return earlier.length ? Number(earlier[earlier.length-1].ende) : 0;
   }
-
-  function alleFelderLeeren() {
-    // Leeren aller Eingabefelder
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(inp => {
-      if (inp.type === 'number' || inp.type === 'text') {
-        if (inp.id !== 'datum' && inp.id !== 'nr' && !inp.readOnly) {
-          inp.value = (inp.id.includes('ausgabe') && inp.type === 'text') ? '' : '0';
-        }
+  function refreshProto() {
+    if (!currentDateProto) return;
+    let ist = 0;
+    ALL_DENOMS.forEach(d => { const inp = document.getElementById(`count_${d.id}`); if(inp) ist += num(inp.value) * d.val; });
+    document.getElementById("istTotalProto").innerHTML = euro(ist);
+    document.getElementById("istSummaryProto").innerHTML = euro(ist);
+    let bank = 0;
+    if (document.getElementById("hasBankSelectProto").value === "yes") {
+      ALL_DENOMS.forEach(d => { const inp = document.getElementById(`bank_${d.id}`); if(inp) bank += num(inp.value) * d.val; });
+    }
+    document.getElementById("bankTotalProto").innerHTML = euro(bank);
+    document.getElementById("bankSummaryProto").innerHTML = euro(bank);
+    const start = previousEndProto;
+    document.getElementById("vortagFieldProto").value = euro(start);
+    document.getElementById("startSummaryProto").innerHTML = euro(start);
+    const zbon = num(document.getElementById("zbonProto").value);
+    document.getElementById("zbonSummaryProto").innerHTML = euro(zbon);
+    document.getElementById("sollDisplayProto").innerHTML = euro(start + zbon);
+    document.getElementById("endeSummaryProto").innerHTML = euro(ist - bank);
+  }
+  function toggleBankProto(show) { document.getElementById("bankPanelProto").classList.toggle("hidden", !show); }
+  function clearProto() {
+    if (!currentDateProto) return;
+    if (confirm("Alle Zählfelder für heute löschen?")) {
+      ALL_DENOMS.forEach(d => { const inp = document.getElementById(`count_${d.id}`); if(inp) inp.value = 0; const bankInp = document.getElementById(`bank_${d.id}`); if(bankInp) bankInp.value = 0; });
+      document.getElementById("zbonProto").value = "0";
+      document.getElementById("hasBankSelectProto").value = "no";
+      toggleBankProto(false);
+      refreshProto();
+    }
+  }
+  function loadDayProto(date) {
+    if (!date) return;
+    currentDateProto = date;
+    const entries = loadAllProto();
+    previousEndProto = getPrevProto(date, entries);
+    const existing = entries.find(e => e.date === date);
+    ALL_DENOMS.forEach(d => { document.getElementById(`count_${d.id}`).value = 0; document.getElementById(`bank_${d.id}`).value = 0; });
+    document.getElementById("zbonProto").value = "0";
+    document.getElementById("hasBankSelectProto").value = "no";
+    toggleBankProto(false);
+    if (existing) {
+      if (existing.counts) ALL_DENOMS.forEach(d => { if(existing.counts[d.id]) document.getElementById(`count_${d.id}`).value = existing.counts[d.id]; });
+      document.getElementById("zbonProto").value = (existing.zbon || 0).toFixed(2);
+      const hasBank = (existing.bankDetails && existing.bankDetails.length > 0);
+      document.getElementById("hasBankSelectProto").value = hasBank ? "yes" : "no";
+      toggleBankProto(hasBank);
+      if (hasBank && existing.bankDetails) {
+        existing.bankDetails.forEach(det => {
+          const denom = ALL_DENOMS.find(d => Math.abs(d.val - det.denom) < 0.001);
+          if (denom) document.getElementById(`bank_${denom.id}`).value = det.quantity;
+        });
       }
-    });
-    // Standardtexte wiederherstellen
-    if(document.getElementById('ausgabe1')) document.getElementById('ausgabe1').value = 'Wareneinkäufe und Warennebenkosten';
-    if(document.getElementById('ausgabe2')) document.getElementById('ausgabe2').value = 'Geschäftsausgaben';
-    if(document.getElementById('ausgabe3')) document.getElementById('ausgabe3').value = 'Privatentnahmen';
-    if(document.getElementById('ausgabe4')) document.getElementById('ausgabe4').value = 'Sonstige Ausgaben';
-    if(document.getElementById('ausgabe5')) document.getElementById('ausgabe5').value = '';
-    document.getElementById('bestandSchluss').value = '0';
-    document.getElementById('vortag').value = '0';
-    document.getElementById('sonstigeEinnahmen').value = '0';
-    document.getElementById('steuer19').value = '0';
-    document.getElementById('steuer7').value = '0';
-    for(let i=1;i<=5;i++) {
-      document.getElementById(`vor${i}`).value = '0';
-      document.getElementById(`betrag${i}`).value = '0';
+      document.getElementById("infoMsgProto").innerHTML = `📅 Geladen: ${date} (gespeichert) – Vortag: ${euro(previousEndProto)}`;
+    } else {
+      document.getElementById("infoMsgProto").innerHTML = `✨ Neuer Tag: ${date} – Vortag: ${euro(previousEndProto)}`;
     }
-    vollBerechnen();
+    refreshProto();
+  }
+  function saveProto() {
+    if (!currentDateProto) { alert("Bitte Datum laden."); return; }
+    const entries = loadAllProto();
+    let ist = 0, counts = {};
+    ALL_DENOMS.forEach(d => { const q = num(document.getElementById(`count_${d.id}`).value); counts[d.id] = q; ist += q * d.val; });
+    const zbon = num(document.getElementById("zbonProto").value);
+    let bank = 0, bankDetails = [];
+    if (document.getElementById("hasBankSelectProto").value === "yes") {
+      ALL_DENOMS.forEach(d => { const q = num(document.getElementById(`bank_${d.id}`).value); if(q>0) { bank += q * d.val; bankDetails.push({ denom: d.val, quantity: q }); } });
+    }
+    const ende = ist - bank;
+    const entry = { date: currentDateProto, start: previousEndProto, zbon, ist, bank, bankDetails, ende, counts, timestamp: Date.now() };
+    const idx = entries.findIndex(e => e.date === currentDateProto);
+    if (idx !== -1) entries[idx] = entry; else entries.push(entry);
+    saveAllProto(entries);
+    alert(`Gespeichert! Endbestand für morgen: ${euro(ende)}`);
+    loadDayProto(currentDateProto);
+  }
+  function printProto() {
+    if (!currentDateProto) { alert("Kein Tag geladen"); return; }
+    const entries = loadAllProto();
+    let entry = entries.find(e => e.date === currentDateProto);
+    if (!entry) {
+      let ist=0, counts={};
+      ALL_DENOMS.forEach(d=>{ let q=num(document.getElementById(`count_${d.id}`).value); counts[d.id]=q; ist+=q*d.val; });
+      let zbon=num(document.getElementById("zbonProto").value), start=previousEndProto, bank=0, bankDetails=[];
+      if(document.getElementById("hasBankSelectProto").value==="yes") ALL_DENOMS.forEach(d=>{ let q=num(document.getElementById(`bank_${d.id}`).value); if(q>0){ bank+=q*d.val; bankDetails.push({denom:d.val, quantity:q, label:d.label}); } });
+      entry = {start, zbon, ist, bank, bankDetails, counts, ende:ist-bank};
+    }
+    const denomRows = ALL_DENOMS.map(d => `<td><td style="border:1px solid #aaa; padding:5px;">${d.label}</td><td style="text-align:center">${entry.counts[d.id]||0}</td><td style="text-align:right">${euro((entry.counts[d.id]||0)*d.val)}</td>`).join('');
+    const bankRows = (entry.bankDetails||[]).map(b => `<tr><td style="border:1px solid #aaa; padding:5px;">${b.label || (b.denom.toFixed(2).replace('.',',')+' €')}</td><td style="text-align:center">${b.quantity}</td><td style="text-align:right">${euro(b.denom*b.quantity)}</td>`).join('');
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Zählprotokoll ${currentDateProto}</title><style>body{font-family:system-ui;padding:1.5cm;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #888;padding:6px;}</style></head><body><h1>Zählprotokoll Sanremo</h1><p>Datum: ${currentDateProto}</p><h2>Kassenbestand (IST)</h2><table><th>Stückelung</th><th>Anzahl</th><th>Wert</th>${denomRows}<tr><td colspan="2"><strong>Summe IST</strong></td><td class="text-right"><strong>${euro(entry.ist)}</strong></td></tr></table>${entry.bankDetails?.length ? `<h2>Bank-Einzahlung</h2><table><th>Stückelung</th><th>Anzahl</th><th>Betrag</th>${bankRows}<tr><td colspan="2"><strong>Summe Bank</strong></td><td class="text-right"><strong>${euro(entry.bank)}</strong></td></tr></table>` : '<p>Keine Bank-Einzahlung</p>'}<h2>Abschluss</h2><td><td>Vortag</td><td class="text-right">${euro(entry.start)}</td></tr><tr><td>+ Z-Bon</td><td class="text-right">${euro(entry.zbon)}</td></tr><tr style="background:#e0f0e8;"><td><strong>Endbestand (für morgen) = Ist − Bank</strong></td><td class="text-right"><strong>${euro(entry.ende)}</strong></td></tr></table><div style="margin-top:20px;">Unterschrift: _________________</div></body></html>`;
+    const w = window.open(); w.document.write(html); w.document.close(); w.print();
+  }
+  function initProtoGrids() {
+    document.getElementById("notesGridProto").innerHTML = NOTES.map(n => `<div class="denom-item"><label>${n.label}</label><input type="number" id="count_${n.id}" min="0" value="0" step="1"></div>`).join('');
+    document.getElementById("coinsGridProto").innerHTML = COINS.map(c => `<div class="denom-item"><label>${c.label}</label><input type="number" id="count_${c.id}" min="0" value="0" step="1"></div>`).join('');
+    document.getElementById("bankNotesGridProto").innerHTML = NOTES.map(n => `<div class="denom-item"><span class="bank-badge">Bank</span><label>${n.label}</label><input type="number" id="bank_${n.id}" min="0" value="0" step="1"></div>`).join('');
+    document.getElementById("bankCoinsGridProto").innerHTML = COINS.map(c => `<div class="denom-item"><span class="bank-badge">Bank</span><label>${c.label}</label><input type="number" id="bank_${c.id}" min="0" value="0" step="1"></div>`).join('');
+    document.getElementById("hasBankSelectProto").addEventListener("change", e => toggleBankProto(e.target.value === "yes"));
+    document.getElementById("loadDayProto").onclick = () => loadDayProto(document.getElementById("currentDateProto").value);
+    document.getElementById("saveProto").onclick = saveProto;
+    document.getElementById("printProto").onclick = printProto;
+    document.getElementById("clearProto").onclick = clearProto;
+    document.getElementById("currentDateProto").value = new Date().toISOString().slice(0,10);
+    document.querySelectorAll('#tab1 input[type="number"]').forEach(inp => inp.addEventListener("input", refreshProto));
+    document.getElementById("zbonProto").addEventListener("input", refreshProto);
+    refreshProto();
   }
 
-  // Event-Listener für alle relevanten Felder
-  function bindEvents() {
-    const ids = ['bestandSchluss', 'vortag', 'sonstigeEinnahmen', 'betrag1','betrag2','betrag3','betrag4','betrag5'];
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.addEventListener('input', vollBerechnen);
-    });
-    for(let i=1;i<=5;i++) {
-      const vor = document.getElementById(`vor${i}`);
-      if(vor) vor.addEventListener('input', vollBerechnen);
+  // ======================== MODUL 2: KASSENBERICHT ORIGINAL FOTO ========================
+  const BERICHT_STORAGE = "sanremo_kassenbericht_original_foto";
+  function loadBerichtEntries() { try { return JSON.parse(localStorage.getItem(BERICHT_STORAGE) || '[]'); } catch { return []; } }
+  function saveBerichtEntries(e) { localStorage.setItem(BERICHT_STORAGE, JSON.stringify(e)); }
+
+  function refreshBericht() {
+    // Ausgaben Brutto (Betrag) und Vorsteuer summen
+    let betrag1 = num(document.getElementById("betrag1").value);
+    let betrag2 = num(document.getElementById("betrag2").value);
+    let betrag3 = num(document.getElementById("betrag3").value);
+    let betrag4 = num(document.getElementById("betrag4").value);
+    let summeAusBrutto = betrag1 + betrag2 + betrag3 + betrag4;
+    let vor1 = num(document.getElementById("vorsteuer1").value);
+    let vor2 = num(document.getElementById("vorsteuer2").value);
+    let vor3 = num(document.getElementById("vorsteuer3").value);
+    let vor4 = num(document.getElementById("vorsteuer4").value);
+    let vorsteuerGes = vor1+vor2+vor3+vor4;
+    document.getElementById("vorsteuerGesamt").innerHTML = euro(vorsteuerGes);
+    let schluss = num(document.getElementById("bestandSchluss").value);
+    let vortag = num(document.getElementById("bestandVortag").value);
+    let sonstEin = num(document.getElementById("sonstigeEinnahmen").value);
+    // Summe abzüglich Kassenbestand des Vortages = (Kassenbestand Schluss + Ausgaben Brutto) - Vortag
+    let summeAbzgl = (schluss + summeAusBrutto) - vortag;
+    document.getElementById("summeAbzglVortag").innerHTML = euro(summeAbzgl);
+    let kasseneingang = summeAbzgl - sonstEin;
+    document.getElementById("kasseneingang").innerHTML = euro(kasseneingang);
+  }
+
+  function saveBericht() {
+    let date = document.getElementById("berichtDatum").value;
+    if (!date) { alert("Datum eingeben"); return; }
+    let entries = loadBerichtEntries();
+    let entry = {
+      nr: document.getElementById("berichtNr").value,
+      datum: date,
+      bestandSchluss: num(document.getElementById("bestandSchluss").value),
+      bestandVortag: num(document.getElementById("bestandVortag").value),
+      sonstigeEinnahmen: num(document.getElementById("sonstigeEinnahmen").value),
+      ausgaben: [
+        { vorsteuer: num(document.getElementById("vorsteuer1").value), betrag: num(document.getElementById("betrag1").value) },
+        { vorsteuer: num(document.getElementById("vorsteuer2").value), betrag: num(document.getElementById("betrag2").value) },
+        { vorsteuer: num(document.getElementById("vorsteuer3").value), betrag: num(document.getElementById("betrag3").value) },
+        { vorsteuer: num(document.getElementById("vorsteuer4").value), betrag: num(document.getElementById("betrag4").value) }
+      ],
+      steuer19: num(document.getElementById("steuer19").value),
+      steuer7: num(document.getElementById("steuer7").value),
+      timestamp: Date.now()
+    };
+    const idx = entries.findIndex(e => e.datum === date);
+    if (idx !== -1) entries[idx] = entry; else entries.push(entry);
+    saveBerichtEntries(entries);
+    alert("Kassenbericht gespeichert!");
+  }
+
+  function clearBericht() {
+    if (confirm("Alle Felder des Kassenberichts löschen?")) {
+      document.getElementById("berichtNr").value = "";
+      document.getElementById("bestandSchluss").value = "";
+      document.getElementById("bestandVortag").value = "";
+      document.getElementById("sonstigeEinnahmen").value = "";
+      for(let i=1;i<=4;i++) {
+        document.getElementById(`vorsteuer${i}`).value = "0";
+        document.getElementById(`betrag${i}`).value = "0";
+      }
+      document.getElementById("steuer19").value = "0";
+      document.getElementById("steuer7").value = "0";
+      refreshBericht();
     }
   }
 
-  // Initialisierung: Feld für Vortag einfügen, dann berechnen
-  window.onload = () => {
-    fuegeVortagFeldEin();
-    bindEvents();
-    vollBerechnen();
-    // Button "Aktualisieren" ruft ebenfalls vollBerechnen auf
-    const btn = document.querySelector('button[onclick="berechnen()"]');
-    if(btn) btn.onclick = (e) => { e.preventDefault(); vollBerechnen(); };
-  };
+  function printBericht() {
+    let nr = document.getElementById("berichtNr").value || "_____";
+    let datum = document.getElementById("berichtDatum").value || new Date().toISOString().slice(0,10);
+    let schluss = euro(num(document.getElementById("bestandSchluss").value));
+    let vortag = euro(num(document.getElementById("bestandVortag").value));
+    let sonstEin = euro(num(document.getElementById("sonstigeEinnahmen").value));
+    let steuer19 = euro(num(document.getElementById("steuer19").value));
+    let steuer7 = euro(num(document.getElementById("steuer7").value));
+    let rows = "";
+    let summeBrutto = 0, summeVor = 0;
+    let texts = ["Wareneinkäufe und Warennebenkosten", "Geschäftsausgaben", "Privatentnahmen", "Sonstige Ausgaben"];
+    for(let i=1;i<=4;i++) {
+      let vor = num(document.getElementById(`vorsteuer${i}`).value);
+      let betr = num(document.getElementById(`betrag${i}`).value);
+      summeBrutto += betr;
+      summeVor += vor;
+      rows += `<tr><td style="border:1px solid #000; padding:6px;">${texts[i-1]}</td><td style="text-align:right">${euro(vor)}</td><td style="text-align:right">${euro(betr)}</td></tr>`;
+    }
+    let schlussVal = num(document.getElementById("bestandSchluss").value);
+    let vortagVal = num(document.getElementById("bestandVortag").value);
+    let sonstEinVal = num(document.getElementById("sonstigeEinnahmen").value);
+    let zwischen = schlussVal + summeBrutto;
+    let summeAbzgl = zwischen - vortagVal;
+    let kasseneingang = summeAbzgl - sonstEinVal;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Kassenbericht ${datum}</title><style>body{font-family:'Segoe UI',system-ui;padding:1.8cm;} h1{font-size:16pt;} table{border-collapse:collapse;width:100%;margin:12px 0;} th,td{border:1px solid #000;padding:8px;vertical-align:top;} .text-right{text-align:right;} .bold{font-weight:700;} @page{size:A4;margin:1.5cm;}</style></head><body><h1>Kassenbericht Nr. ${nr}</h1><p><strong>Datum:</strong> ${datum}</p><p><strong>Kassenbestand bei Geschäftsschluß:</strong> ${schluss}</p><h2>Buchungsvermerke</h2><table><thead><tr><th>Ausgaben im Laufe des Tages</th><th>Vorsteuer (€)</th><th>Netto-/Brutto-Betrag (€)</th></tr></thead><tbody>${rows}<tr style="background:#f0f0f0;"><td><strong>Summen</strong></td><td class="text-right"><strong>${euro(summeVor)}</strong></td><td class="text-right"><strong>${euro(summeBrutto)}</strong></td></tr></tbody></table><div style="margin:15px 0; padding:10px; border:1px solid #aaa;"><p><strong>Vorsteuer bei Nettobetrag:</strong> ${euro(summeVor)}</p><p><strong>Summe abzüglich Kassenbestand des Vortages:</strong> ${euro(summeAbzgl)}  (${euro(schlussVal)} + ${euro(summeBrutto)} - ${euro(vortagVal)})</p><p><strong>Abzüglich sonstige Einnahmen:</strong> ${sonstEin}</p><h2>💶 KASSENEINGANG (brutto): ${euro(kasseneingang)}</h2></div><div style="margin-top:20px;"><p>davon 19% Umsatzsteuer: ${steuer19}</p><p>davon 7% Umsatzsteuer: ${steuer7}</p></div><div style="margin-top:30px;">Unterschrift: _________________________</div></body></html>`;
+    const w = window.open(); w.document.write(html); w.document.close(); w.print();
+  }
+
+  // Eventos módulo 2
+  document.getElementById("bestandSchluss").addEventListener("input", refreshBericht);
+  document.getElementById("bestandVortag").addEventListener("input", refreshBericht);
+  document.getElementById("sonstigeEinnahmen").addEventListener("input", refreshBericht);
+  for(let i=1;i<=4;i++) {
+    document.getElementById(`betrag${i}`).addEventListener("input", refreshBericht);
+    document.getElementById(`vorsteuer${i}`).addEventListener("input", refreshBericht);
+  }
+  document.getElementById("saveBerichtBtn").onclick = saveBericht;
+  document.getElementById("printBerichtBtn").onclick = printBericht;
+  document.getElementById("clearBerichtBtn").onclick = clearBericht;
+  document.getElementById("berichtDatum").value = new Date().toISOString().slice(0,10);
+  refreshBericht();
+
+  initProtoGrids();
+  setLock(true);
+  document.getElementById("lockAppBtn").onclick = () => setLock(true);
 </script>
 </body>
 </html>
