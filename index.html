@@ -2,494 +2,132 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Sanremo · Zählprotokoll + Kassenbericht 305 (Komplett)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zählprotokoll Kasse – Eiscafé Sanremo</title>
 <style>
-  * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-  body { background: #e9e9e9; margin: 0; padding: 20px; }
-  .main-container { max-width: 1400px; margin: 0 auto; }
-  
-  /* TABS */
-  .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tab-btn {
-    background: #f0f0f0; border: 1px solid #aaa; padding: 10px 24px;
-    font-size: 1rem; font-weight: bold; border-radius: 30px 30px 0 0;
-    cursor: pointer; transition: 0.2s;
-  }
-  .tab-btn.active { background: white; border-bottom: 3px solid #4caf50; color: #2e7d32; }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* Header */
-  .global-header {
-    background: white; padding: 12px 20px; border-radius: 20px;
-    margin-bottom: 20px; display: flex; justify-content: space-between;
-    align-items: center; flex-wrap: wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  .global-header h1 { font-size: 1.6rem; color: #1e4a76; }
-  .status { padding: 6px 16px; border-radius: 40px; font-weight: bold; }
-  .status.lock { background: #ffe2e2; color: #b91c1c; }
-  .status.open { background: #dff9e6; color: #0f7b3a; }
-
-  /* Cards */
-  .card {
-    background: white; border-radius: 24px; border: 1px solid #ddd;
-    padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  }
-  .card-title {
-    font-size: 1.3rem; font-weight: bold; border-left: 5px solid #1e4a76;
-    padding-left: 15px; margin-bottom: 1.2rem;
-  }
-  .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  @media (max-width: 800px) { .two-cols { grid-template-columns: 1fr; } }
-  .form-group { margin-bottom: 1rem; }
-  label { font-weight: bold; font-size: 0.75rem; text-transform: uppercase; color: #2c3e66; display: block; margin-bottom: 4px; }
-  input, select { width: 100%; padding: 10px 12px; border: 2px solid #dce3ec; border-radius: 18px; font-size: 0.9rem; }
-  .readonly-field { background: #f1f5f9; font-weight: 600; }
-  .denom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin: 12px 0; }
-  .denom-item { background: #f8fafc; border-radius: 18px; padding: 6px; text-align: center; border: 1px solid #dce5ec; }
-  .denom-item input { text-align: center; padding: 6px; font-weight: 600; border-radius: 30px; }
-  .bank-badge { background: #d97706; color: white; font-size: 8px; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 4px; }
-  .summary-box { background: #f0f9ff; padding: 14px; border-radius: 20px; margin: 12px 0; }
-  .summary-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #bdd3e8; }
-  .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
-  .btn { padding: 8px 18px; font-weight: bold; border: none; border-radius: 40px; cursor: pointer; background: #1e4a76; color: white; }
-  .btn-success { background: #0f7b3a; }
-  .btn-outline { background: white; border: 2px solid #1e4a76; color: #1e4a76; }
-  .btn-danger { background: #b91c1c; }
-  .alert { background: #fef9e3; padding: 10px; border-radius: 18px; margin-top: 10px; font-size: 0.8rem; border-left: 4px solid #f1c40f; }
-  .hidden { display: none; }
-
-  /* Kassenbericht 305 Tabelle (Excel-Format) */
-  .sheet-wrap { background: white; border-radius: 12px; padding: 20px; overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; min-width: 1000px; }
-  td { border: 1px solid #000; padding: 6px 8px; vertical-align: middle; font-size: 12px; }
-  .bold { font-weight: bold; }
-  .right { text-align: right; }
-  .center { text-align: center; }
-  .green { color: #1e7e1e; }
-  .blue { color: #0066cc; }
-  .red { color: #c00; }
-  input.cell { width: 100%; border: none; outline: none; background: transparent; text-align: right; font: inherit; }
-  input.left { text-align: left; }
-  .signature { height: 50px; }
-
-  @media print {
-    body { background: white; margin: 0; padding: 0; }
-    .tabs, .global-header .status, .btn-group, .btn, #loginCard { display: none !important; }
-    .tab-content.active { display: block !important; }
-    .sheet-wrap { box-shadow: none; padding: 0; }
-    @page { size: A4; margin: 1.5cm; }
-  }
-  footer { text-align: center; margin-top: 20px; font-size: 11px; color: #666; }
+*{box-sizing:border-box}
+body{margin:0;background:#e5e5e5;font-family:Arial,Helvetica,sans-serif;color:#111}
+.app{max-width:1000px;margin:0 auto;padding:18px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:12px}
+button{border:0;border-radius:8px;background:#111;color:#fff;font-weight:700;padding:10px 14px;cursor:pointer}
+button.gray{background:#555}button.green{background:#166534}button.red{background:#991b1b}
+.page{width:210mm;min-height:297mm;background:#fff;margin:0 auto 18px;padding:18mm;box-shadow:0 2px 12px rgba(0,0,0,.22)}
+h1{font-size:30px;margin:0 0 18px;text-transform:uppercase;line-height:1.05}
+h2{font-size:22px;margin:22px 0 10px;text-transform:uppercase;border-bottom:2px solid #111;padding-bottom:5px}
+.grid{display:grid;grid-template-columns:180px 1fr 180px 1fr;gap:10px;align-items:end;margin-bottom:10px}
+label{font-weight:700;font-size:14px}
+input,textarea{width:100%;border:0;border-bottom:2px solid #111;font-size:16px;padding:5px;background:transparent;font-variant-numeric:tabular-nums}
+input.num{text-align:right}
+textarea{height:55px;border:2px solid #111;resize:vertical}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:15px}
+th,td{border:1px solid #111;padding:6px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{background:#f0f0f0}
+.result{display:grid;grid-template-columns:1fr 180px;gap:10px;margin:8px 0;font-size:18px;font-weight:800;align-items:end}
+.result input{font-weight:900;font-size:20px;text-align:right}
+.small{font-size:13px;color:#333}.note{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px;margin-bottom:12px}.positive{color:#166534}.negative{color:#991b1b}.sign{height:42px;border-bottom:2px solid #111;margin-top:18px}
+@media(max-width:800px){.page{width:100%;min-height:auto;padding:16px}.grid{grid-template-columns:1fr}.app{padding:8px}}
+@media print{body{background:#fff}.app{padding:0}.toolbar,.note{display:none}.page{box-shadow:none;margin:0;width:210mm;min-height:297mm;padding:15mm;page-break-after:always}input,textarea{border-bottom:1.5px solid #000}textarea{border:1.5px solid #000}button{display:none}@page{size:A4;margin:0}}
 </style>
 </head>
 <body>
-<div class="main-container">
-  <div class="global-header">
-    <div><h1>🍦 Eiscafé Sanremo</h1><div>Bad Berleburg · Zählprotokoll + Kassenbericht 305 (vollständig)</div></div>
-    <div id="lockState" class="status lock">GESPERRT</div>
-  </div>
+<div class="app">
+<div class="toolbar">
+<button onclick="window.print()">Drucken / PDF</button>
+<button class="gray" onclick="setToday()">Datum automatisch</button>
+<button class="green" onclick="addPurchaseRow()">+ Barausgabe</button>
+<button class="red" onclick="clearAll()">Leeren</button>
+</div>
+<div class="note">Einfaches Zählprotokoll: Noten und Münzen zählen, Bargeld-Einnahmen erfassen, Bar-Einkäufe abziehen. Ergebnis: Kassenbestand laut Zählung.</div>
 
-  <!-- Login -->
-  <div id="loginCard" class="card" style="max-width: 400px; margin: 20px auto;">
-    <div class="card-title">🔐 PIN</div>
-    <input type="password" id="pinInput" placeholder="3515" style="margin-bottom:12px;">
-    <div class="btn-group"><button id="unlockBtn" class="btn">Entsperren</button><button id="changePinBtn" class="btn btn-outline">PIN ändern</button></div>
-    <div id="pinChangeBox" class="hidden" style="margin-top:12px;">
-      <input type="password" id="newPinInput" placeholder="Neuer PIN (4+ Ziffern)">
-      <div class="btn-group"><button id="savePinBtn" class="btn-success">Speichern</button><button id="cancelPinBtn" class="btn-outline">Abbrechen</button></div>
-    </div>
-  </div>
+<section class="page">
+<h1>Zählprotokoll Kasse</h1>
+<div class="small"><b>Betrieb:</b> Eiscafé Sanremo, Fürst Richard Str. 1, 57319 Bad Berleburg</div>
+<br>
+<div class="grid">
+<label>Datum</label><input id="datum" placeholder="TT.MM.JJJJ">
+<label>Mitarbeiter</label><input id="mitarbeiter">
+<label>Kasse / Standort</label><input id="standort" placeholder="z. B. Eiscafé / REWE Lieferung">
+<label>Beleg-Nr.</label><input id="belegnr">
+</div>
 
-  <div id="app" class="hidden">
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="tab1">🧾 1. Zählprotokoll (Geld zählen + Barausgaben)</button>
-      <button class="tab-btn" data-tab="tab2">📑 2. Kassenbericht 305 (Finanzamt-Format)</button>
-    </div>
+<h2>1. Bargeld zählen – Banknoten</h2>
+<table id="notesTable">
+<thead><tr><th>Banknote</th><th>Anzahl</th><th>Betrag</th></tr></thead>
+<tbody></tbody>
+</table>
 
-    <!-- ========= TAB 1: ZÄHLPROTOKOLL mit Barausgaben ========= -->
-    <div id="tab1" class="tab-content active">
-      <div class="card">
-        <div class="card-title">📅 Tag wählen & laden</div>
-        <div class="two-cols">
-          <div class="form-group"><label>Datum (YYYY-MM-DD)</label><input type="date" id="currentDateProto"></div>
-          <div class="btn-group"><button id="loadDayProto" class="btn">📂 Laden / Neu</button><button id="lockAppBtn" class="btn-outline">🔒 Sperren</button></div>
-        </div>
-        <div id="infoMsgProto" class="alert">👉 Datum wählen, dann auf "Laden" klicken. Der Vortag wird automatisch aus dem letzten gespeicherten Tag übernommen.</div>
-      </div>
+<h2>2. Bargeld zählen – Münzen</h2>
+<table id="coinsTable">
+<thead><tr><th>Münze</th><th>Anzahl</th><th>Betrag</th></tr></thead>
+<tbody></tbody>
+</table>
 
-      <div class="two-cols">
-        <div class="card">
-          <div class="card-title">📊 Vortag & Umsatz</div>
-          <div class="form-group"><label>📌 Vortag (Rest von gestern) – automatisch</label><input type="text" id="vortagFieldProto" class="readonly-field" readonly></div>
-          <div class="form-group"><label>💰 Tagesumsatz (Z-Bon) – Kassenlaut</label><input type="number" id="zbonProto" step="0.01" value="0.00"></div>
-          <div class="form-group"><label>💸 Barausgaben (Cash Expenses, z.B. Wareneinkauf)</label><input type="number" id="cashExpensesProto" step="0.01" value="0.00"></div>
-          <div class="summary-box"><div class="summary-row"><span>📌 Soll = Vortag + Z-Bon – Barausgaben</span><span id="sollDisplayProto">0,00 €</span></div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">🏦 Bank-Einzahlung (optional – detailliert)</div>
-          <select id="hasBankSelectProto"><option value="no">❌ Keine Einzahlung heute</option><option value="yes">✅ Ja, Geld zur Bank gebracht</option></select>
-          <div id="bankPanelProto" class="hidden" style="margin-top:12px;">
-            <div><span class="bank-badge">Bank Scheine</span></div>
-            <div class="denom-grid" id="bankNotesGridProto"></div>
-            <div><span class="bank-badge">Bank Münzen</span></div>
-            <div class="denom-grid" id="bankCoinsGridProto"></div>
-            <div class="summary-box"><div class="summary-row"><span>💰 Summe Einzahlung</span><span id="bankTotalProto">0,00 €</span></div></div>
-          </div>
-        </div>
-      </div>
+<h2>3. Einnahmen / Ausgaben</h2>
+<div class="result"><span>Kassenbestand gezählt:</span><input id="cashTotal" readonly></div>
+<div class="result"><span>Bargeld-Einnahmen laut Kasse:</span><input id="cashIncome" class="num" placeholder="0,00" oninput="calc()"></div>
+<div class="result"><span>Wechselgeld Anfangsbestand:</span><input id="openingCash" class="num" placeholder="0,00" oninput="calc()"></div>
 
-      <div class="card">
-        <div class="card-title">🧾 Kassenbestand zählen (IST) – Noten & Münzen</div>
-        <div><span class="bank-badge" style="background:#1e4a76;">Scheine</span></div>
-        <div class="denom-grid" id="notesGridProto"></div>
-        <div><span class="bank-badge" style="background:#1e4a76;">Münzen</span></div>
-        <div class="denom-grid" id="coinsGridProto"></div>
-        <div class="summary-box"><div class="summary-row"><span>💵 Physisch gezählte Ist-Kasse</span><span id="istTotalProto">0,00 €</span></div></div>
-      </div>
+<h2>4. Barausgaben / Einkäufe bar</h2>
+<table id="purchaseTable">
+<thead><tr><th>Beleg / Beschreibung</th><th>Betrag €</th><th class="no-print">Aktion</th></tr></thead>
+<tbody>
+<tr><td><input placeholder="z. B. Milch bar bezahlt"></td><td><input class="num purchase" placeholder="0,00" oninput="calc()"></td><td class="no-print"><button class="red" onclick="removeRow(this)">X</button></td></tr>
+</tbody>
+</table>
+<div class="result"><span>Barausgaben gesamt:</span><input id="purchaseTotal" readonly></div>
 
-      <div class="card">
-        <div class="card-title">✅ Tagesabschluss – Endbestand für morgen</div>
-        <div class="summary-box">
-          <div class="summary-row"><span>Vortag</span><span id="startSummaryProto">0,00 €</span></div>
-          <div class="summary-row"><span>+ Z-Bon</span><span id="zbonSummaryProto">0,00 €</span></div>
-          <div class="summary-row"><span>− Barausgaben</span><span id="cashExpSummaryProto">0,00 €</span></div>
-          <div class="summary-row"><span>= Soll (theoretischer Bestand)</span><span id="sollSummaryProto">0,00 €</span></div>
-          <div class="summary-row"><span>🧾 Ist gezählt (physisch)</span><span id="istSummaryProto">0,00 €</span></div>
-          <div class="summary-row"><span>🏦 − Bank-Einzahlung</span><span id="bankSummaryProto">0,00 €</span></div>
-          <div class="summary-row"><span><strong>🔁 Endbestand für morgen = Ist − Bank</strong></span><span id="endeSummaryProto" style="font-size:1.3rem;">0,00 €</span></div>
-          <div class="summary-row" style="color:#c00;"><span>⚠️ Differenz (Ist − Soll)</span><span id="diffValueProto">0,00 €</span></div>
-        </div>
-        <div class="btn-group">
-          <button id="saveProto" class="btn-success">💾 Speichern</button>
-          <button id="printProto" class="btn">🖨️ Drucken (Zählprotokoll)</button>
-          <button id="clearProto" class="btn-danger">🗑️ Alle Felder löschen (heute)</button>
-          <button id="newDayProto" class="btn-outline">🆕 Neuen Tag starten</button>
-        </div>
-        <div class="alert">💡 Endbestand = physisch gezähltes Geld (Ist) minus Bank-Einzahlung. Dieser Betrag wird beim nächsten Tag als Vortag automatisch geladen. Die Barausgaben helfen beim Abgleich mit dem Soll.</div>
-      </div>
-    </div>
+<h2>5. Ergebnis für Buchhaltung</h2>
+<div class="result"><span>Soll-Kassenbestand:</span><input id="expectedCash" readonly></div>
+<div class="result"><span>Ist-Kassenbestand gezählt:</span><input id="actualCash" readonly></div>
+<div class="result"><span>Differenz:</span><input id="difference" readonly></div>
 
-    <!-- ========= TAB 2: KASSENBERICHT 305 (Original Excel) ========= -->
-    <div id="tab2" class="tab-content">
-      <div class="sheet-wrap">
-        <table>
-          <colgroup><col style="width:240px"><col style="width:80px"><col style="width:80px"><col style="width:80px"><col style="width:80px"><col style="width:80px"><col style="width:100px"><col style="width:120px"><col style="width:140px"><col style="width:120px"></colgroup>
-          <tr><td class="bold" style="font-size:16px">Kassenbericht 305</td><td class="center">Nr.</td><td colspan="2"><input class="cell left" id="berichtNr" value=""></td><td></td><td></td><td colspan="2" class="right bold">Datum:</td><td colspan="2"><input class="cell left" id="datum305" value=""></td></tr>
-          <tr style="background:#e8f5e9;"><td colspan="6" class="bold">🏦 Kassenbestand bei Geschäftsschluß</td><td colspan="3"></td><td class="green right"><span id="kassenbestandHeute305">0,00 €</span></td></tr>
-          <input type="hidden" id="kassenbestandHidden305" value="0">
-          <tr><td colspan="6" class="bold">📤 Ausgaben im Laufe des Tages</td><td class="bold center">Vorsteuer</td><td colspan="2" class="bold center">Betrag (Brutto)</td><td class="bold center">Notiz</td></tr>
-          <!-- 5 Zeilen Wareneinkäufe -->
-          <tr><td class="bold">Wareneinkäufe und Warennebenkosten</td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="w1_tax"></td><td colspan="2"><input class="cell expense305" id="w1_amt"></td><td><input class="cell left" id="w1_note"></td></tr>
-          <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="w2_tax"></td><td colspan="2"><input class="cell expense305" id="w2_amt"></td><td><input class="cell left" id="w2_note"></td></tr>
-          <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="w3_tax"></td><td colspan="2"><input class="cell expense305" id="w3_amt"></td><td><input class="cell left" id="w3_note"></td></tr>
-          <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="w4_tax"></td><td colspan="2"><input class="cell expense305" id="w4_amt"></td><td><input class="cell left" id="w4_note"></td></tr>
-          <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="w5_tax"></td><td colspan="2"><input class="cell expense305" id="w5_amt"></td><td><input class="cell left" id="w5_note"></td></tr>
-          <!-- Geschäftsausgaben 3 Zeilen -->
-          <tr><td class="bold">Geschäftsausgaben</td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="g1_tax"></td><td colspan="2"><input class="cell expense305" id="g1_amt"></td><td><input class="cell left" id="g1_note"></td></tr>
-          <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="g2_tax"></td><td colspan="2"><input class="cell expense305" id="g2_amt"></td><td><input class="cell left" id="g2_note"></td></tr>
-          <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="g3_tax"></td><td colspan="2"><input class="cell expense305" id="g3_amt"></td><td><input class="cell left" id="g3_note"></td></tr>
-          <!-- Privatentnahmen -->
-          <tr><td class="bold">Privatentnahmen</td><td></td><td></td><td></td><td></td><td></td><td class="center">*****</td><td colspan="2"><input class="cell expense305" id="privat305"></td><td><input class="cell left" id="privatNote"></td></tr>
-          <!-- Sonstige Ausgaben 3 Zeilen -->
-          <tr><td class="bold">Sonstige Ausgaben</td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="s1_tax"></td><td colspan="2"><input class="cell expense305" id="s1_amt"></td><td><input class="cell left" id="s1_note"></td></tr>
-          <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="s2_tax"></td><td colspan="2"><input class="cell expense305" id="s2_amt"></td><td><input class="cell left" id="s2_note"></td></tr>
-          <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><input class="cell" id="s3_tax"></td><td colspan="2"><input class="cell expense305" id="s3_amt"></td><td><input class="cell left" id="s3_note"></td></tr>
-          <tr><td colspan="7"></td><td class="bold center">Summe Ausgaben</td><td class="red right"><span id="summeAusgaben305">0,00 €</span></td><td></td></tr>
-          <tr style="background:#fff9e6;"><td colspan="6" class="bold green">💰 Einnahmen / Umsatz</td><td class="bold center">Steuer</td><td colspan="2" class="bold center">Betrag</td><td class="bold center">Notiz</td></tr>
-          <tr><td class="bold">TE 19%</td><td></td><td></td><td></td><td></td><td></td><td class="center">19%</td><td colspan="2"><input class="cell income305" id="te19"></td><td><input class="cell left" id="te19Note"></td></tr>
-          <tr><td class="bold">TE 7%</td><td></td><td></td><td></td><td></td><td></td><td class="center">7%</td><td colspan="2"><input class="cell income305" id="te7"></td><td><input class="cell left" id="te7Note"></td></tr>
-          <tr><td class="bold">Gutschein</td><td></td><td></td><td></td><td></td><td></td><td></td><td colspan="2"><input class="cell income305" id="gutschein"></td><td><input class="cell left" id="gutscheinNote"></td></tr>
-          <tr><td class="bold">Trinkgeld / freiBetrag</td><td></td><td></td><td></td><td></td><td></td><td></td><td colspan="2"><input class="cell income305" id="trinkgeld"></td><td><input class="cell left" id="trinkgeldNote"></td></tr>
-          <tr><td colspan="7"></td><td class="bold center">Tageslösung (Summe)</td><td class="green right"><span id="tageslosung305">0,00 €</span></td><td></td></tr>
-          <tr><td colspan="6" class="bold">📅 Kassenbestand des Vortages</td><td colspan="3"><input class="cell" id="vortag305" style="background:#fff3e0;"></td><td class="right"><span id="vortagAnzeige305">0,00 €</span></td></tr>
-          <tr><td colspan="6" class="bold red">➖ Abzüglich aller Ausgaben</td><td colspan="2" class="bold center">- Ausgaben</td><td class="red right"><span id="abzugAusgaben305">0,00 €</span></td><td></td></tr>
-          <tr><td colspan="4" class="bold">👥 Kundenzahl heute</td><td colspan="2"><input class="cell" id="kundenzahl305"></td><td colspan="2" class="bold center">Ø Betrag/Kunde</td><td class="right"><span id="betragProKunde305">0,00 €</span></td><td></td></tr>
-          <tr style="background:#e3f2fd;"><td colspan="8" class="bold blue">📌 Notiz: Summe Einnahmen/Umsatz + Kassenbestand des Vortages</td><td class="blue right"><span id="summeVortagTageslosungNotiz305">0,00 €</span></td><td></td></tr>
-          <tr><td colspan="4"></td><td colspan="2"></td><td colspan="2" class="bold center">Unterschrift</td><td class="signature"></td><td></td></tr>
-        </table>
-        <div style="margin-top:15px; padding:8px; background:#f5f5f5; font-size:11px;">
-          ✅ Formel: <strong>Tageslösung = TE19 + TE7 + Gutschein + Trinkgeld</strong><br>
-          🧮 <strong>Kassenbestand heute = Vortag + Tageslösung – Summe Ausgaben</strong><br>
-          📌 Die Summe <strong>Vortag + Tageslösung</strong> wird in der Notiz-Zelle angezeigt.<br>
-          💾 Alle Eingaben werden automatisch gespeichert (lokal).<br>
-          🖨️ Drucken: Klicken Sie oben auf "Bericht 305 drucken".
-        </div>
-        <div class="btn-group" style="margin-top: 15px;">
-          <button id="save305Btn" class="btn-success">💾 Bericht 305 speichern</button>
-          <button id="print305Btn" class="btn">🖨️ Bericht 305 drucken</button>
-          <button id="clear305Btn" class="btn-danger">🗑️ Alle Felder löschen</button>
-        </div>
-      </div>
-    </div>
-    <footer>🔐 PIN-geschützt · Daten bleiben im Browser · Endbestand (Ist − Bank) wird automatisch Vortag des nächsten Tages.</footer>
-  </div>
+<h2>6. Notizen</h2>
+<textarea id="notes" placeholder="z. B. Einkauf bar bezahlt, Beleg liegt bei. Differenz erklärt durch Wechselgeld / Trinkgeld / Rundung."></textarea>
+
+<div class="grid" style="margin-top:20px">
+<label>Unterschrift Mitarbeiter</label><div class="sign"></div>
+<label>Kontrolle / Chef</label><div class="sign"></div>
+</div>
+</section>
 </div>
 
 <script>
-  // ======================== PIN / LOCK ========================
-  const DEFAULT_PIN = "3515";
-  let locked = true;
-  function setLock(lock) {
-    locked = lock;
-    document.getElementById("app").classList.toggle("hidden", lock);
-    document.getElementById("loginCard").classList.toggle("hidden", !lock);
-    const state = document.getElementById("lockState");
-    if (lock) { state.innerHTML = "GESPERRT"; state.className = "status lock"; }
-    else { state.innerHTML = "ENTSPERRT"; state.className = "status open"; }
-  }
-  function checkPin() { const pin = document.getElementById("pinInput").value; const stored = localStorage.getItem("sanremo_pin") || DEFAULT_PIN; if (pin === stored) { setLock(false); document.getElementById("pinInput").value = ""; } else alert("Falscher PIN"); }
-  function changePin() { const newPin = document.getElementById("newPinInput").value; if (/^\d{4,}$/.test(newPin)) { localStorage.setItem("sanremo_pin", newPin); alert("PIN geändert"); document.getElementById("pinChangeBox").classList.add("hidden"); } else alert("Mindestens 4 Ziffern"); }
-  document.getElementById("unlockBtn").onclick = checkPin;
-  document.getElementById("changePinBtn").onclick = () => document.getElementById("pinChangeBox").classList.toggle("hidden");
-  document.getElementById("savePinBtn").onclick = changePin;
-  document.getElementById("cancelPinBtn").onclick = () => document.getElementById("pinChangeBox").classList.add("hidden");
-
-  // TABS
-  const tabs = document.querySelectorAll('.tab-btn');
-  const contents = document.querySelectorAll('.tab-content');
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tabId = btn.dataset.tab;
-      tabs.forEach(b => b.classList.remove('active'));
-      contents.forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
-    });
-  });
-
-  // ======================== MODUL 1: Zählprotokoll ========================
-  const NOTES = [
-    { id: 'n500', val: 500, label: '500 €' }, { id: 'n200', val: 200, label: '200 €' },
-    { id: 'n100', val: 100, label: '100 €' }, { id: 'n50', val: 50, label: '50 €' },
-    { id: 'n20', val: 20, label: '20 €' }, { id: 'n10', val: 10, label: '10 €' },
-    { id: 'n5', val: 5, label: '5 €' }
-  ];
-  const COINS = [
-    { id: 'c2', val: 2, label: '2 €' }, { id: 'c1', val: 1, label: '1 €' },
-    { id: 'c050', val: 0.5, label: '0,50 €' }, { id: 'c020', val: 0.2, label: '0,20 €' },
-    { id: 'c010', val: 0.1, label: '0,10 €' }, { id: 'c005', val: 0.05, label: '0,05 €' },
-    { id: 'c002', val: 0.02, label: '0,02 €' }, { id: 'c001', val: 0.01, label: '0,01 €' }
-  ];
-  const ALL_DENOMS = [...NOTES, ...COINS];
-  const PROTO_STORAGE = "sanremo_protokoll_final_v2";
-  let currentDateProto = "", previousEndProto = 0;
-  const euro = (n) => (Number(n) || 0).toFixed(2).replace('.', ',') + " €";
-  const num = v => Number(v) || 0;
-
-  function loadAllProto() { try { return JSON.parse(localStorage.getItem(PROTO_STORAGE) || '[]'); } catch { return []; } }
-  function saveAllProto(e) { localStorage.setItem(PROTO_STORAGE, JSON.stringify(e)); }
-  function getPrevProto(date, entries) { const earlier = entries.filter(e => e.date < date).sort((a,b)=>a.date.localeCompare(b.date)); return earlier.length ? Number(earlier[earlier.length-1].ende) : 0; }
-
-  function refreshProto() {
-    if (!currentDateProto) return;
-    let ist = 0;
-    ALL_DENOMS.forEach(d => { const inp = document.getElementById(`count_${d.id}`); if(inp) ist += num(inp.value) * d.val; });
-    document.getElementById("istTotalProto").innerHTML = euro(ist);
-    document.getElementById("istSummaryProto").innerHTML = euro(ist);
-    let bank = 0;
-    if (document.getElementById("hasBankSelectProto").value === "yes") {
-      ALL_DENOMS.forEach(d => { const inp = document.getElementById(`bank_${d.id}`); if(inp) bank += num(inp.value) * d.val; });
-    }
-    document.getElementById("bankTotalProto").innerHTML = euro(bank);
-    document.getElementById("bankSummaryProto").innerHTML = euro(bank);
-    const start = previousEndProto;
-    document.getElementById("vortagFieldProto").value = euro(start);
-    document.getElementById("startSummaryProto").innerHTML = euro(start);
-    const zbon = num(document.getElementById("zbonProto").value);
-    const cashExp = num(document.getElementById("cashExpensesProto").value);
-    document.getElementById("zbonSummaryProto").innerHTML = euro(zbon);
-    document.getElementById("cashExpSummaryProto").innerHTML = euro(cashExp);
-    const soll = start + zbon - cashExp;
-    document.getElementById("sollDisplayProto").innerHTML = euro(soll);
-    document.getElementById("sollSummaryProto").innerHTML = euro(soll);
-    const ende = ist - bank;
-    document.getElementById("endeSummaryProto").innerHTML = euro(ende);
-    const diff = ist - soll;
-    document.getElementById("diffValueProto").innerHTML = euro(diff);
-    const diffRow = document.getElementById("diffValueProto").parentElement;
-    if (Math.abs(diff) < 0.01) diffRow.style.color = "#0f7b3a"; else diffRow.style.color = "#c00";
-  }
-
-  function toggleBankProto(show) { document.getElementById("bankPanelProto").classList.toggle("hidden", !show); }
-  function clearProto() {
-    if (!currentDateProto) return;
-    if (confirm("Alle Zählfelder für heute löschen?")) {
-      ALL_DENOMS.forEach(d => { const inp = document.getElementById(`count_${d.id}`); if(inp) inp.value = 0; const bankInp = document.getElementById(`bank_${d.id}`); if(bankInp) bankInp.value = 0; });
-      document.getElementById("zbonProto").value = "0";
-      document.getElementById("cashExpensesProto").value = "0";
-      document.getElementById("hasBankSelectProto").value = "no";
-      toggleBankProto(false);
-      refreshProto();
-    }
-  }
-  function newDayProto() {
-    let currentEnd = parseEuroString(document.getElementById("endeSummaryProto").innerText);
-    if (confirm(`Neuen Tag beginnen? Der aktuelle Endbestand (${euro(currentEnd)}) wird als neuer Vortag übernommen. Alle heutigen Eingaben werden zurückgesetzt.`)) {
-      // Speichere den aktuellen Tag (damit er in der Historie bleibt)
-      saveProto();
-      // Setze das Datum auf morgen
-      let today = new Date(currentDateProto);
-      let tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-      let yyyy = tomorrow.getFullYear();
-      let mm = String(tomorrow.getMonth()+1).padStart(2,'0');
-      let dd = String(tomorrow.getDate()).padStart(2,'0');
-      let newDate = `${yyyy}-${mm}-${dd}`;
-      document.getElementById("currentDateProto").value = newDate;
-      loadDayProto(newDate);
-      // Der Vortag sollte nun der gespeicherte Endbestand des alten Tages sein
-      alert(`Neuer Tag ${newDate} wurde eingerichtet. Vortag = ${euro(currentEnd)}`);
-    }
-  }
-  function parseEuroString(str) { let s = str.replace(/\./g,'').replace(',','.').replace(/[^0-9.-]/g,''); return parseFloat(s) || 0; }
-  function loadDayProto(date) {
-    if (!date) return;
-    currentDateProto = date;
-    const entries = loadAllProto();
-    previousEndProto = getPrevProto(date, entries);
-    const existing = entries.find(e => e.date === date);
-    ALL_DENOMS.forEach(d => { document.getElementById(`count_${d.id}`).value = 0; document.getElementById(`bank_${d.id}`).value = 0; });
-    document.getElementById("zbonProto").value = "0";
-    document.getElementById("cashExpensesProto").value = "0";
-    document.getElementById("hasBankSelectProto").value = "no";
-    toggleBankProto(false);
-    if (existing) {
-      if (existing.counts) ALL_DENOMS.forEach(d => { if(existing.counts[d.id]) document.getElementById(`count_${d.id}`).value = existing.counts[d.id]; });
-      document.getElementById("zbonProto").value = (existing.zbon || 0).toFixed(2);
-      document.getElementById("cashExpensesProto").value = (existing.cashExpenses || 0).toFixed(2);
-      const hasBank = (existing.bankDetails && existing.bankDetails.length > 0);
-      document.getElementById("hasBankSelectProto").value = hasBank ? "yes" : "no";
-      toggleBankProto(hasBank);
-      if (hasBank && existing.bankDetails) {
-        existing.bankDetails.forEach(det => {
-          const denom = ALL_DENOMS.find(d => Math.abs(d.val - det.denom) < 0.001);
-          if (denom) document.getElementById(`bank_${denom.id}`).value = det.quantity;
-        });
-      }
-      document.getElementById("infoMsgProto").innerHTML = `📅 Geladen: ${date} (gespeichert) – Vortag: ${euro(previousEndProto)}`;
-    } else {
-      document.getElementById("infoMsgProto").innerHTML = `✨ Neuer Tag: ${date} – Vortag aus letztem Tag: ${euro(previousEndProto)}`;
-    }
-    refreshProto();
-  }
-  function saveProto() {
-    if (!currentDateProto) { alert("Bitte Datum laden."); return; }
-    const entries = loadAllProto();
-    let ist = 0, counts = {};
-    ALL_DENOMS.forEach(d => { const q = num(document.getElementById(`count_${d.id}`).value); counts[d.id] = q; ist += q * d.val; });
-    const zbon = num(document.getElementById("zbonProto").value);
-    const cashExpenses = num(document.getElementById("cashExpensesProto").value);
-    let bank = 0, bankDetails = [];
-    if (document.getElementById("hasBankSelectProto").value === "yes") {
-      ALL_DENOMS.forEach(d => { const q = num(document.getElementById(`bank_${d.id}`).value); if(q>0) { bank += q * d.val; bankDetails.push({ denom: d.val, quantity: q }); } });
-    }
-    const ende = ist - bank;
-    const entry = { date: currentDateProto, start: previousEndProto, zbon, cashExpenses, ist, bank, bankDetails, ende, counts, timestamp: Date.now() };
-    const idx = entries.findIndex(e => e.date === currentDateProto);
-    if (idx !== -1) entries[idx] = entry; else entries.push(entry);
-    saveAllProto(entries);
-    alert(`Gespeichert! Endbestand für morgen: ${euro(ende)}`);
-    loadDayProto(currentDateProto);
-  }
-  function printProto() {
-    if (!currentDateProto) { alert("Kein Tag geladen"); return; }
-    const entries = loadAllProto();
-    let entry = entries.find(e => e.date === currentDateProto);
-    if (!entry) {
-      let ist=0, counts={};
-      ALL_DENOMS.forEach(d=>{ let q=num(document.getElementById(`count_${d.id}`).value); counts[d.id]=q; ist+=q*d.val; });
-      let zbon=num(document.getElementById("zbonProto").value);
-      let cashExpenses=num(document.getElementById("cashExpensesProto").value);
-      let start=previousEndProto, bank=0, bankDetails=[];
-      if(document.getElementById("hasBankSelectProto").value==="yes") ALL_DENOMS.forEach(d=>{ let q=num(document.getElementById(`bank_${d.id}`).value); if(q>0){ bank+=q*d.val; bankDetails.push({denom:d.val, quantity:q, label:d.label}); } });
-      entry = {start, zbon, cashExpenses, ist, bank, bankDetails, counts, ende:ist-bank};
-    }
-    const denomRows = ALL_DENOMS.map(d => `<tr><td style="border:1px solid #aaa; padding:5px;">${d.label}</td><td style="text-align:center">${entry.counts[d.id]||0}</td><td style="text-align:right">${euro((entry.counts[d.id]||0)*d.val)}</td>`).join('');
-    const bankRows = (entry.bankDetails||[]).map(b => `<tr><td style="border:1px solid #aaa; padding:5px;">${b.label || (b.denom.toFixed(2).replace('.',',')+' €')}</td><td style="text-align:center">${b.quantity}</td><td style="text-align:right">${euro(b.denom*b.quantity)}</td>`).join('');
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Zählprotokoll ${currentDateProto}</title><style>body{font-family:system-ui;padding:1.5cm;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #888;padding:6px;} .text-right{text-align:right;} @page{size:A4;margin:1.5cm;}</style></head><body><h1>Zählprotokoll Sanremo</h1><p>Datum: ${currentDateProto}</p><h2>Kassenbestand (IST)</h2><tr><th>Stückelung</th><th>Anzahl</th><th>Wert</th>${denomRows}<tr><td colspan="2"><strong>Summe IST</strong></td><td class="text-right"><strong>${euro(entry.ist)}</strong></td></tr></table>${entry.bankDetails?.length ? `<h2>Bank-Einzahlung</h2><table><th>Stückelung</th><th>Anzahl</th><th>Betrag</th>${bankRows}<tr><td colspan="2"><strong>Summe Bank</strong></td><td class="text-right"><strong>${euro(entry.bank)}</strong></td></tr></table>` : '<p>Keine Bank-Einzahlung</p>'}<h2>Abschluss</h2><tr><td>Vortag (von gestern)</td><td class="text-right">${euro(entry.start)}</tr>
-      <tr><td>+ Tagesumsatz (Z-Bon)</td><td class="text-right">${euro(entry.zbon)}</td></tr>
-      <tr><td>− Barausgaben (Cash Expenses)</td><td class="text-right">${euro(entry.cashExpenses||0)}</td></tr>
-      <tr><td><strong>= Soll (theoretisch)</strong></td><td class="text-right"><strong>${euro(entry.start + entry.zbon - (entry.cashExpenses||0))}</strong></td></tr>
-      <tr><td>Ist gezählt (physisch)</td><td class="text-right">${euro(entry.ist)}</td></tr>
-      <tr><td>− Bank-Einzahlung</td><td class="text-right">${euro(entry.bank)}</td></tr>
-      <tr style="background:#e0f0e8;"><td><strong>🔁 Endbestand für morgen = Ist − Bank</strong></td><td class="text-right"><strong>${euro(entry.ende)}</strong></td></tr>
-      <tr><td>📊 Differenz (Ist − Soll)</td><td class="text-right">${euro(entry.ist - (entry.start + entry.zbon - (entry.cashExpenses||0)))}</td></tr>
-    </table><div style="margin-top:20px;">Unterschrift: _________________</div></body></html>`;
-    const w = window.open(); w.document.write(html); w.document.close(); w.print();
-  }
-
-  function initProtoGrids() {
-    document.getElementById("notesGridProto").innerHTML = NOTES.map(n => `<div class="denom-item"><label>${n.label}</label><input type="number" id="count_${n.id}" min="0" value="0" step="1"></div>`).join('');
-    document.getElementById("coinsGridProto").innerHTML = COINS.map(c => `<div class="denom-item"><label>${c.label}</label><input type="number" id="count_${c.id}" min="0" value="0" step="1"></div>`).join('');
-    document.getElementById("bankNotesGridProto").innerHTML = NOTES.map(n => `<div class="denom-item"><span class="bank-badge">Bank</span><label>${n.label}</label><input type="number" id="bank_${n.id}" min="0" value="0" step="1"></div>`).join('');
-    document.getElementById("bankCoinsGridProto").innerHTML = COINS.map(c => `<div class="denom-item"><span class="bank-badge">Bank</span><label>${c.label}</label><input type="number" id="bank_${c.id}" min="0" value="0" step="1"></div>`).join('');
-    document.getElementById("hasBankSelectProto").addEventListener("change", e => toggleBankProto(e.target.value === "yes"));
-    document.getElementById("loadDayProto").onclick = () => loadDayProto(document.getElementById("currentDateProto").value);
-    document.getElementById("saveProto").onclick = saveProto;
-    document.getElementById("printProto").onclick = printProto;
-    document.getElementById("clearProto").onclick = clearProto;
-    document.getElementById("newDayProto").onclick = newDayProto;
-    document.getElementById("currentDateProto").value = new Date().toISOString().slice(0,10);
-    document.querySelectorAll('#tab1 input').forEach(inp => inp.addEventListener("input", refreshProto));
-    refreshProto();
-  }
-
-  // ======================== MODUL 2: Kassenbericht 305 ========================
-  const BERICHT_STORAGE = "sanremo_bericht305_final";
-  function loadBericht() { try { return JSON.parse(localStorage.getItem(BERICHT_STORAGE) || '{}'); } catch { return {}; } }
-  function saveBericht(data) { localStorage.setItem(BERICHT_STORAGE, JSON.stringify(data)); }
-  function save305() {
-    let data = { nr: document.getElementById("berichtNr").value, datum: document.getElementById("datum305").value, vortag: parseEuro305(document.getElementById("vortag305").value), kundenzahl: document.getElementById("kundenzahl305").value, ausgaben: {}, einnahmen: {}, notizen: {} };
-    document.querySelectorAll('.expense305').forEach(el => { if(el.id) data.ausgaben[el.id] = el.value; });
-    document.querySelectorAll('.income305').forEach(el => { if(el.id) data.einnahmen[el.id] = el.value; });
-    document.querySelectorAll('#tab2 input.cell').forEach(inp => { if(inp.id && !data.ausgaben[inp.id] && !data.einnahmen[inp.id]) data.notizen[inp.id] = inp.value; });
-    saveBericht(data); alert("Kassenbericht 305 gespeichert!");
-  }
-  function load305() {
-    const data = loadBericht();
-    if (data.nr) document.getElementById("berichtNr").value = data.nr;
-    if (data.datum) document.getElementById("datum305").value = data.datum;
-    if (data.vortag) document.getElementById("vortag305").value = data.vortag;
-    if (data.kundenzahl) document.getElementById("kundenzahl305").value = data.kundenzahl;
-    if (data.ausgaben) Object.entries(data.ausgaben).forEach(([id,val]) => { let el = document.getElementById(id); if(el) el.value = val; });
-    if (data.einnahmen) Object.entries(data.einnahmen).forEach(([id,val]) => { let el = document.getElementById(id); if(el) el.value = val; });
-    if (data.notizen) Object.entries(data.notizen).forEach(([id,val]) => { let el = document.getElementById(id); if(el) el.value = val; });
-    recalc305();
-  }
-  function clear305() { if(confirm("Alle Felder des Kassenberichts 305 löschen?")) { document.querySelectorAll('#tab2 input.cell').forEach(inp => { if(inp.id !== 'vortag305') inp.value = ''; }); document.getElementById("vortag305").value = ''; recalc305(); save305(); } }
-  function parseEuro305(val) { let s = String(val).replace(/\./g,'').replace(',','.').replace(/[^0-9.-]/g,''); let n = parseFloat(s); return isNaN(n)?0:n; }
-  function formatEuro305(v) { return v.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
-  function recalc305() {
-    let sumExp = 0; document.querySelectorAll('.expense305').forEach(el => sumExp += parseEuro305(el.value));
-    document.getElementById("summeAusgaben305").innerText = formatEuro305(sumExp);
-    document.getElementById("abzugAusgaben305").innerText = formatEuro305(sumExp);
-    let te19 = parseEuro305(document.getElementById("te19").value), te7 = parseEuro305(document.getElementById("te7").value), gutschein = parseEuro305(document.getElementById("gutschein").value), trinkgeld = parseEuro305(document.getElementById("trinkgeld").value);
-    let tageslosung = te19 + te7 + gutschein + trinkgeld;
-    document.getElementById("tageslosung305").innerText = formatEuro305(tageslosung);
-    let vortag = parseEuro305(document.getElementById("vortag305").value);
-    document.getElementById("vortagAnzeige305").innerText = formatEuro305(vortag);
-    let kassenbestand = vortag + tageslosung - sumExp;
-    document.getElementById("kassenbestandHeute305").innerText = formatEuro305(kassenbestand);
-    document.getElementById("kassenbestandHidden305").value = kassenbestand;
-    document.getElementById("summeVortagTageslosungNotiz305").innerText = formatEuro305(vortag + tageslosung);
-    let kundenzahl = parseEuro305(document.getElementById("kundenzahl305").value);
-    document.getElementById("betragProKunde305").innerText = formatEuro305(kundenzahl ? tageslosung/kundenzahl : 0);
-  }
-  function print305() { const originalTitle = document.title; document.title = "Kassenbericht 305"; window.print(); document.title = originalTitle; }
-
-  document.querySelectorAll('#tab2 input').forEach(inp => inp.addEventListener('input', recalc305));
-  document.getElementById("save305Btn").onclick = save305;
-  document.getElementById("print305Btn").onclick = print305;
-  document.getElementById("clear305Btn").onclick = clear305;
-  let today = new Date(); let dd = String(today.getDate()).padStart(2,'0'); let mm = String(today.getMonth()+1).padStart(2,'0'); let yyyy = today.getFullYear();
-  if(!document.getElementById("datum305").value) document.getElementById("datum305").value = `${dd}.${mm}.${yyyy}`;
-  recalc305(); load305();
-
-  initProtoGrids();
-  setLock(true);
-  document.getElementById("lockAppBtn").onclick = () => setLock(true);
+const notes=[500,200,100,50,20,10,5];
+const coins=[2,1,0.5,0.2,0.1,0.05,0.02,0.01];
+function euro(x){return (Math.round(x*100)/100).toFixed(2).replace('.',',')+' €'}
+function val(id){return parseFloat(String(document.getElementById(id).value).replace(',','.'))||0}
+function inputVal(el){return parseFloat(String(el.value).replace(',','.'))||0}
+function makeRows(){
+ const nt=document.querySelector('#notesTable tbody');nt.innerHTML='';
+ notes.forEach(v=>nt.innerHTML+=`<tr><td>${v.toFixed(0)} €</td><td><input class="num count" data-value="${v}" oninput="calc()"></td><td class="lineTotal">0,00 €</td></tr>`);
+ const ct=document.querySelector('#coinsTable tbody');ct.innerHTML='';
+ coins.forEach(v=>ct.innerHTML+=`<tr><td>${v>=1?v.toFixed(0):v.toFixed(2).replace('.',',')} €</td><td><input class="num count" data-value="${v}" oninput="calc()"></td><td class="lineTotal">0,00 €</td></tr>`);
+}
+function calc(){
+ let cash=0;
+ document.querySelectorAll('.count').forEach(i=>{const sum=inputVal(i)*parseFloat(i.dataset.value);cash+=sum;i.closest('tr').querySelector('.lineTotal').textContent=euro(sum)});
+ let purchases=0;document.querySelectorAll('.purchase').forEach(i=>purchases+=inputVal(i));
+ const income=val('cashIncome');const opening=val('openingCash');
+ const expected=opening+income-purchases;
+ const diff=cash-expected;
+ document.getElementById('cashTotal').value=euro(cash);
+ document.getElementById('actualCash').value=euro(cash);
+ document.getElementById('purchaseTotal').value=euro(purchases);
+ document.getElementById('expectedCash').value=euro(expected);
+ document.getElementById('difference').value=euro(diff);
+ document.getElementById('difference').className=diff<0?'negative':'positive';
+}
+function addPurchaseRow(){
+ const tb=document.querySelector('#purchaseTable tbody');
+ const tr=document.createElement('tr');
+ tr.innerHTML='<td><input placeholder="Beschreibung / Beleg"></td><td><input class="num purchase" placeholder="0,00" oninput="calc()"></td><td class="no-print"><button class="red" onclick="removeRow(this)">X</button></td>';
+ tb.appendChild(tr);
+}
+function removeRow(btn){btn.closest('tr').remove();calc()}
+function setToday(){document.getElementById('datum').value=new Date().toLocaleDateString('de-DE')}
+function clearAll(){if(!confirm('Alles leeren?'))return;document.querySelectorAll('input,textarea').forEach(i=>i.value='');makeRows();calc()}
+makeRows();calc();
 </script>
 </body>
 </html>
