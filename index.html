@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Sanremo · Zählprotokoll + Kassenbericht (Excel-Format)</title>
+  <title>Sanremo · Kassen- & Produktionsprotokoll (KOMPLETT)</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -140,7 +140,7 @@
     .alert { background: #fef9e3; padding: 10px; border-radius: 18px; margin-top: 10px; font-size: 0.8rem; border-left: 4px solid #f1c40f; }
     .hidden { display: none; }
 
-    /* Estilo tipo Excel para o Kassenbericht */
+    /* Excel-Format / Kassenbericht */
     .excel-table {
       width: 100%;
       border-collapse: collapse;
@@ -170,13 +170,8 @@
       outline: none;
       background: #fff9e0;
     }
-    .excel-table .text-right {
-      text-align: right;
-    }
-    .excel-table .summe-row {
-      background: #f0f3f8;
-      font-weight: 700;
-    }
+    .excel-table .text-right { text-align: right; }
+    .excel-table .summe-row { background: #f0f3f8; font-weight: 700; }
     .excel-kasten {
       border: 1px solid #aaa;
       padding: 12px;
@@ -189,10 +184,7 @@
       padding: 6px 0;
       border-bottom: 1px dotted #ccc;
     }
-    .rechts {
-      text-align: right;
-      font-weight: 700;
-    }
+    .rechts { text-align: right; font-weight: 700; }
     .unterschrift {
       margin-top: 25px;
       border-top: 1px solid #000;
@@ -200,11 +192,37 @@
       display: flex;
       justify-content: space-between;
     }
+    
+    /* Produktionsprotokoll */
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .checks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .checkline { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+    .checkline input { width: auto; }
+    .result {
+      background: #f9fafb;
+      border: 1px dashed #d1d5db;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .big { font-size: 20px; font-weight: 800; }
+    .ok { color: #166534; font-weight: 800; }
+    .warn { color: #92400e; font-weight: 800; }
+    table.prod-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .prod-table th, .prod-table td { border: 1px solid #d1d5db; padding: 8px; text-align: left; vertical-align: top; }
+    .prod-table th { background: #f3f4f6; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    @media (max-width: 800px) {
+      .grid, .grid-2, .checks { grid-template-columns: 1fr; }
+    }
     @media print {
       .no-print, .tabs, .btn-group, .header .status, #loginCard, .tab-btn { display: none !important; }
       body { background: white; padding: 0; margin: 0; }
       .card { border: 1px solid #ccc; margin-bottom: 10px; page-break-inside: avoid; }
       .excel-table th, .excel-table td { border: 1px solid #000; }
+      .prod-table th, .prod-table td { border: 1px solid #000; }
       @page { size: A4; margin: 1.5cm; }
     }
     footer { text-align: center; margin-top: 20px; font-size: 11px; color: #4a627a; }
@@ -213,7 +231,7 @@
 <body>
 <div class="container">
   <div class="header no-print">
-    <div><h1>🍦 Eiscafé Sanremo</h1><div>Bad Berleburg · Zählprotokoll + Kassenbericht (Excel-Format)</div></div>
+    <div><h1>🍦 Eiscafé Sanremo</h1><div>Bad Berleburg · Zählprotokoll | Kassenbericht | Produktion & Lieferung (KOMPLETT)</div></div>
     <div id="lockState" class="status lock">GESPERRT</div>
   </div>
 
@@ -230,11 +248,12 @@
 
   <div id="app" class="hidden">
     <div class="tabs no-print">
-      <button class="tab-btn active" data-tab="tab1">🧾 Kassen-Zählprotokoll (detailliert)</button>
-      <button class="tab-btn" data-tab="tab2">📑 Kassenbericht (Excel-Format / Original)</button>
+      <button class="tab-btn active" data-tab="tab1">🧾 Kassen-Zählprotokoll</button>
+      <button class="tab-btn" data-tab="tab2">📑 Kassenbericht (Excel-Format)</button>
+      <button class="tab-btn" data-tab="tab3">🍦 Produktion & Lieferung (Eisbecher)</button>
     </div>
 
-    <!-- ========= TAB 1: Zählprotokoll (existente) ========= -->
+    <!-- ========= TAB 1: Zählprotokoll (original + print completo) ========= -->
     <div id="tab1" class="tab-content active">
       <div class="card no-print">
         <div class="card-title">📅 1. Tag wählen</div>
@@ -288,20 +307,16 @@
       </div>
     </div>
 
-    <!-- ========= TAB 2: KASSENBERICHT IM EXCEL-FORMAT (GLEICH WIE BEISPIEL) ========= -->
+    <!-- ========= TAB 2: KASSENBERICHT (completo: save/LS, print específico, clear fields) ========= -->
     <div id="tab2" class="tab-content">
       <div class="card">
         <div style="display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
           <div><strong>Kassenbericht Nr.</strong> <input type="text" id="berichtNr" style="width: 100px;" placeholder="___"></div>
           <div><strong>Datum:</strong> <input type="date" id="berichtDatum" style="width: 140px;"></div>
         </div>
-
         <div class="form-group"><label>Kassenbestand bei Geschäftsschluß (€)</label><input type="number" id="bestandSchluss" step="0.01" value="0" placeholder="0,00"></div>
-
         <table class="excel-table" id="ausgabenTable">
-          <thead>
-            <tr><th>Ausgaben Im Laufe des Tages</th><th style="width: 120px;">Vorsteuer (€)</th><th style="width: 150px;">Netto-/Brutto-Betrag (€)</th></tr>
-          </thead>
+          <thead><tr><th>Ausgaben Im Laufe des Tages</th><th style="width: 120px;">Vorsteuer (€)</th><th style="width: 150px;">Netto-/Brutto-Betrag (€)</th></tr></thead>
           <tbody>
             <tr><td>Wareneinkäufe und Warennebenkosten</td><td><input type="number" id="vorsteuer1" step="0.01" value="0"></td><td><input type="number" id="betrag1" step="0.01" value="0"></td></tr>
             <tr><td><input type="text" id="ausgabe2_text" value="Geschäftsausgaben" style="width: 100%;"></td><td><input type="number" id="vorsteuer2" step="0.01" value="0"></td><td><input type="number" id="betrag2" step="0.01" value="0"></td></tr>
@@ -311,7 +326,6 @@
             <tr><td><input type="text" id="ausgabe6_text" placeholder="Weitere Ausgabe" style="width: 100%;"></td><td><input type="number" id="vorsteuer6" step="0.01" value="0"></td><td><input type="number" id="betrag6" step="0.01" value="0"></td></tr>
           </tbody>
         </table>
-
         <div class="excel-kasten">
           <div class="zeile"><span>Vorsteuer bei Nettobetrag:</span><span class="rechts" id="vorsteuerGesamt">0,00 €</span></div>
           <div class="zeile"><span>Summe (Netto-/Brutto-Beträge):</span><span class="rechts" id="summeAusgaben">0,00 €</span></div>
@@ -319,36 +333,128 @@
           <div class="zeile"><span>abzüglich sonstige Einnahmen:</span><span class="rechts"><input type="number" id="sonstigeEinnahmen" step="0.01" value="0" style="width: 120px; text-align: right;"></span></div>
           <div class="zeile" style="border-top: 2px solid #aaa; margin-top: 6px;"><span><strong>Kasseneingang (brutto):</strong></span><span class="rechts" id="kasseneingang" style="font-size: 1.2rem;">0,00 €</span></div>
         </div>
-
         <div style="display: flex; gap: 30px; flex-wrap: wrap; margin: 15px 0;">
           <div><strong>TE 19%</strong> <input type="number" id="steuer19" step="0.01" value="0" style="width: 100px;"></div>
           <div><strong>TE 7%</strong> <input type="number" id="steuer7" step="0.01" value="0" style="width: 100px;"></div>
         </div>
-
         <div class="excel-table" style="margin-top: 15px;">
           <div class="zeile"><span>Kundenzahl</span><span><input type="text" id="kundenzahl" placeholder="z.B. 42" style="width: 100px;"></span></div>
           <div class="zeile"><span>Einnahmen (Tageslösung)</span><span class="rechts" id="einnahmenTagesloesung">0,00 €</span></div>
         </div>
-
         <div class="unterschrift">
           <div>Betrag/Kunde: <input type="text" id="betragKunde" placeholder="_________________"></div>
           <div>Unterschrift: <input type="text" id="unterschrift" placeholder="_________________________"></div>
         </div>
-
         <div class="btn-group">
           <button id="saveBerichtBtn" class="btn-success">💾 Kassenbericht speichern</button>
           <button id="printBerichtBtn" class="btn">🖨️ Drucken (Excel-Format)</button>
           <button id="clearBerichtBtn" class="btn-danger">🗑️ Felder löschen</button>
         </div>
-        <div class="alert" style="margin-top: 15px;">💡 Der Kasseneingang wird berechnet als: (Kassenbestand Schluss + Summe Ausgaben Brutto) − (Vortag + sonstige Einnahmen). Die Einnahmen (Tageslösung) sind identisch mit dem Kasseneingang.</div>
+        <div class="alert" style="margin-top: 15px;">💡 Der Kasseneingang wird berechnet als: (Kassenbestand Schluss + Summe Ausgaben Brutto) − (Vortag + sonstige Einnahmen).</div>
       </div>
     </div>
-    <footer class="no-print">✅ Zählprotokoll: Endbestand = Ist − Bank. Kassenbericht: Excel-Format mit automatischen Summen.</footer>
+
+    <!-- ========= TAB 3: PRODUKTION (completo) ========= -->
+    <div id="tab3" class="tab-content">
+      <div class="card">
+        <div class="actions no-print" style="margin-bottom: 16px;">
+          <button id="prodPrintBtn" class="btn">Drucken / PDF</button>
+          <button id="prodSaveBtn" class="btn-success">Speichern</button>
+          <button id="prodLoadBtn" class="btn-outline">Laden</button>
+          <button id="prodResetBtn" class="btn-danger">Neu</button>
+        </div>
+        <div>
+          <h2>📋 Allgemeine Daten</h2>
+          <div class="grid">
+            <div><label>Datum</label><input id="prod_datum" type="date"></div>
+            <div><label>Auftrags-/Lieferscheinnr.</label><input id="prod_lieferschein" placeholder="z. B. 2026-05-02-01"></div>
+            <div><label>Kunde / Filiale</label><input id="prod_kunde" placeholder="z. B. REWE Bad Laasphe"></div>
+            <div><label>Mitarbeiter</label><input id="prod_mitarbeiter" placeholder="z. B. Paulo"></div>
+          </div>
+        </div>
+        <div style="margin-top: 20px;">
+          <h2>🍨 Produkt 1 – 170 g Becher</h2>
+          <div class="grid">
+            <div><label>Nenngewicht gesetzlich (g)</label><input id="prod_p170_nenn" type="number" value="170"></div>
+            <div><label>Tara Becher + Deckel (g)</label><input id="prod_p170_tara" type="number" value="10"></div>
+            <div><label>Soll Gesamtgewicht Ziel (g)</label><input id="prod_p170_soll" type="number" value="185"></div>
+            <div><label>Tatsächliches Gesamtgewicht Kontrolle (g)</label><input id="prod_p170_ist" type="number" value="190"></div>
+            <div><label>Produzierte Menge (Stück)</label><input id="prod_p170_prod" type="number" value="145"></div>
+            <div><label>Gelieferte Menge (Stück)</label><input id="prod_p170_lief" type="number" value="145"></div>
+          </div>
+          <div class="result" id="prod_p170_result"></div>
+        </div>
+        <div style="margin-top: 20px;">
+          <h2>🍨 Produkt 2 – 750 g Becher</h2>
+          <div class="grid">
+            <div><label>Nenngewicht gesetzlich (g)</label><input id="prod_p750_nenn" type="number" value="750"></div>
+            <div><label>Tara Becher + Deckel (g)</label><input id="prod_p750_tara" type="number" value="30"></div>
+            <div><label>Soll Gesamtgewicht Ziel (g)</label><input id="prod_p750_soll" type="number" value="785"></div>
+            <div><label>Tatsächliches Gesamtgewicht Kontrolle (g)</label><input id="prod_p750_ist" type="number" value="790"></div>
+            <div><label>Produzierte Menge (Stück)</label><input id="prod_p750_prod" type="number" value="24"></div>
+            <div><label>Gelieferte Menge (Stück)</label><input id="prod_p750_lief" type="number" value="24"></div>
+          </div>
+          <div class="result" id="prod_p750_result"></div>
+        </div>
+        <div style="margin-top: 20px;">
+          <h2>📉 Abweichung / Produktionsverlust</h2>
+          <div class="result" id="prod_loss_result"></div>
+          <label>Grund</label>
+          <textarea id="prod_grund">Produktionsbedingter Sicherheitszuschlag zur Einhaltung der gesetzlichen Mindestfüllmenge. Abfüllung erfolgt oberhalb des Nenngewichts zur Vermeidung von Unterfüllung.</textarea>
+        </div>
+        <div style="margin-top: 20px;">
+          <h2>🔍 Kontrollverfahren</h2>
+          <div class="checks">
+            <label class="checkline"><input type="checkbox" id="prod_check1" checked> 100% Verwiegung (jedes Stück gewogen)</label>
+            <label class="checkline"><input type="checkbox" id="prod_check2" checked> Stichprobenkontrolle gemäß interner Richtlinie durchgeführt</label>
+          </div>
+          <table class="prod-table">
+            <thead><tr><th>Uhrzeit</th><th>Produkt</th><th>Gesamtgewicht</th><th>OK / NICHT OK</th><th>Unterschrift</th></tr></thead>
+            <tbody id="prod_control_tbody">
+              <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+              <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+              <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 20px;">
+          <h2>🚮 Ausschuss / Verluste Produktion</h2>
+          <div class="grid">
+            <div><label>Produkt</label><input id="prod_verlust_produkt" placeholder="z. B. 170 g Becher"></div>
+            <div><label>Menge Stück</label><input id="prod_verlust_stueck" type="number" value="0"></div>
+            <div><label>Gewicht kg</label><input id="prod_verlust_kg" type="number" step="0.01" value="0"></div>
+            <div><label>Verlustanteil %</label><input id="prod_verlust_prozent" readonly></div>
+          </div>
+          <div class="checks">
+            <label class="checkline"><input type="checkbox" id="prod_loss_beschadigt"> Beschädigte Becher</label>
+            <label class="checkline"><input type="checkbox" id="prod_loss_deckel"> Beschädigte Deckel</label>
+            <label class="checkline"><input type="checkbox" id="prod_loss_fehler"> Fehlproduktion (Geschmack / Konsistenz)</label>
+            <label class="checkline"><input type="checkbox" id="prod_loss_reste"> Produktionsreste</label>
+            <label class="checkline"><input type="checkbox" id="prod_loss_temp"> Temperatur / Lagerung</label>
+            <label class="checkline"><input type="checkbox" id="prod_loss_hygiene"> Hygiene / Entsorgung</label>
+          </div>
+          <label>Beschreibung / Ursache / Maßnahme</label>
+          <textarea id="prod_verlust_text" placeholder="z. B. beschädigte Deckel, Ware nicht verkaufsfähig, entsorgt."></textarea>
+        </div>
+        <div style="margin-top: 20px;">
+          <h2>✅ Lieferbestätigung</h2>
+          <div class="grid-2">
+            <div><label>Ware vollständig und ordnungsgemäß geliefert</label><select id="prod_liefer_ok"><option>JA</option><option>NEIN</option></select></div>
+            <div><label>Temperatur bei Übergabe (°C)</label><input id="prod_temp" placeholder="z. B. -18"></div>
+          </div>
+          <div class="grid-2" style="margin-top: 10px;">
+            <div><label>Unterschrift Fahrer</label><input id="prod_unterschrift_fahrer"></div>
+            <div><label>Unterschrift Kunde</label><input id="prod_unterschrift_kunde"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="no-print">✅ Alle Funktionen originalgetreu: Zählprotokoll mit Detaildruck, Kassenbericht mit Speicherung & separatem Druck, Produktionsprotokoll komplett.</footer>
   </div>
 </div>
 
 <script>
-  // ---------- PIN & LOCK ----------
+  // -------------------------- PIN & LOCK --------------------------
   const DEFAULT_PIN = "3515";
   let locked = true;
   function setLock(lock) {
@@ -374,6 +480,7 @@
   document.getElementById("changePinBtn").onclick = () => document.getElementById("pinChangeBox").classList.toggle("hidden");
   document.getElementById("savePinBtn").onclick = changePin;
   document.getElementById("cancelPinBtn").onclick = () => document.getElementById("pinChangeBox").classList.add("hidden");
+  document.getElementById("lockAppBtn").onclick = () => setLock(true);
 
   // TABS
   const tabs = document.querySelectorAll('.tab-btn');
@@ -388,7 +495,7 @@
     });
   });
 
-  // ========== MODUL 1: Zählprotokoll (código estável) ==========
+  // ========================= MODUL 1: Zählprotokoll (original + print komplett) =========================
   const NOTES = [
     { id: 'n500', val: 500, label: '500 €' }, { id: 'n200', val: 200, label: '200 €' },
     { id: 'n100', val: 100, label: '100 €' }, { id: 'n50', val: 50, label: '50 €' },
@@ -406,7 +513,6 @@
   let currentDateProto = "", previousEndProto = 0;
   const euro = (n) => (Number(n) || 0).toFixed(2).replace('.', ',') + " €";
   const num = v => Number(v) || 0;
-
   function loadAllProto() { try { return JSON.parse(localStorage.getItem(PROTO_STORAGE) || '[]'); } catch { return []; } }
   function saveAllProto(e) { localStorage.setItem(PROTO_STORAGE, JSON.stringify(e)); }
   function getPrevProto(date, entries) {
@@ -480,7 +586,7 @@
     const zbon = num(document.getElementById("zbonProto").value);
     let bank = 0, bankDetails = [];
     if (document.getElementById("hasBankSelectProto").value === "yes") {
-      ALL_DENOMS.forEach(d => { const q = num(document.getElementById(`bank_${d.id}`).value); if(q>0) { bank += q * d.val; bankDetails.push({ denom: d.val, quantity: q }); } });
+      ALL_DENOMS.forEach(d => { const q = num(document.getElementById(`bank_${d.id}`).value); if(q>0) { bank += q * d.val; bankDetails.push({ denom: d.val, quantity: q, label: d.label }); } });
     }
     const ende = ist - bank;
     const entry = { date: currentDateProto, start: previousEndProto, zbon, ist, bank, bankDetails, ende, counts, timestamp: Date.now() };
@@ -490,6 +596,7 @@
     alert(`Gespeichert! Endbestand für morgen: ${euro(ende)}`);
     loadDayProto(currentDateProto);
   }
+  // Druck Zählprotokoll – vollständige Tabelle wie Original
   function printProto() {
     if (!currentDateProto) { alert("Kein Tag geladen"); return; }
     const entries = loadAllProto();
@@ -501,9 +608,9 @@
       if(document.getElementById("hasBankSelectProto").value==="yes") ALL_DENOMS.forEach(d=>{ let q=num(document.getElementById(`bank_${d.id}`).value); if(q>0){ bank+=q*d.val; bankDetails.push({denom:d.val, quantity:q, label:d.label}); } });
       entry = {start, zbon, ist, bank, bankDetails, counts, ende:ist-bank};
     }
-    const denomRows = ALL_DENOMS.map(d => `<tr><td style="border:1px solid #aaa; padding:5px;">${d.label}</td><td style="text-align:center">${entry.counts[d.id]||0}</td><td style="text-align:right">${euro((entry.counts[d.id]||0)*d.val)}</td>`).join('');
-    const bankRows = (entry.bankDetails||[]).map(b => `<tr><td style="border:1px solid #aaa; padding:5px;">${b.label || (b.denom.toFixed(2).replace('.',',')+' €')}</td><td style="text-align:center">${b.quantity}</td><td style="text-align:right">${euro(b.denom*b.quantity)}</td>`).join('');
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Zählprotokoll ${currentDateProto}</title><style>body{font-family:system-ui;padding:1.5cm;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #888;padding:6px;} .text-right{text-align:right;}</style></head><body><h1>Zählprotokoll Sanremo</h1><p>Datum: ${currentDateProto}</p><h2>Kassenbestand (IST)</h2><table><th>Stückelung</th><th>Anzahl</th><th>Wert</th>${denomRows}<tr><td colspan="2"><strong>Summe IST</strong></td><td class="text-right"><strong>${euro(entry.ist)}</strong></tr></table>${entry.bankDetails?.length ? `<h2>Bank-Einzahlung</h2><table><th>Stückelung</th><th>Anzahl</th><th>Betrag</th>${bankRows}<tr><td colspan="2"><strong>Summe Bank</strong><td class="text-right"><strong>${euro(entry.bank)}</strong></tr></table>` : '<p>Keine Bank-Einzahlung</p>'}<h2>Abschluss</h2><table><tr><td>Vortag<td class="text-right">${euro(entry.start)}</tr><tr><td>+ Z-Bon<td class="text-right">${euro(entry.zbon)}</tr><tr style="background:#e0f0e8;"><td><strong>Endbestand (für morgen) = Ist − Bank</strong><td class="text-right"><strong>${euro(entry.ende)}</strong></tr></table><div style="margin-top:20px;">Unterschrift: _________________</div></body></html>`;
+    const denomRows = ALL_DENOMS.map(d => `<tr><td style="border:1px solid #aaa; padding:5px;">${d.label}</td><td style="text-align:center">${entry.counts[d.id]||0}</td><td style="text-align:right">${euro((entry.counts[d.id]||0)*d.val)}</td></tr>`).join('');
+    const bankRows = (entry.bankDetails||[]).map(b => `<tr><td style="border:1px solid #aaa; padding:5px;">${b.label || (b.denom.toFixed(2).replace('.',',')+' €')}</td><td style="text-align:center">${b.quantity}</td><td style="text-align:right">${euro(b.denom*b.quantity)}</td></tr>`).join('');
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Zählprotokoll ${currentDateProto}</title><style>body{font-family:system-ui;padding:1.5cm;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #888;padding:6px;} .text-right{text-align:right;}</style></head><body><h1>Zählprotokoll Sanremo</h1><p>Datum: ${currentDateProto}</p><h2>Kassenbestand (IST)</h2><table><tr><th>Stückelung</th><th>Anzahl</th><th>Wert</th></tr>${denomRows}<tr><td colspan="2"><strong>Summe IST</strong></td><td class="text-right"><strong>${euro(entry.ist)}</strong></td></tr></table>${entry.bankDetails?.length ? `<h2>Bank-Einzahlung</h2><table><tr><th>Stückelung</th><th>Anzahl</th><th>Betrag</th></tr>${bankRows}<tr><td colspan="2"><strong>Summe Bank</strong><td class="text-right"><strong>${euro(entry.bank)}</strong></td></tr></table>` : '<p>Keine Bank-Einzahlung</p>'}<h2>Abschluss</h2><table><tr><td>Vortag<td class="text-right">${euro(entry.start)}</tr><tr><td>+ Z-Bon<td class="text-right">${euro(entry.zbon)}</tr><tr style="background:#e0f0e8;"><td><strong>Endbestand (für morgen) = Ist − Bank</strong><td class="text-right"><strong>${euro(entry.ende)}</strong></tr></table><div style="margin-top:20px;">Unterschrift: _________________</div></body></html>`;
     const w = window.open(); w.document.write(html); w.document.close(); w.print();
   }
   function initProtoGrids() {
@@ -522,39 +629,20 @@
     refreshProto();
   }
 
-  // ========== MODUL 2: KASSENBERICHT (EXCEL-FORMAT) ==========
+  // ========= MODUL 2: Kassenbericht (completo: save/load/printer/limpar) =========
   const BERICHT_STORAGE = "sanremo_kassenbericht_excel";
   function loadBerichtEntries() { try { return JSON.parse(localStorage.getItem(BERICHT_STORAGE) || '[]'); } catch { return []; } }
   function saveBerichtEntries(e) { localStorage.setItem(BERICHT_STORAGE, JSON.stringify(e)); }
-
   function refreshBericht() {
-    // Summe der Brutto-Beträge (für 6 Zeilen)
-    let summeBrutto = 0;
-    for(let i=1;i<=6;i++) {
-      let betrag = num(document.getElementById(`betrag${i}`).value);
-      summeBrutto += betrag;
-    }
-    document.getElementById("summeAusgaben").innerHTML = euro(summeBrutto);
-    
-    // Vorsteuer summe (nur wo keine Sterne)
-    let summeVor = 0;
-    for(let i=1;i<=6;i++) {
-      let vorInput = document.getElementById(`vorsteuer${i}`);
-      if(vorInput && vorInput.readOnly !== true) {
-        summeVor += num(vorInput.value);
-      }
-    }
-    document.getElementById("vorsteuerGesamt").innerHTML = euro(summeVor);
-    
-    let schluss = num(document.getElementById("bestandSchluss").value);
-    let vortag = num(document.getElementById("bestandVortag").value);
-    let sonstEin = num(document.getElementById("sonstigeEinnahmen").value);
-    
-    let kasseneingang = (schluss + summeBrutto) - (vortag + sonstEin);
-    document.getElementById("kasseneingang").innerHTML = euro(kasseneingang);
-    document.getElementById("einnahmenTagesloesung").innerHTML = euro(kasseneingang);
+    let summeBrutto=0; for(let i=1;i<=6;i++) summeBrutto+=num(document.getElementById(`betrag${i}`).value);
+    document.getElementById("summeAusgaben").innerHTML=euro(summeBrutto);
+    let summeVor=0; for(let i=1;i<=6;i++){ let v=document.getElementById(`vorsteuer${i}`); if(v&&v.readOnly!==true) summeVor+=num(v.value); }
+    document.getElementById("vorsteuerGesamt").innerHTML=euro(summeVor);
+    let schluss=num(document.getElementById("bestandSchluss").value), vortag=num(document.getElementById("bestandVortag").value), sonstEin=num(document.getElementById("sonstigeEinnahmen").value);
+    let kasseneingang=(schluss+summeBrutto)-(vortag+sonstEin);
+    document.getElementById("kasseneingang").innerHTML=euro(kasseneingang);
+    document.getElementById("einnahmenTagesloesung").innerHTML=euro(kasseneingang);
   }
-
   function saveBericht() {
     let date = document.getElementById("berichtDatum").value;
     if (!date) { alert("Datum eingeben"); return; }
@@ -586,7 +674,6 @@
     saveBerichtEntries(entries);
     alert("Kassenbericht gespeichert!");
   }
-
   function clearBericht() {
     if (confirm("Alle Felder des Kassenberichts löschen?")) {
       document.getElementById("berichtNr").value = "";
@@ -606,7 +693,6 @@
       refreshBericht();
     }
   }
-
   function printBericht() {
     let nr = document.getElementById("berichtNr").value || "_____";
     let datum = document.getElementById("berichtDatum").value || new Date().toISOString().slice(0,10);
@@ -618,10 +704,7 @@
     let kundenzahl = document.getElementById("kundenzahl").value || "___";
     let betragKunde = document.getElementById("betragKunde").value || "_____________";
     let unterschrift = document.getElementById("unterschrift").value || "_________________________";
-    
-    let rows = "";
-    let summeBrutto = 0;
-    let summeVor = 0;
+    let rows = "", summeBrutto = 0, summeVor = 0;
     let texts = [
       "Wareneinkäufe und Warennebenkosten",
       document.getElementById("ausgabe2_text").value,
@@ -642,12 +725,9 @@
     let sonstEinVal = num(document.getElementById("sonstigeEinnahmen").value);
     let kasseneingangVal = (schlussVal + summeBrutto) - (vortagVal + sonstEinVal);
     let kasseneingang = euro(kasseneingangVal);
-    
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Kassenbericht ${datum}</title><style>body{font-family:Calibri, 'Segoe UI', system-ui; padding:1.8cm;} h1{font-size:16pt;} table{border-collapse:collapse;width:100%;margin:12px 0;} th,td{border:1px solid #000;padding:6px;} .text-right{text-align:right;} .bold{font-weight:700;} @page{size:A4;margin:1.5cm;}</style></head><body><h1>Kassenbericht Nr. ${nr}</h1><p><strong>Datum:</strong> ${datum}</p><p><strong>Kassenbestand bei Geschäftsschluß:</strong> ${schluss}</p><table><thead><tr><th>Ausgaben Im Laufe des Tages</th><th>Vorsteuer (€)</th><th>Netto-/Brutto-Betrag (€)</th></tr></thead><tbody>${rows}<tr style="background:#f0f0f0;"><td><strong>Summen</strong><td class="text-right"><strong>${euro(summeVor)}</strong><td class="text-right"><strong>${euro(summeBrutto)}</strong></tr></tbody></table><div style="margin:15px 0; padding:10px; border:1px solid #000;"><p><strong>Vorsteuer bei Nettobetrag:</strong> ${euro(summeVor)}</p><p><strong>Summe (Netto-/Brutto-Beträge):</strong> ${euro(summeBrutto)}</p><p><strong>abzüglich Kassenbestand des Vortages:</strong> ${vortag}</p><p><strong>abzüglich sonstige Einnahmen:</strong> ${sonstEin}</p><h2>💶 KASSENEINGANG (brutto): ${kasseneingang}</h2></div><div style="margin:10px 0;"><strong>TE 19%</strong> ${steuer19} &nbsp;&nbsp; <strong>TE 7%</strong> ${steuer7}</div><div style="margin:10px 0;"><strong>Kundenzahl:</strong> ${kundenzahl}</div><div><strong>Einnahmen (Tageslösung):</strong> ${kasseneingang}</div><div class="unterschrift" style="margin-top:30px; display:flex; justify-content:space-between;"><div>Betrag/Kunde: ${betragKunde}</div><div>Unterschrift: ${unterschrift}</div></div></body></html>`;
     const w = window.open(); w.document.write(html); w.document.close(); w.print();
   }
-
-  // Event listeners für Modul 2
   for(let i=1;i<=6;i++) {
     document.getElementById(`betrag${i}`).addEventListener("input", refreshBericht);
     if(document.getElementById(`vorsteuer${i}`) && document.getElementById(`vorsteuer${i}`).readOnly !== true)
@@ -662,9 +742,70 @@
   document.getElementById("berichtDatum").value = new Date().toISOString().slice(0,10);
   refreshBericht();
 
+  // ========= MODUL 3: PRODUKTION (completo, igual original) =========
+  const PROD_KEY = "sanremo_produktion_protokoll";
+  function getProdNumber(id) { return parseFloat(document.getElementById(id).value || 0); }
+  function kgProd(v) { return (Math.round(v*100)/100).toFixed(2).replace('.',','); }
+  function calcProductProd(prefix){
+    const nenn=getProdNumber('prod_'+prefix+'_nenn'), tara=getProdNumber('prod_'+prefix+'_tara'), ist=getProdNumber('prod_'+prefix+'_ist'), stueck=getProdNumber('prod_'+prefix+'_lief');
+    const nettoIst=Math.max(0,ist-tara), nennKg=(nenn*stueck)/1000, realKg=(nettoIst*stueck)/1000, overKg=realKg-nennKg;
+    return {nettoIst, nennKg, realKg, overKg};
+  }
+  function updateProduction(){
+    const a=calcProductProd('p170'), b=calcProductProd('p750');
+    document.getElementById('prod_p170_result').innerHTML=`Nettoinhalt: ${a.nettoIst} g<br>Gesamt Nenn: ${kgProd(a.nennKg)} kg<br>Real: ${kgProd(a.realKg)} kg<br>Überfüllung: <span class="warn">${kgProd(a.overKg)} kg</span>`;
+    document.getElementById('prod_p750_result').innerHTML=`Nettoinhalt: ${b.nettoIst} g<br>Gesamt Nenn: ${kgProd(b.nennKg)} kg<br>Real: ${kgProd(b.realKg)} kg<br>Überfüllung: <span class="warn">${kgProd(b.overKg)} kg</span>`;
+    const totalNenn=a.nennKg+b.nennKg, totalReal=a.realKg+b.realKg, totalOver=a.overKg+b.overKg;
+    document.getElementById('prod_loss_result').innerHTML=`Gesamt Nenngewicht: <b>${kgProd(totalNenn)} kg</b><br>Gesamt real: <b>${kgProd(totalReal)} kg</b><br>Überfüllung: <span class="big warn">${kgProd(totalOver)} kg</span>`;
+    const verlustKg=getProdNumber('prod_verlust_kg'), prodTotal=getProdNumber('prod_p170_prod')+getProdNumber('prod_p750_prod');
+    const percent=prodTotal>0?(verlustKg/totalReal*100):0;
+    document.getElementById('prod_verlust_prozent').value=isFinite(percent)?(Math.round(percent*100)/100).toString().replace('.',',')+' %':'';
+  }
+  function saveProductionData(){
+    const data={};
+    const fields=['datum','lieferschein','kunde','mitarbeiter','p170_nenn','p170_tara','p170_soll','p170_ist','p170_prod','p170_lief','p750_nenn','p750_tara','p750_soll','p750_ist','p750_prod','p750_lief','grund','verlust_produkt','verlust_stueck','verlust_kg','verlust_text','temp','liefer_ok','unterschrift_fahrer','unterschrift_kunde'];
+    fields.forEach(f=>{const el=document.getElementById('prod_'+f); if(el) data[f]=el.value;});
+    data.checks={check1:document.getElementById('prod_check1').checked,check2:document.getElementById('prod_check2').checked};
+    const rows=[];
+    document.querySelectorAll('#prod_control_tbody tr').forEach(tr=>{const cells=Array.from(tr.querySelectorAll('[contenteditable]')).map(cell=>cell.innerText); rows.push(cells);});
+    data.controlRows=rows;
+    localStorage.setItem(PROD_KEY,JSON.stringify(data));
+    alert('Produktionsprotokoll gespeichert');
+  }
+  function loadProductionData(){
+    const raw=localStorage.getItem(PROD_KEY);
+    if(!raw) return alert('Keine Daten gefunden.');
+    const data=JSON.parse(raw);
+    const fields=['datum','lieferschein','kunde','mitarbeiter','p170_nenn','p170_tara','p170_soll','p170_ist','p170_prod','p170_lief','p750_nenn','p750_tara','p750_soll','p750_ist','p750_prod','p750_lief','grund','verlust_produkt','verlust_stueck','verlust_kg','verlust_text','temp','liefer_ok','unterschrift_fahrer','unterschrift_kunde'];
+    fields.forEach(f=>{const el=document.getElementById('prod_'+f); if(el && data[f]!==undefined) el.value=data[f];});
+    if(data.checks){ document.getElementById('prod_check1').checked=data.checks.check1; document.getElementById('prod_check2').checked=data.checks.check2; }
+    if(data.controlRows){
+      const tbody=document.getElementById('prod_control_tbody');
+      tbody.innerHTML='';
+      data.controlRows.forEach(row=>{ const tr=document.createElement('tr'); row.forEach(cell=>{ const td=document.createElement('td'); td.setAttribute('contenteditable','true'); td.innerText=cell||''; tr.appendChild(td); }); tbody.appendChild(tr); });
+      while(tbody.children.length<3){ const tr=document.createElement('tr'); for(let i=0;i<5;i++){ const td=document.createElement('td'); td.setAttribute('contenteditable','true'); tr.appendChild(td); } tbody.appendChild(tr); }
+    }
+    updateProduction();
+    alert('Produktionsdaten geladen');
+  }
+  function resetProductionForm(){
+    if(!confirm('Alles zurücksetzen?')) return;
+    localStorage.removeItem(PROD_KEY);
+    location.reload();
+  }
+  function printProduction(){ window.print(); }
+  document.getElementById('prodPrintBtn').onclick=printProduction;
+  document.getElementById('prodSaveBtn').onclick=saveProductionData;
+  document.getElementById('prodLoadBtn').onclick=loadProductionData;
+  document.getElementById('prodResetBtn').onclick=resetProductionForm;
+  const prodInputs=['prod_p170_nenn','prod_p170_tara','prod_p170_soll','prod_p170_ist','prod_p170_prod','prod_p170_lief','prod_p750_nenn','prod_p750_tara','prod_p750_soll','prod_p750_ist','prod_p750_prod','prod_p750_lief','prod_verlust_kg','prod_verlust_stueck'];
+  prodInputs.forEach(id=>document.getElementById(id).addEventListener('input',updateProduction));
+  document.getElementById('prod_datum').value=new Date().toISOString().slice(0,10);
+  updateProduction();
+
+  // Inicialização geral
   initProtoGrids();
   setLock(true);
-  document.getElementById("lockAppBtn").onclick = () => setLock(true);
 </script>
 </body>
 </html>
