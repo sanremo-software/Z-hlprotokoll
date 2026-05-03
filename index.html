@@ -59,7 +59,15 @@ h1{font-size:22px;margin:0 0 10px;text-align:center;text-transform:uppercase}
     </table>
 
     <table class="summary">
-      <tr><td style="width:50%"></td><td class="label" style="width:25%">Total</td><td class="green" id="grandTotalCell">- €</td></tr>
+      <tr><td style="width:50%"></td><td class="label" style="width:25%">Total Bargeld</td><td class="yellow" id="grandTotalCell">- €</td></tr>
+      <tr><td colspan="3" style="height:8px;border:0"></td></tr>
+      <tr><td class="label" colspan="3">Einkäufe / Ausgaben bar</td></tr>
+      <tr><td>Beschreibung / Beleg</td><td>Betrag</td><td></td></tr>
+      <tr><td><input id="buyDesc1" placeholder="z. B. Milch bar bezahlt"></td><td><input id="buy1" class="buy" inputmode="decimal" placeholder="0,00" oninput="calc()"></td><td></td></tr>
+      <tr><td><input id="buyDesc2" placeholder="z. B. Obst / Material"></td><td><input id="buy2" class="buy" inputmode="decimal" placeholder="0,00" oninput="calc()"></td><td></td></tr>
+      <tr><td><input id="buyDesc3" placeholder="Sonstiges"></td><td><input id="buy3" class="buy" inputmode="decimal" placeholder="0,00" oninput="calc()"></td><td></td></tr>
+      <tr><td></td><td class="label">Summe Ausgaben</td><td class="yellow" id="buyTotalCell">- €</td></tr>
+      <tr><td></td><td class="label">Endbestand nach Abzug</td><td class="green" id="finalTotalCell">- €</td></tr>
     </table>
 
     <div class="notes">
@@ -93,17 +101,22 @@ function render(){
 function getQty(id){return parseInt(document.getElementById('q_'+id)?.value||'0',10)||0}
 function setQty(id,v){document.getElementById('q_'+id).value=Math.max(0,v);calc()}
 function changeQty(id,delta){setQty(id,getQty(id)+delta)}
+function moneyInput(id){return parseFloat(String(document.getElementById(id)?.value||'0').replace(',','.'))||0}
 function calc(){
  let nt=0,ct=0;
  notes.forEach((v,i)=>{const sum=v*getQty('n'+i);nt+=sum;document.getElementById('t_n'+i).textContent=euro(sum)});
  coins.forEach((v,i)=>{const sum=v*getQty('c'+i);ct+=sum;document.getElementById('t_c'+i).textContent=euro(sum)});
  const grand=nt+ct;
+ const buyTotal=moneyInput('buy1')+moneyInput('buy2')+moneyInput('buy3');
+ const finalTotal=grand-buyTotal;
  document.getElementById('notesTotal').textContent=euro(nt);
  document.getElementById('notesTotal_extra').textContent=euro(nt);
  document.getElementById('coinsTotal').textContent=euro(ct);
  document.getElementById('coinsTotal_extra').textContent=euro(ct);
  document.getElementById('yellowTotal').textContent=euro(grand);
  document.getElementById('grandTotalCell').textContent=euro(grand);
+ document.getElementById('buyTotalCell').textContent=euro(buyTotal);
+ document.getElementById('finalTotalCell').textContent=euro(finalTotal);
 }
 function setMonth(){
  const d=new Date();
