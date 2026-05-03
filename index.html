@@ -6,128 +6,114 @@
 <title>Zählprotokoll Kasse – Eiscafé Sanremo</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#e5e5e5;font-family:Arial,Helvetica,sans-serif;color:#111}
-.app{max-width:1000px;margin:0 auto;padding:18px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:12px}
-button{border:0;border-radius:8px;background:#111;color:#fff;font-weight:700;padding:10px 14px;cursor:pointer}
-button.gray{background:#555}button.green{background:#166534}button.red{background:#991b1b}
-.page{width:210mm;min-height:297mm;background:#fff;margin:0 auto 18px;padding:18mm;box-shadow:0 2px 12px rgba(0,0,0,.22)}
-h1{font-size:30px;margin:0 0 18px;text-transform:uppercase;line-height:1.05}
-h2{font-size:22px;margin:22px 0 10px;text-transform:uppercase;border-bottom:2px solid #111;padding-bottom:5px}
-.grid{display:grid;grid-template-columns:180px 1fr 180px 1fr;gap:10px;align-items:end;margin-bottom:10px}
-label{font-weight:700;font-size:14px}
-input,textarea{width:100%;border:0;border-bottom:2px solid #111;font-size:16px;padding:5px;background:transparent;font-variant-numeric:tabular-nums}
-input.num{text-align:right}
-textarea{height:55px;border:2px solid #111;resize:vertical}
-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:15px}
-th,td{border:1px solid #111;padding:6px;text-align:right}
-th:first-child,td:first-child{text-align:left}
-th{background:#f0f0f0}
-.result{display:grid;grid-template-columns:1fr 180px;gap:10px;margin:8px 0;font-size:18px;font-weight:800;align-items:end}
-.result input{font-weight:900;font-size:20px;text-align:right}
-.small{font-size:13px;color:#333}.note{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px;margin-bottom:12px}.positive{color:#166534}.negative{color:#991b1b}.sign{height:42px;border-bottom:2px solid #111;margin-top:18px}
-@media(max-width:800px){.page{width:100%;min-height:auto;padding:16px}.grid{grid-template-columns:1fr}.app{padding:8px}}
-@media print{body{background:#fff}.app{padding:0}.toolbar,.note{display:none}.page{box-shadow:none;margin:0;width:210mm;min-height:297mm;padding:15mm;page-break-after:always}input,textarea{border-bottom:1.5px solid #000}textarea{border:1.5px solid #000}button{display:none}@page{size:A4;margin:0}}
+body{margin:0;background:#e5e5e5;font-family:Arial,Helvetica,sans-serif;color:#000}
+.app{max-width:900px;margin:0 auto;padding:16px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px}
+button{border:0;border-radius:7px;background:#111;color:#fff;font-weight:700;padding:9px 12px;cursor:pointer}
+button.gray{background:#555}button.red{background:#991b1b}
+.info{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:9px;margin-bottom:10px;font-size:14px}
+.page{width:210mm;min-height:297mm;background:#fff;margin:0 auto 18px;padding:13mm 14mm;box-shadow:0 2px 12px rgba(0,0,0,.22)}
+h1{font-size:22px;margin:0 0 10px;text-align:center;text-transform:uppercase}
+.date-row{display:grid;grid-template-columns:1fr 90px 1fr;gap:0;margin-bottom:10px}
+.date-row input,.date-row div{border:1px solid #000;height:26px;text-align:center;font-weight:700;font-size:14px;padding:3px;background:#fff}
+.cash-table{width:100%;border-collapse:collapse;font-size:15px;table-layout:fixed}
+.cash-table th,.cash-table td{border:1px solid #000;padding:4px;height:27px}
+.cash-table th{text-align:center;color:red;background:#fff;font-weight:700}
+.cash-table td.value{text-align:right;width:32%;font-weight:700;padding-right:10px}
+.cash-table td.qty{width:24%;padding:0;text-align:center}
+.cash-table td.total{text-align:right;width:34%;padding-right:10px;font-weight:700}
+.cash-table td.extra{width:10%;text-align:right;background:#ffc000;font-weight:700;padding-right:10px}
+.qty-wrap{display:grid;grid-template-columns:34px 1fr 34px;height:100%}
+.qty-wrap button{border:0;border-radius:0;background:#eee;color:#000;font-size:16px;padding:0;font-weight:900}
+.qty-wrap button:hover{background:#ddd}
+.qty-wrap input{border:0;width:100%;text-align:center;font-size:16px;color:#00f;font-weight:700;background:#fff;height:100%;font-variant-numeric:tabular-nums}
+.total-label{text-align:center;font-weight:700}.redcell{background:red;color:#000}.bluecell{background:#b4c7e7;font-weight:700;text-align:center}.greencell{background:#00b050;font-weight:900;text-align:right;padding-right:10px}.yellowcell{background:#ffc000;text-align:right;font-weight:900;padding-right:10px}
+.summary{margin-top:10px;border-collapse:collapse;width:100%;font-size:15px}.summary td{border:1px solid #000;padding:5px;height:28px}.summary .label{font-weight:700;background:#b4c7e7;text-align:center}.summary .green{background:#00b050;text-align:right;font-weight:900}.summary .yellow{background:#ffc000;text-align:right;font-weight:900}.notes{margin-top:12px;display:grid;grid-template-columns:130px 1fr;gap:8px;align-items:end;font-size:14px;font-weight:700}.notes input{border:0;border-bottom:1px solid #000;font-size:14px;padding:3px}.signs{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:18px;font-size:13px;font-weight:700}.sign{border-bottom:1px solid #000;height:35px}
+@media(max-width:800px){.page{width:100%;padding:10px}.cash-table{font-size:13px}.qty-wrap{grid-template-columns:30px 1fr 30px}.toolbar{justify-content:flex-start}}
+@media print{body{background:#fff}.app{padding:0}.toolbar,.info,.qty-wrap button{display:none!important}.page{box-shadow:none;margin:0;width:210mm;height:297mm;min-height:0;padding:10mm 12mm;overflow:hidden}.qty-wrap{display:block}.qty-wrap input{height:22px}.cash-table th,.cash-table td{height:24px;padding:3px}h1{font-size:20px;margin-bottom:8px}@page{size:A4;margin:0}}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="toolbar">
-<button onclick="window.print()">Drucken / PDF</button>
-<button class="gray" onclick="setToday()">Datum automatisch</button>
-<button class="green" onclick="addPurchaseRow()">+ Barausgabe</button>
-<button class="red" onclick="clearAll()">Leeren</button>
-</div>
-<div class="note">Einfaches Zählprotokoll: Noten und Münzen zählen, Bargeld-Einnahmen erfassen, Bar-Einkäufe abziehen. Ergebnis: Kassenbestand laut Zählung.</div>
+  <div class="toolbar">
+    <button onclick="window.print()">Drucken / PDF</button>
+    <button class="gray" onclick="setMonth()">Monat automatisch</button>
+    <button class="red" onclick="clearAll()">Leeren</button>
+  </div>
+  <div class="info">Com o rato: clica em <b>+</b> para adicionar quantidade e em <b>−</b> para retirar. Imprime tudo numa folha A4.</div>
 
-<section class="page">
-<h1>Zählprotokoll Kasse</h1>
-<div class="small"><b>Betrieb:</b> Eiscafé Sanremo, Fürst Richard Str. 1, 57319 Bad Berleburg</div>
-<br>
-<div class="grid">
-<label>Datum</label><input id="datum" placeholder="TT.MM.JJJJ">
-<label>Mitarbeiter</label><input id="mitarbeiter">
-<label>Kasse / Standort</label><input id="standort" placeholder="z. B. Eiscafé / REWE Lieferung">
-<label>Beleg-Nr.</label><input id="belegnr">
-</div>
+  <section class="page">
+    <h1>Zählprotokoll Kasse</h1>
 
-<h2>1. Bargeld zählen – Banknoten</h2>
-<table id="notesTable">
-<thead><tr><th>Banknote</th><th>Anzahl</th><th>Betrag</th></tr></thead>
-<tbody></tbody>
-</table>
+    <div class="date-row">
+      <input id="dateFrom" value="01.03.2025">
+      <div>Bis</div>
+      <input id="dateTo" value="31.03.2025">
+    </div>
 
-<h2>2. Bargeld zählen – Münzen</h2>
-<table id="coinsTable">
-<thead><tr><th>Münze</th><th>Anzahl</th><th>Betrag</th></tr></thead>
-<tbody></tbody>
-</table>
+    <table class="cash-table">
+      <thead>
+        <tr><th>,</th><th>Quantidade</th><th>Total</th><th></th></tr>
+      </thead>
+      <tbody id="cashBody"></tbody>
+    </table>
 
-<h2>3. Einnahmen / Ausgaben</h2>
-<div class="result"><span>Kassenbestand gezählt:</span><input id="cashTotal" readonly></div>
-<div class="result"><span>Bargeld-Einnahmen laut Kasse:</span><input id="cashIncome" class="num" placeholder="0,00" oninput="calc()"></div>
-<div class="result"><span>Wechselgeld Anfangsbestand:</span><input id="openingCash" class="num" placeholder="0,00" oninput="calc()"></div>
+    <table class="summary">
+      <tr><td style="width:50%"></td><td class="label" style="width:25%">Total</td><td class="green" id="grandTotalCell">- €</td></tr>
+    </table>
 
-<h2>4. Barausgaben / Einkäufe bar</h2>
-<table id="purchaseTable">
-<thead><tr><th>Beleg / Beschreibung</th><th>Betrag €</th><th class="no-print">Aktion</th></tr></thead>
-<tbody>
-<tr><td><input placeholder="z. B. Milch bar bezahlt"></td><td><input class="num purchase" placeholder="0,00" oninput="calc()"></td><td class="no-print"><button class="red" onclick="removeRow(this)">X</button></td></tr>
-</tbody>
-</table>
-<div class="result"><span>Barausgaben gesamt:</span><input id="purchaseTotal" readonly></div>
-
-<h2>5. Ergebnis für Buchhaltung</h2>
-<div class="result"><span>Soll-Kassenbestand:</span><input id="expectedCash" readonly></div>
-<div class="result"><span>Ist-Kassenbestand gezählt:</span><input id="actualCash" readonly></div>
-<div class="result"><span>Differenz:</span><input id="difference" readonly></div>
-
-<h2>6. Notizen</h2>
-<textarea id="notes" placeholder="z. B. Einkauf bar bezahlt, Beleg liegt bei. Differenz erklärt durch Wechselgeld / Trinkgeld / Rundung."></textarea>
-
-<div class="grid" style="margin-top:20px">
-<label>Unterschrift Mitarbeiter</label><div class="sign"></div>
-<label>Kontrolle / Chef</label><div class="sign"></div>
-</div>
-</section>
+    <div class="notes">
+      <span>Mitarbeiter:</span><input>
+      <span>Bemerkung:</span><input>
+    </div>
+    <div class="signs">
+      <div><div class="sign"></div>Unterschrift Mitarbeiter</div>
+      <div><div class="sign"></div>Kontrolle / Buchhaltung</div>
+    </div>
+  </section>
 </div>
 
 <script>
-const notes=[500,200,100,50,20,10,5];
+const notes=[100,50,20,10,5];
 const coins=[2,1,0.5,0.2,0.1,0.05,0.02,0.01];
-function euro(x){return (Math.round(x*100)/100).toFixed(2).replace('.',',')+' €'}
-function val(id){return parseFloat(String(document.getElementById(id).value).replace(',','.'))||0}
-function inputVal(el){return parseFloat(String(el.value).replace(',','.'))||0}
-function makeRows(){
- const nt=document.querySelector('#notesTable tbody');nt.innerHTML='';
- notes.forEach(v=>nt.innerHTML+=`<tr><td>${v.toFixed(0)} €</td><td><input class="num count" data-value="${v}" oninput="calc()"></td><td class="lineTotal">0,00 €</td></tr>`);
- const ct=document.querySelector('#coinsTable tbody');ct.innerHTML='';
- coins.forEach(v=>ct.innerHTML+=`<tr><td>${v>=1?v.toFixed(0):v.toFixed(2).replace('.',',')} €</td><td><input class="num count" data-value="${v}" oninput="calc()"></td><td class="lineTotal">0,00 €</td></tr>`);
+function euro(v){return v===0?'- €':v.toFixed(2).replace('.',',')+' €'}
+function qtyInput(value,idx){return `<div class="qty-wrap"><button type="button" onclick="changeQty('${idx}',-1)">−</button><input id="q_${idx}" value="0" inputmode="numeric" oninput="calc()"><button type="button" onclick="changeQty('${idx}',1)">+</button></div>`}
+function makeRow(value,idx){return `<tr><td class="value">${value.toFixed(2).replace('.',',')} €</td><td class="qty">${qtyInput(value,idx)}</td><td class="total" id="t_${idx}">- €</td><td class="extra"></td></tr>`}
+function totalRow(id,label){return `<tr><td></td><td class="total-label">${label}</td><td class="total redcell" id="${id}">- €</td><td class="extra" id="${id}_extra">- €</td></tr>`}
+function render(){
+ let html='';
+ notes.forEach((v,i)=>html+=makeRow(v,'n'+i));
+ html+=totalRow('notesTotal','Total');
+ coins.forEach((v,i)=>html+=makeRow(v,'c'+i));
+ html+=totalRow('coinsTotal','Total');
+ html+=`<tr><td colspan="3"></td><td class="yellowcell" id="yellowTotal">- €</td></tr>`;
+ document.getElementById('cashBody').innerHTML=html;
+ calc();
 }
+function getQty(id){return parseInt(document.getElementById('q_'+id)?.value||'0',10)||0}
+function setQty(id,v){document.getElementById('q_'+id).value=Math.max(0,v);calc()}
+function changeQty(id,delta){setQty(id,getQty(id)+delta)}
 function calc(){
- let cash=0;
- document.querySelectorAll('.count').forEach(i=>{const sum=inputVal(i)*parseFloat(i.dataset.value);cash+=sum;i.closest('tr').querySelector('.lineTotal').textContent=euro(sum)});
- let purchases=0;document.querySelectorAll('.purchase').forEach(i=>purchases+=inputVal(i));
- const income=val('cashIncome');const opening=val('openingCash');
- const expected=opening+income-purchases;
- const diff=cash-expected;
- document.getElementById('cashTotal').value=euro(cash);
- document.getElementById('actualCash').value=euro(cash);
- document.getElementById('purchaseTotal').value=euro(purchases);
- document.getElementById('expectedCash').value=euro(expected);
- document.getElementById('difference').value=euro(diff);
- document.getElementById('difference').className=diff<0?'negative':'positive';
+ let nt=0,ct=0;
+ notes.forEach((v,i)=>{const sum=v*getQty('n'+i);nt+=sum;document.getElementById('t_n'+i).textContent=euro(sum)});
+ coins.forEach((v,i)=>{const sum=v*getQty('c'+i);ct+=sum;document.getElementById('t_c'+i).textContent=euro(sum)});
+ const grand=nt+ct;
+ document.getElementById('notesTotal').textContent=euro(nt);
+ document.getElementById('notesTotal_extra').textContent=euro(nt);
+ document.getElementById('coinsTotal').textContent=euro(ct);
+ document.getElementById('coinsTotal_extra').textContent=euro(ct);
+ document.getElementById('yellowTotal').textContent=euro(grand);
+ document.getElementById('grandTotalCell').textContent=euro(grand);
 }
-function addPurchaseRow(){
- const tb=document.querySelector('#purchaseTable tbody');
- const tr=document.createElement('tr');
- tr.innerHTML='<td><input placeholder="Beschreibung / Beleg"></td><td><input class="num purchase" placeholder="0,00" oninput="calc()"></td><td class="no-print"><button class="red" onclick="removeRow(this)">X</button></td>';
- tb.appendChild(tr);
+function setMonth(){
+ const d=new Date();
+ const first=new Date(d.getFullYear(),d.getMonth(),1);
+ const last=new Date(d.getFullYear(),d.getMonth()+1,0);
+ document.getElementById('dateFrom').value=first.toLocaleDateString('de-DE');
+ document.getElementById('dateTo').value=last.toLocaleDateString('de-DE');
 }
-function removeRow(btn){btn.closest('tr').remove();calc()}
-function setToday(){document.getElementById('datum').value=new Date().toLocaleDateString('de-DE')}
-function clearAll(){if(!confirm('Alles leeren?'))return;document.querySelectorAll('input,textarea').forEach(i=>i.value='');makeRows();calc()}
-makeRows();calc();
+function clearAll(){document.querySelectorAll('.qty-wrap input').forEach(i=>i.value='0');calc()}
+render();
 </script>
 </body>
 </html>
