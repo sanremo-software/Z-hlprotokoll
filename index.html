@@ -59,6 +59,7 @@ h1{font-size:22px;margin:0 0 10px;text-align:center;text-transform:uppercase}
     </table>
 
     <table class="summary">
+      <tr><td class="label">Saldo anterior</td><td><input id="prevTotal" class="buy" inputmode="decimal" placeholder="0,00" oninput="calc()"></td><td></td></tr>
       <tr><td style="width:50%"></td><td class="label" style="width:25%">Total Bargeld</td><td class="yellow" id="grandTotalCell">- €</td></tr>
       <tr><td colspan="3" style="height:8px;border:0"></td></tr>
       <tr><td class="label" colspan="3">Einkäufe / Ausgaben bar</td></tr>
@@ -107,8 +108,9 @@ function calc(){
  notes.forEach((v,i)=>{const sum=v*getQty('n'+i);nt+=sum;document.getElementById('t_n'+i).textContent=euro(sum)});
  coins.forEach((v,i)=>{const sum=v*getQty('c'+i);ct+=sum;document.getElementById('t_c'+i).textContent=euro(sum)});
  const grand=nt+ct;
+ const prev=moneyInput('prevTotal');
  const buyTotal=moneyInput('buy1')+moneyInput('buy2')+moneyInput('buy3');
- const finalTotal=grand-buyTotal;
+ const finalTotal=grand+prev-buyTotal;
  document.getElementById('notesTotal').textContent=euro(nt);
  document.getElementById('notesTotal_extra').textContent=euro(nt);
  document.getElementById('coinsTotal').textContent=euro(ct);
