@@ -8,9 +8,10 @@
     *{box-sizing:border-box}
     body{margin:0;background:#e5e5e5;font-family:Georgia,'Times New Roman',serif;color:#111}
     .app{max-width:900px;margin:0 auto;padding:18px}
-    .toolbar{display:flex;gap:10px;justify-content:flex-end;margin-bottom:12px;font-family:Arial,sans-serif}
+    .toolbar{display:flex;gap:10px;justify-content:flex-end;margin-bottom:12px;font-family:Arial,sans-serif;flex-wrap:wrap}
     button{border:0;background:#111;color:white;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
     button.gray{background:#555}
+    button.orange{background:#9a3412}
     .page{width:210mm;min-height:297mm;background:white;margin:0 auto 18px;padding:22mm 18mm;box-shadow:0 2px 12px rgba(0,0,0,.22);position:relative}
     h1{font-size:31px;line-height:1.03;margin:0 0 20px;font-weight:900;letter-spacing:.3px;text-transform:uppercase}
     h2{font-size:31px;line-height:1.05;margin:26px 0 18px;font-weight:900;text-transform:uppercase;display:flex;align-items:center;gap:12px}
@@ -27,24 +28,30 @@
     .icon{width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;filter:grayscale(100%)}
     .checkline{font-size:17px;line-height:1.55;font-weight:700}.checkline input{width:16px;height:16px;margin-right:5px;vertical-align:middle}
     .stich{font-size:18px;font-weight:900;margin:20px 0 8px}.plainline{font-size:18px;font-weight:900;word-spacing:3px;margin-bottom:22px}
-    .loss-grid{font-size:19px;font-weight:900;line-height:1.55}.loss-grid .row{font-size:19px;margin:8px 0}.checks{font-size:20px;line-height:1.55;margin-top:18px}.checks label{display:block;margin:7px 0}.checks input{width:18px;height:18px;margin-right:6px;vertical-align:middle}
-    .subhead{font-size:19px;font-weight:900;margin-top:18px}.write-line{border-bottom:2px solid #222;height:22px;margin:5px 0 10px;width:100%}.liefer{font-size:18px;font-weight:700;margin-top:22px}.spacer{height:10px}
-    input.blank{font-family:Georgia,'Times New Roman',serif;border:0;border-bottom:2px solid #222;min-width:80px;font-size:18px;background:transparent;text-align:center;padding:0 3px;height:23px}
-    input.blank.long{min-width:240px;text-align:left}.manual{font-size:15px;font-family:Arial,sans-serif;color:#333;margin:0 auto 12px;max-width:210mm;background:#fff7ed;border:1px solid #fed7aa;padding:10px;border-radius:10px}
+    .loss-grid{font-size:19px;font-weight:900;line-height:1.55}.loss-grid .row{font-size:19px;margin:8px 0}.checks{font-size:20px;line-height:1.55;margin-top:18px}.checks label{display:block;margin:7px 0}.checks input[type="checkbox"]{width:18px;height:18px;margin-right:6px;vertical-align:middle}
+    .subhead{font-size:19px;font-weight:900;margin-top:18px}.liefer{font-size:18px;font-weight:700;margin-top:22px}.spacer{height:10px}
+
+    /* Campos com números direitos e legíveis */
+    input.blank{
+      font-family:Arial,Helvetica,sans-serif;
+      font-variant-numeric:tabular-nums lining-nums;
+      border:0;border-bottom:2px solid #222;min-width:80px;font-size:18px;background:transparent;text-align:center;padding:0 3px;height:25px;color:#111
+    }
+    input.blank.long{min-width:240px;text-align:left}
+    input.blank.tiny{min-width:62px}
+    input.blank.short{min-width:84px}
+    input.blank.full{width:100%;text-align:left}
+    .manual{font-size:15px;font-family:Arial,sans-serif;color:#333;margin:0 auto 12px;max-width:210mm;background:#fff7ed;border:1px solid #fed7aa;padding:10px;border-radius:10px}
+    .mini-actions{font-family:Arial,sans-serif;display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+    .mini-actions button{font-size:12px;padding:7px 9px;border-radius:7px;background:#374151}
+
     @media print{
       body{background:white}
       .app{padding:0;margin:0;max-width:none}
-      .toolbar,.manual{display:none!important}
+      .toolbar,.manual,.mini-actions{display:none!important}
       .page{
-        box-shadow:none;
-        margin:0;
-        width:210mm;
-        height:297mm;
-        min-height:0;
-        page-break-after:always;
-        break-after:page;
-        padding:16mm 17mm 12mm 17mm;
-        overflow:hidden;
+        box-shadow:none;margin:0;width:210mm;height:297mm;min-height:0;page-break-after:always;break-after:page;
+        padding:16mm 17mm 12mm 17mm;overflow:hidden
       }
       .page:last-child{page-break-after:auto;break-after:auto}
       h1{font-size:27px;margin-bottom:15px;line-height:1.02}
@@ -66,17 +73,22 @@
       .subhead{font-size:16px;margin-top:10px}
       .checks{font-size:16px;line-height:1.25;margin-top:8px}
       .checks label{margin:4px 0}
-      .write-line{height:17px;margin:3px 0 6px}
       .liefer{font-size:15px;margin-top:12px}
-      input.blank{font-size:15px;height:19px;border-bottom:1.5px solid #000}
+      input.blank{font-size:15px;height:19px;border-bottom:1.5px solid #000;font-family:Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums lining-nums}
       @page{size:A4;margin:0}
     }
   </style>
 </head>
 <body>
 <div class="app">
-  <div class="toolbar"><button onclick="window.print()">Drucken / PDF</button><button class="gray" onclick="calc()">Berechnen</button><button class="gray" onclick="clearAll()">Leeren</button></div>
-  <div class="manual">Preenche os campos brancos. O botão “Berechnen” calcula: Gesamtmenge Nenngewicht, Gesamtmenge real e Überfüllung gesamt.</div>
+  <div class="toolbar">
+    <button onclick="window.print()">Drucken / PDF</button>
+    <button class="gray" onclick="calc()">Berechnen</button>
+    <button class="gray" onclick="setToday()">Datum automatisch</button>
+    <button class="orange" onclick="fillDeckelText()">Text: beschädigte Deckel</button>
+    <button class="gray" onclick="clearAll()">Leeren</button>
+  </div>
+  <div class="manual">Preenche os campos brancos. “Berechnen” calcula automaticamente: Gesamtmenge Nenngewicht, Gesamtmenge real, Überfüllung gesamt, Gesamtproduktion e Verlustanteil.</div>
 
   <section class="page">
     <h1>PRODUKTIONS- UND<br>LIEFERPROTOKOLL – EISBECHER</h1>
@@ -86,7 +98,7 @@
       <div><span class="bold">Adresse:</span> Fürst Richard Str. 1, 57319 Bad Berleburg</div>
     </div>
     <br>
-    <div class="row"><span>Datum:</span><input id="datum" class="blank long"></div>
+    <div class="row"><span>Datum:</span><input id="datum" class="blank long" placeholder="TT.MM.JJJJ"></div>
     <div class="row"><span>Auftrags-/Lieferscheinnr.:</span><input id="lieferschein" class="blank long"></div>
     <div class="row"><span>Kunde / Filiale:</span><input id="kunde" class="blank long"></div>
     <div class="row"><span>Mitarbeiter Produktion:</span><input id="mitarbeiterProduktion" class="blank long"></div>
@@ -142,7 +154,7 @@
     <h2 style="margin-top:0">AUSSCHUSS / VERLUSTE<br>(PRODUKTION)</h2>
 
     <div class="loss-grid">
-      <div class="row"><span>Datum:</span><input id="verlust_datum" class="blank long"></div>
+      <div class="row"><span>Datum:</span><input id="verlust_datum" class="blank long" placeholder="TT.MM.JJJJ"></div>
       <div class="row"><span>Produkt:</span><input id="verlust_produkt" class="blank long"></div>
       <div class="row"><span>Menge (Stück):</span><input id="verlust_stueck" class="blank short"></div>
       <div class="row"><span>Gewicht (kg):</span><input id="verlust_kg" class="blank short"></div>
@@ -154,24 +166,29 @@
 
     <div class="subhead">Art des Verlustes (ankreuzen):</div>
     <div class="checks">
-      <label><input type="checkbox">Beschädigte Becher</label>
-      <label><input type="checkbox">Beschädigte Deckel</label>
-      <label><input type="checkbox">Fehlproduktion (Geschmack / Konsistenz)</label>
-      <label><input type="checkbox">Produktionsreste</label>
-      <label><input type="checkbox">Temperatur / Lagerung</label>
-      <label><input type="checkbox">Hygiene / Entsorgung</label>
-      <label><input type="checkbox">Sonstiges: <input id="sonstiges_text" class="blank long"></label>
+      <label><input id="cb_becher" type="checkbox">Beschädigte Becher</label>
+      <label><input id="cb_deckel" type="checkbox">Beschädigte Deckel</label>
+      <label><input id="cb_fehlproduktion" type="checkbox">Fehlproduktion (Geschmack / Konsistenz)</label>
+      <label><input id="cb_reste" type="checkbox">Produktionsreste</label>
+      <label><input id="cb_temperatur" type="checkbox">Temperatur / Lagerung</label>
+      <label><input id="cb_hygiene" type="checkbox">Hygiene / Entsorgung</label>
+      <label><input id="cb_sonstiges" type="checkbox">Sonstiges: <input id="sonstiges_text" class="blank long"></label>
       <br>
-      <label><input type="checkbox" checked>technisch bedingte Überfüllung</label>
-      <label><input type="checkbox" checked>produktionsbedingter Ausschuss</label>
+      <label><input id="cb_ueberfuellung" type="checkbox" checked>technisch bedingte Überfüllung</label>
+      <label><input id="cb_ausschuss" type="checkbox" checked>produktionsbedingter Ausschuss</label>
     </div>
 
-    <div class="subhead">Beschreibung:</div><input class="blank long" style="width:100%">
-    <div class="subhead">Ursache:</div><input class="blank long" style="width:100%">
-    <div class="subhead">Maßnahme (optional):</div><input class="blank long" style="width:100%">
-    <div class="row"><span class="bold">Verantwortlicher:</span><input class="blank long"></div>
+    <div class="mini-actions">
+      <button type="button" onclick="fillDeckelText()">Beschädigte Deckel automatisch eintragen</button>
+      <button type="button" onclick="clearLossTexts()">Texte leeren</button>
+    </div>
 
-    <div class="liefer">Gewicht bei Übergabe kontrolliert: <label><input type="checkbox"> JA</label> <label><input type="checkbox"> NEIN</label></div>
+    <div class="subhead">Beschreibung:</div><input id="beschreibung" class="blank full">
+    <div class="subhead">Ursache:</div><input id="ursache" class="blank full">
+    <div class="subhead">Maßnahme (optional):</div><input id="massnahme" class="blank full">
+    <div class="row"><span class="bold">Verantwortlicher:</span><input id="verantwortlicher" class="blank long"></div>
+
+    <div class="liefer">Gewicht bei Übergabe kontrolliert: <label><input id="uebergabe_ja" type="checkbox"> JA</label> <label><input id="uebergabe_nein" type="checkbox"> NEIN</label></div>
   </section>
 </div>
 
@@ -198,7 +215,36 @@ function calc(){
   const totalReal=p170_real+p750_real;
   set('verlust_prozent', vk&&totalReal?f(vk/totalReal*100):'');
 }
-function clearAll(){document.querySelectorAll('input.blank').forEach(i=>{if(!i.readOnly && i.id!=='p170_tara' && i.id!=='p750_tara')i.value=''});calc()}
+function germanDate(){
+  const d=new Date();
+  const day=String(d.getDate()).padStart(2,'0');
+  const month=String(d.getMonth()+1).padStart(2,'0');
+  const year=d.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+function setToday(){
+  const today=germanDate();
+  set('datum',today);
+  set('verlust_datum',today);
+}
+function fillDeckelText(){
+  document.getElementById('cb_deckel').checked=true;
+  set('beschreibung','Mehrere Deckel während der Abfüllung beschädigt, nicht verwendbar.');
+  set('ursache','Materialschwäche / fehlerhafte Lieferung.');
+  set('massnahme','Beschädigte Deckel aussortiert und entsorgt.');
+}
+function clearLossTexts(){
+  set('beschreibung','');
+  set('ursache','');
+  set('massnahme','');
+}
+function clearAll(){
+  document.querySelectorAll('input.blank').forEach(i=>{if(!i.readOnly && i.id!=='p170_tara' && i.id!=='p750_tara')i.value=''});
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb=>{cb.checked=false});
+  document.getElementById('cb_ueberfuellung').checked=true;
+  document.getElementById('cb_ausschuss').checked=true;
+  calc();
+}
 document.addEventListener('input',calc);
 </script>
 </body>
